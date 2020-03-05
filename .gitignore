@@ -1,6 +1,6 @@
-source/*.buildinfo
-source/*.changes
-source/*.deb
-source/*.dsc
-source/*.tar.xz
+*.buildinfo
+*.changes
+*.deb
+*.dsc
+*.tar.xz
 source/debian/*
