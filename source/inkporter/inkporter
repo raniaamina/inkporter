@@ -15,7 +15,7 @@ SOURCE=$1
 IDPATTERN=$2
 echo " "
 PS3='Enter the number: '
-options=("png" "pdf" "pdf-cmyk" "svg" "eps-default" "cancel")
+options=("png" "jpg" "pdf" "pdf-cmyk" "svg" "eps-default" "cancel")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -27,9 +27,27 @@ do
             mkdir -p $DIRECTORY
             for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -z -j -i $id -e "$DIRECTORY/$id.png" -d $DPI -f $SOURCE
+            inkscape -z -j -i $id -e "$DIRECTORY/$id.png" -d $DPI -f $SOURCE >> /tmp/inkporter-png.log
             echo "Sedang memproses $id ke $DIRECTORY/$id.png"
             done
+            break
+            ;;
+        "jpg")
+            echo "Berkas akan diekspor ke format JPG"
+            read -e -p "Tentukan latar gambar black/white (default white): " -i "white" BGCOLOR
+            read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
+            mkdir -p $DIRECTORY/.temp
+            for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
+            do 
+            inkscape -z -j -i $id -e "$DIRECTORY/.temp/$id.png" -d 96 -f $SOURCE >> /tmp/inkporter-jpg.log
+            echo "Sedang memproses $id ke $DIRECTORY/$id.jpg"
+            done
+            cd $DIRECTORY/.temp
+            for i in *.png; do convert "$i"  -background $BGCOLOR -flatten -quality 100 -colorspace CMYK "../${i%.*}.jpg"; 
+            echo "Sedang mengoptimasi $id.jpg"  
+            done
+            cd .. && rm -r .temp
+            cd .. 
             break
             ;;
         "pdf")
@@ -38,11 +56,13 @@ do
             mkdir -p $DIRECTORY/.temp
             for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -z -i $id -l "$DIRECTORY/.temp/$id.svg" -f $SOURCE
-            echo "Sedang memproses $id ke $DIRECTORY/$id.svg"
+            inkscape -z -i $id -l "$DIRECTORY/.temp/$id.svg" -f $SOURCE >> /tmp/inkporter-pdf.log
+            echo "Sedang memproses $id ke $DIRECTORY/$id.pdf"
             done
             cd $DIRECTORY/.temp
-            for i in *.svg; do inkscape "$i" --export-area-page --without-gui "$i" -A "../${i%.*}.pdf";done
+            for i in *.svg; do inkscape "$i" --export-area-page --without-gui "$i" -A "../${i%.*}.pdf";
+             echo "Sedang mengoptimasi berkas $id.pdf"
+            done
             cd .. && rm -r .temp
             cd .. 
             break
@@ -53,13 +73,17 @@ do
             mkdir -p $DIRECTORY/.temp
             for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -z -i $id -l "$DIRECTORY/.temp/$id.svg" -f $SOURCE
-            echo "Sedang memproses $id ke $DIRECTORY/$id.svg"
+            inkscape -z -i $id -l "$DIRECTORY/.temp/$id.svg" -f $SOURCE >> /tmp/inkporter-pdf-cmyk.log
+            echo "Inisiasi objek: $id (OK!)"
             done
             cd $DIRECTORY/.temp
-            for i in *.svg; do inkscape "$i" --export-area-page --without-gui "$i" -A ${i%.*}.pdf;done
+            for i in *.svg; do inkscape "$i" --export-area-page --without-gui "$i" -A ${i%.*}.pdf;
+            echo "Sedang memproses $id ke $DIRECTORY/$id.pdf"
+            done
             rm *.svg
-            for i in *.pdf; do gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile="$i" "$i"; done
+            for i in *.pdf; do gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile="$i" "$i" >> /tmp/inkporter-pdf-gs.log; 
+            echo "Sedang mengoptimasi berkas $id.pdf ke CMYK"
+            done
             mv ./* ../ && cd .. && rm -r .temp && cd ..
             cd .. 
             break
@@ -71,7 +95,7 @@ do
             mkdir -p $DIRECTORY
             for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -z -j -i $id -f $SOURCE -l "$DIRECTORY/$id.svg" 
+            inkscape -z -j -i $id -f $SOURCE -l "$DIRECTORY/$id.svg" >> /tmp/inkporter-pdf.log
             echo "Sedang memproses $id ke $DIRECTORY/$id.svg"
             done
             break
@@ -82,11 +106,13 @@ do
             mkdir -p $DIRECTORY/.temp
             for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -z -i $id -l "$DIRECTORY/.temp/$id.svg" -f $SOURCE
-            echo "Sedang memproses $id ke $DIRECTORY/$id.svg"
+            inkscape -z -i $id -l "$DIRECTORY/.temp/$id.svg" -f $SOURCE >> /tmp/inkporter-pdf.log
+            echo "Sedang memproses $id ke $DIRECTORY/$id.eps"
             done
             cd $DIRECTORY/.temp
-            for i in *.svg; do inkscape "$i" --without-gui "$i" -E "../${i%.*}.eps" --export-area-page --export-ignore-filters --export-text-to-path --export-ps-level={3};done
+            for i in *.svg; do inkscape "$i" --without-gui "$i" -E "../${i%.*}.eps" --export-area-page --export-ignore-filters --export-text-to-path --export-ps-level={3};
+            echo "Sedang mengoptimasi berkas $id.eps"
+            done
             cd .. && rm -r .temp
             cd .. 
             break
