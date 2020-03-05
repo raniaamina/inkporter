@@ -1,0 +1,6 @@
+source/*.buildinfo
+source/*.changes
+source/*.deb
+source/*.dsc
+source/*.tar.xz
+source/debian/*
