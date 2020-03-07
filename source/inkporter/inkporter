@@ -15,7 +15,7 @@ SOURCE=$1
 IDPATTERN=$2
 echo " "
 PS3='Enter the number: '
-options=("png" "jpg" "pdf" "pdf-cmyk" "svg" "eps-default" "cancel")
+options=("png" "jpg" "pdf" "pdf-cmyk" "svg" "eps-default" "booklet" "cancel")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -114,6 +114,24 @@ do
             echo "Sedang mengoptimasi berkas $id.eps"
             done
             cd .. && rm -r .temp
+            cd .. 
+            break
+            ;;
+        "booklet")
+            echo "Berkas akan akan diproses ke format PDF (CMYK)"
+            read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
+            mkdir -p $DIRECTORY/.temp
+            for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
+            do 
+            inkscape -z -j -i $id -f $SOURCE -l "$DIRECTORY/.temp/$id.svg" 
+            echo "Inisiasi objek: $id (OK!)"
+            done
+            cd $DIRECTORY/.temp
+#             for i in *.svg; do sed -r -i "s/#((0x){0,1}|#{0,1})([0-9a-fA-F]{8}|[0-9a-fA-F]{6})/#000/g" "$i"; done 
+            echo "Mnegkompilasi booklet"
+            rsvg-convert -f pdf -o "../$DIRECTORY.pdf" $(ls --sort=version *.svg)
+            cd ..
+            rm -r .temp
             cd .. 
             break
             ;;
