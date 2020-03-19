@@ -2,7 +2,12 @@
 set /a objnum=1
 :main
 cls
+echo.
+echo.
+echo.
+echo =====================
 echo INKPORTER FOR WINDOWS
+echo =====================
 echo.
 echo PASTIKAN ANDA SUDAH MENGARAHKAN COMMAND PROMPT PADA DIREKTORI
 echo FILE YANG INGIN ANDA PROSES!
@@ -52,7 +57,7 @@ echo Anda harus tambahkan folder direktori installasi Inkscape ke Environment Va
 echo =======================================================================================
 echo Versi ini masih dalam tahap percobaan
 echo ======================================
-echo Ditulis oleh Mas
+echo Ditulis oleh Mas RJ95
 echo Kota Tahu, 2020
 echo.
 echo Tekan ENTER untuk kembali
@@ -100,7 +105,9 @@ set /p objID="Pola Object ID: "
 :PDFBATCHPPROCESS
 
 for /f "delims=," %%d in ('inkscape --query-all %svg% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-pdf %%d.pdf %svg%
+	inkscape --export-id=%%d --export-plain-svg=%%d.svg drawing.svg
+	inkscape --export-area-page --export-pdf=%%d.pdf %%d.svg
+	del %%d.svg
 	echo.
 	echo file %%d.pdf telah dibuat
 	)
@@ -120,9 +127,11 @@ set /p objID="Pola Object ID: "
 
 :EPSBATCHPPROCESS
 for /f "delims=," %%d in ('inkscape --query-all %svg% ^| findstr %objID%') do (
+	inkscape --export-id=%%d --export-plain-svg=%%d.svg drawing.svg
 	inkscape %svg% --export-id=%%d --export-eps=%%d.eps --export-ps-level=3 --export-text-to-path --export-ignore-filters
+	del %%d.svg
 	echo.
-	echo file %%d.pdf telah dibuat
+	echo file %%d.eps telah dibuat
 	)
 goto end
 
