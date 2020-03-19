@@ -123,7 +123,7 @@ set /p objID="Pola Object ID: "
 :EPSBATCHPPROCESS
 for /f "delims=," %%d in ('inkscape --query-all %svg% ^| findstr %objID%') do (
 	inkscape --export-id=%%d --export-plain-svg=%%d.svg %svg%
-	inkscape %svg% --export-id=%%d --export-eps=%%d.eps --export-ps-level=3 --export-text-to-path --export-ignore-filters
+	inkscape %%d.svg --export-eps=%%d.eps --export-area-page --export-ps-level={3} --export-text-to-path --export-ignore-filters
 	del %%d.svg
 	echo.
 	echo file %%d.eps telah dibuat
