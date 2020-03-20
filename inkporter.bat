@@ -1,8 +1,6 @@
 @echo off
-set /a objnum=1
 :main
 cls
-echo.
 echo.
 echo.
 echo =====================
@@ -45,19 +43,16 @@ echo.
 echo.
 echo.
 echo.
-echo .bat ini terinspirasi dari Inkporter yang ditulis oleh Rania Amina untuk Sistem Operasi Linux
+echo .bat ini merupakan hasil re-write dari inkporter yang ditulis dalam bash
 echo =============================================================================================
-echo Tool ini dibuat untuk pengguna Windows yang belum memiliki fitur WSL (Windows
-echo Subsystem for Linux) atau yang tidak ingin menginstall WSL
+echo Tool ini dibuat untuk melakukan batch exporting pada file .svg melalui Inkscape command line
 echo ==========================================================
-echo versi ini memiliki beberapa keterbatan dibandingkan Inkporter dan pengembangnya
-echo masih berusaha agar dapat menyamai Inkporter
+echo versi ini memiliki beberapa keterbatan dibandingkan Inkporter untuk linux
+echo dan masih berusaha agar dapat menyamai Inkporter pada linux
 echo ============================================
-echo Anda harus tambahkan folder direktori installasi Inkscape ke Environment Variables PATH
-echo =======================================================================================
 echo Versi ini masih dalam tahap percobaan
 echo ======================================
-echo Ditulis oleh Mas RJ95
+echo Ditulis oleh Mas
 echo Kota Tahu, 2020
 echo.
 echo Tekan ENTER untuk kembali
@@ -105,8 +100,8 @@ set /p objID="Pola Object ID: "
 :PDFBATCHPPROCESS
 
 for /f "delims=," %%d in ('inkscape --query-all %svg% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-plain-svg=%%d.svg drawing.svg
-	inkscape --export-area-page --export-pdf=%%d.pdf %%d.svg
+	inkscape --export-id=%%d --export-plain-svg=%%d.svg %svg%
+	inkscape --export-area-page --without-gui --export-pdf=%%d.pdf %%d.svg
 	del %%d.svg
 	echo.
 	echo file %%d.pdf telah dibuat
@@ -116,7 +111,7 @@ goto end
 :EPSFULL
 set /p svg="Nama File Anda :"
 set /p output="Nama File Output "
-inkscape %svg% --export-eps=%output%.eps --export-ps-level=3 --export-text-to-path --export-ignore-filters
+inkscape %svg% --export-eps=%output%.eps --without-gui --export-ps-level=3 --export-text-to-path --export-ignore-filters
 echo %output%.eps telah dibuat
 echo.
 goto end
@@ -127,8 +122,8 @@ set /p objID="Pola Object ID: "
 
 :EPSBATCHPPROCESS
 for /f "delims=," %%d in ('inkscape --query-all %svg% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-plain-svg=%%d.svg drawing.svg
-	inkscape %svg% --export-id=%%d --export-eps=%%d.eps --export-ps-level=3 --export-text-to-path --export-ignore-filters
+	inkscape --export-id=%%d --export-plain-svg=%%d.svg %svg%
+	inkscape %%d.svg --export-eps=%%d.eps --export-area-page --export-ps-level={3} --export-text-to-path --export-ignore-filters
 	del %%d.svg
 	echo.
 	echo file %%d.eps telah dibuat
