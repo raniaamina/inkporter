@@ -3,31 +3,48 @@
 cls
 echo.
 echo.
-echo =====================
-echo INKPORTER FOR WINDOWS
-echo =====================
+echo "|| Selamat Datang di                                                    ||"
+echo "||  ___       _                     _                         _         ||"
+echo "|| |_ _|_ __ | | ___ __   ___  _ __| |_ ___ _ __    __      _(_)_ __    ||"
+echo "||  | || '_ \| |/ / '_ \ / _ \| '__| __/ _ \ '__|___\ \ /\ / / | '_ \   ||"
+echo "||  | || | | |   <| |_) | (_) | |  | ||  __/ | |_____\ V  V /| | | | |  ||"
+echo "|| |___|_| |_|_|\_\ .__/ \___/|_|   \__\___|_|        \_/\_/ |_|_| |_|  ||"
+echo "||                |_|                                                   ||"
 echo.
 echo PASTIKAN ANDA SUDAH MENGARAHKAN COMMAND PROMPT PADA DIREKTORI
 echo FILE YANG INGIN ANDA PROSES!
 echo.
 echo Silahkan Pilih Target Export Anda
 echo.
-echo Pilihan : 1="png" 2="pdf" 3="eps" 4="png_batch" 5="pdf_batch" 6="eps_batch"
+echo Pilihan : 
+echo 1="png"
+echo 2="pdf"
+echo 3="pdf_cmyk"
+echo 4="eps_default"
+echo 5="png_batch"
+echo 6="pdf_batch"
+echo 7="pdf_cmyk_batch"
+echo 8="eps_default_batch"
+echo.
 echo Untuk informasi pengembang, silahkan ketik "about"
 echo.
 set /p target=Pilihan Anda : 
 if %target%== png goto PNGFULL
 if %target%== pdf goto PDFFULL
-if %target%== eps goto EPSFULL
+if %target%== pdf_cmyk goto PDFCMYKFULL
+if %target%== eps_default goto EPSFULL
 if %target%== png_batch goto PNGBATCH
 if %target%== pdf_batch goto PDFBATCH
-if %target%== eps_batch goto EPSBATCH
+if %target%== pdf_cmyk_batch goto PDFCMYKBATCH
+if %target%== eps_default_batch goto EPSBATCH
 if %target%== 1 goto PNGFULL
 if %target%== 2 goto PDFFULL
-if %target%== 3 goto EPSFULL
-if %target%== 4 goto PNGBATCH
-if %target%== 5 goto PDFBATCH
-if %target%== 6 goto EPSBATCH
+if %target%== 3 goto PDFCMYKFULL
+if %target%== 4 goto EPSFULL
+if %target%== 5 goto PNGBATCH
+if %target%== 6 goto PDFBATCH
+if %target%== 7 goto PDFCMYKBATCH
+if %target%== 8 goto EPSBATCH
 if %target%== help goto HELP
 if %target%== about goto credits
 if %target%== exit goto langsung_end
@@ -52,7 +69,7 @@ echo dan masih berusaha agar dapat menyamai Inkporter pada linux
 echo ============================================
 echo Versi ini masih dalam tahap percobaan
 echo ======================================
-echo Ditulis oleh Mas
+echo Ditulis oleh Mas RJ95
 echo Kota Tahu, 2020
 echo.
 echo Tekan ENTER untuk kembali
@@ -66,25 +83,40 @@ echo Bagian ini belum selesai :v
 goto main 
 
 :PNGFULL
-set /p svg="Nama File Anda :"
-set /p output="Nama File Output "
-inkscape --export-png %output%.png %svg%
+echo Bersiap mengekspor berkas SVG (Page) ke PNG
+set /p svg="Nama File Anda : "
+set /p output="Nama File Output : "
+inkscape --export-area-page --export-png=%output%.png %svg%
 echo.
 goto end
 
 
 :PDFFULL
-set /p svg="Nama File Anda :"
-set /p output="Nama File Output "
-inkscape --export-pdf %output%.pdf %svg%
+echo Bersiap mengekspor berkas SVG (Page) ke PDF
+set /p svg="Nama File Anda : "
+set /p output="Nama File Output : "
+inkscape --export-pdf=%output%.pdf --export-area-page %svg%
+echo.
 echo %output%.pdf telah dibuat
 echo.
 goto end
 
+:PDFCMYKFULL
+echo Bersiap mengekspor berkas SVG (Page) ke PDF dengan color space CMYK
+set /p svg="Nama File Anda : "
+set /p output="Nama File Output : "
+inkscape --export-pdf=%output%-rgb.pdf --export-area-page %svg%
+gswin64 -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%output%.pdf %output%-rgb.pdf
+del %output-rgb.pdf
+echo.
+echo %output%.pdf telah dibuat
+goto end
+
 
 :PNGBATCH
-set /p svg="Nama File Anda :"
-set /p objID="Pola Object ID: "
+echo Bersiap mengekspor berkas SVG (object ID) ke PNG
+set /p svg="Nama File Anda : "
+set /p objID="Pola Object ID : "
 
 :PNGBATCHPPROCESS
 for /f "delims=," %%d in ('inkscape --query-all %svg% ^| findstr %objID%') do (
@@ -94,8 +126,9 @@ for /f "delims=," %%d in ('inkscape --query-all %svg% ^| findstr %objID%') do (
 goto end
 
 :PDFBATCH
-set /p svg="Nama File Anda :"
-set /p objID="Pola Object ID: "
+echo Bersiap mengekspor berkas SVG (object ID) ke PDF
+set /p svg="Nama File Anda : "
+set /p objID="Pola Object ID : "
 
 :PDFBATCHPPROCESS
 
@@ -109,16 +142,18 @@ for /f "delims=," %%d in ('inkscape --query-all %svg% ^| findstr %objID%') do (
 goto end
 
 :EPSFULL
-set /p svg="Nama File Anda :"
-set /p output="Nama File Output "
+echo Bersiap mengekspor berkas SVG (Page) ke EPS Default
+set /p svg="Nama File Anda : "
+set /p output="Nama File Output : "
 inkscape %svg% --export-eps=%output%.eps --without-gui --export-ps-level=3 --export-text-to-path --export-ignore-filters
 echo %output%.eps telah dibuat
 echo.
 goto end
 
 :EPSBATCH
-set /p svg="Nama File Anda :"
-set /p objID="Pola Object ID: "
+echo Bersiap mengekspor berkas SVG (object ID) ke EPS
+set /p svg="Nama File Anda : "
+set /p objID="Pola Object ID : "
 
 :EPSBATCHPPROCESS
 for /f "delims=," %%d in ('inkscape --query-all %svg% ^| findstr %objID%') do (
@@ -127,6 +162,24 @@ for /f "delims=," %%d in ('inkscape --query-all %svg% ^| findstr %objID%') do (
 	del %%d.svg
 	echo.
 	echo file %%d.eps telah dibuat
+	)
+goto end
+
+:PDFCMYKBATCH
+echo Bersiap mengekspor berkas SVG (object ID) ke PDF dengan color space CMYK
+set /p svg="Nama File Anda : "
+set /p objID="Pola Object ID : "
+
+:PDFCMYKBATCHPPROCESS
+
+for /f "delims=," %%d in ('inkscape --query-all %svg% ^| findstr %objID%') do (
+	inkscape --export-id=%%d --export-plain-svg=%%d.svg %svg%
+	inkscape --export-area-page --without-gui --export-pdf=%%d-rgb.pdf %%d.svg
+	gswin64 -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%%d.pdf %%d-rgb.pdf
+	del %%d.svg
+	del %%d-rgb.pdf
+	echo.
+	echo file %%d.pdf dengan warna CMYK telah dibuat
 	)
 goto end
 
