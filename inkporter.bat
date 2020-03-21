@@ -11,8 +11,7 @@ echo "||  | || | | |   <| |_) | (_) | |  | ||  __/ | |_____\ V  V /| | | | |  ||
 echo "|| |___|_| |_|_|\_\ .__/ \___/|_|   \__\___|_|        \_/\_/ |_|_| |_|  ||"
 echo "||                |_|                                                   ||"
 echo.
-echo PASTIKAN ANDA SUDAH MENGARAHKAN COMMAND PROMPT PADA DIREKTORI
-echo FILE YANG INGIN ANDA PROSES!
+echo Direktori saat ini %cd%
 echo.
 echo Silahkan Pilih Target Export Anda
 echo.
