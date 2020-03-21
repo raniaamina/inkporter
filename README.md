@@ -6,7 +6,7 @@ Bismillah
 Inkporter merupakan tool sederhana yang dikembangkan oleh @raniaamina untuk mengekspor berkas .svg bedasarkan pola pada nama object id yang aslinya dikembangkan untuk sistem operasi linux
 
 ini merupakan versi .bat dari Inkporter untuk CMD Windows (native) yang ditulis oleh RJ95
-sehingga pengguna Windows dapat melakukan batch export svg tanpa menginstall WSL. Dalam versi .bat ini saya menambahkan export bedasarkan page
+sehingga pengguna Windows dapat melakukan batch export svg tanpa menginstall WSL (Windows Subsystem for Linux). Dalam versi .bat ini saya menambahkan export bedasarkan page
 
 Aplikasi yang dibutuhkan yang dibutuhkan :
 - **Inkscape** : https://inkscape.org/
