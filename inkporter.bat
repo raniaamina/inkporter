@@ -62,18 +62,10 @@ goto main
 cls
 echo.
 echo.
-echo.
-echo.
-echo.
 echo .bat ini merupakan hasil re-write dari inkporter yang ditulis dalam bash
-echo =============================================================================================
+echo =========================================================================
 echo Tool ini dibuat untuk melakukan batch exporting pada file .svg melalui Inkscape command line
-echo ==========================================================
-echo versi ini memiliki beberapa keterbatan dibandingkan Inkporter untuk linux
-echo dan masih berusaha agar dapat menyamai Inkporter pada linux
-echo ============================================
-echo Versi ini masih dalam tahap percobaan
-echo ======================================
+echo ============================================================================================
 echo Ditulis oleh Mas RJ95
 echo Kota Tahu, 2020
 echo.
@@ -202,7 +194,7 @@ set der=%cd%
 for /f "delims=," %%d in ('inkscape --query-all "%svg%" ^| findstr %objID%') do (
 	inkscape --export-id=%%d --export-plain-svg=%%d.svg "%svg%"
 	inkscape --export-area-page --without-gui --export-pdf=%%d-rgb.pdf %%d.svg
-	gswin64 -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%%d.pdf %%d-rgb.pdf
+	gswin32 -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%%d.pdf %%d-rgb.pdf
 	del %%d.svg
 	del %%d-rgb.pdf
 	move %%d.pdf "%der%\%fold%\" >nul
