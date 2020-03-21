@@ -29,20 +29,21 @@ sedangkan pilihan 6-10 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berk
 
 saya akan menggunakan contoh bahwa saya memiliki berkas svg bernama *drawing.svg* di direktori D:\project
 dengan objek yang ingin saya export adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-5* *obj-6*
+
 * untuk mengarahkan CMD pada direktori yang di tuju
 
-1. buka cmd
-2. ketik **nama_partisi:** misal **D:** lalu enter untuk pindah ke partisi D:\
-3. selanjutnya ketik **cd nama_folder** misal **cd project** lalu enter untuk masuk ke folder bernama project
+	* buka cmd
+	* ketik **nama_partisi:** misal **D:** lalu enter untuk pindah ke partisi D:\
+ 	* selanjutnya ketik **cd nama_folder** misal **cd project** lalu enter untuk masuk ke folder bernama project
 
 * untuk menggunakan inkporter
 
-4. di sana saya akan menjalankan inkporter, untuk menjalankannya ketik **inkporter** lalu tekan enter
-5. pilih format yang dinginkan (disini saya ambil contoh pdf maka saya akan memasukkan angka 6)
-6. masukkan nama berkas (**drawing.svg**)
-7. lalu masukkan pola nama object id (**obj**)
-8. tool ini akan mengekspor berkas ke folder baru, masukkan nama yang anda inginkan seperti **hasil export**
-9. berkas anda akan diproses dan selamat berkas berhasil terekspor
+	* di sana saya akan menjalankan inkporter, untuk menjalankannya ketik **inkporter** lalu tekan enter
+	* pilih format yang dinginkan (disini saya ambil contoh pdf maka saya akan memasukkan angka 6)
+	* masukkan nama berkas (**drawing.svg**)
+	* lalu masukkan pola nama object id (**obj**)
+	* tool ini akan mengekspor berkas ke folder baru, masukkan nama yang anda inginkan seperti **hasil export**
+	* berkas anda akan diproses dan selamat berkas berhasil terekspor
 
 Sekian dari saya, bila anda ingin berdiskusi, memberikan feedback, saran, atau tanya2 tentang inkporter.bat ini bisa PM saya lewat telegram @RJ95ID
 
