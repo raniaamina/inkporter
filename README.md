@@ -1,14 +1,49 @@
 # Inkpoter Windows (Native) 
 Inkporter for Windows
 
-ini merupakan versi .bat dari Inkporter untuk CMD Windows
-sehingga pengguna Windows dapat melakukan batch export svg tanpa menginstall WSL
+Bismillah
+
+Inkporter merupakan tool sederhana yang dikembangkan oleh @raniaamina untuk mengekspor berkas .svg bedasarkan pola pada nama object id yang aslinya dikembangkan untuk sistem operasi linux
+
+ini merupakan versi .bat dari Inkporter untuk CMD Windows (native) yang ditulis oleh RJ95
+sehingga pengguna Windows dapat melakukan batch export svg tanpa menginstall WSL (Windows Subsystem for Linux). Dalam versi .bat ini saya menambahkan export bedasarkan page
+
+Aplikasi yang dibutuhkan yang dibutuhkan :
+- **Inkscape** : https://inkscape.org/
+- **Ghostscript** untuk export pdf-cmyk : https://www.ghostscript.com/download/gsdnld.html (gunakan ghostscript 32bit, karena inkporter.bat ini saya tulis agar menggunakan gswin32 sehingga dapat berjalan di semua arsitektur)
 
 Petunjuk Instalasi
 
-1. Clone inkporter.bat ke direktori installasi
-2. tambahkan direktori installasi ke %PATH%
-3. buka CMD dan arahkan ke direktori file SVG
-4. jalankan inkporter dan masukkan nama file dan ID Pattern setelah masuk ke inkporter
+- Unduh dan salin inkporter.bat ke direktori installasi
+- tambahkan direktori installasi inkscape dan ghostscript ke %PATH%
+	- buka Control Panel -> System and Security -> System 
+	- klik pada pojok kanan kiri *Advanced system setting* lalu akan muncul system properties
+	- masuk ke *Environment Variables...*
+	- Edit System variable *Path* lalu tambahkan direktori installasi Inkscape (C:\Program Files\Inkscape) dan Ghostscript (untuk versi terbaru saat ini ditulis = C:\Program Files\gs\gs9.52\bin)
 
-Singkatnya seperti itu :D
+Petunjuk pemakaian :
+
+Pilihan 1-5 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berkas bedasarkan Page,
+sedangkan pilihan 6-10 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berkas bedasarkan pola nama object id
+
+saya akan menggunakan contoh bahwa saya memiliki berkas svg bernama *drawing.svg* di direktori D:\project
+dengan objek yang ingin saya export adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-5* *obj-6*
+
+* untuk mengarahkan CMD pada direktori yang di tuju
+
+	* buka cmd
+	* ketik **nama_partisi:** misal **D:** lalu enter untuk pindah ke partisi D:\
+ 	* selanjutnya ketik **cd nama_folder** misal **cd project** lalu enter untuk masuk ke folder bernama project
+
+* untuk menggunakan inkporter
+
+	* di sana saya akan menjalankan inkporter, untuk menjalankannya ketik **inkporter** lalu tekan enter
+	* pilih format yang dinginkan (disini saya ambil contoh pdf maka saya akan memasukkan angka 6)
+	* masukkan nama berkas (**drawing.svg**)
+	* lalu masukkan pola nama object id (**obj**)
+	* tool ini akan mengekspor berkas ke folder baru, masukkan nama yang anda inginkan seperti **hasil export**
+	* berkas anda akan diproses dan selamat berkas berhasil terekspor
+
+Sekian dari saya, bila anda ingin berdiskusi, memberikan feedback, saran, atau tanya2 tentang inkporter.bat ini bisa PM saya lewat telegram @RJ95ID
+
+sekian Terima Kasih
