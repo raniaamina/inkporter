@@ -14,16 +14,16 @@ Aplikasi yang dibutuhkan yang dibutuhkan :
 
 Petunjuk Instalasi
 
-- Unduh dan salin inkporter.bat ke direktori installasi
+- Unduh dan salin inkporter.bat ke direktori installasi Inkscape
 - tambahkan direktori installasi inkscape dan ghostscript ke %PATH%
 	- buka Control Panel -> System and Security -> System 
-	- klik pada pojok kanan kiri *Advanced system setting* lalu akan muncul system properties
+	- klik pada pojok atas kiri *Advanced system setting* lalu akan muncul system properties
 	- masuk ke *Environment Variables...*
 	- Edit System variable *Path* lalu tambahkan direktori installasi Inkscape (C:\Program Files\Inkscape) dan Ghostscript (untuk versi terbaru saat ini ditulis = C:\Program Files\gs\gs9.52\bin)
 
 Petunjuk pemakaian :
 
-Pilihan 1-5 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berkas bedasarkan Page,
+Pilihan 1-5 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berkas bedasarkan ukuran page,
 sedangkan pilihan 6-10 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berkas bedasarkan pola nama object id
 
 saya akan menggunakan contoh bahwa saya memiliki berkas svg bernama *drawing.svg* di direktori D:\project
