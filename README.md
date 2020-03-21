@@ -25,8 +25,8 @@ Petunjuk Instalasi
 
 Petunjuk pemakaian :
 
-Pilihan 1-4 (png, pdf, pdf-cmyk, eps) akan mengekspor berkas bedasarkan Page,
-sedangkan pilihan 5-8 (png, pdf, pdf-cmyk, eps) akan mengekspor berkas bedasarkan pola nama object id
+Pilihan 1-5 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berkas bedasarkan Page,
+sedangkan pilihan 6-10 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berkas bedasarkan pola nama object id
 
 saya akan menggunakan contoh bahwa saya memiliki berkas svg bernama *drawing.svg* di direktori D:\project
 dengan objek yang ingin saya export adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-5* *obj-6*
