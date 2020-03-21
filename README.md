@@ -35,9 +35,9 @@ dengan objek yang ingin saya export adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-
 3. selanjutnya ketik **cd project** lalu enter untuk masuk ke folder bernama project
 4. di sana saya akan menjalankan inkporter, untuk menjalankannya ketik **inkporter** lalu tekan enter
 5. pilih format yang dinginkan (disini saya ambil contoh pdf maka saya akan memasukkan angka 6)
-6. masukkan nama berkas (*drawing.svg*)
-7. lalu masukkan pola nama object id (*obj*)
-8. tool ini akan mengekspor berkas ke folder baru, masukkan nama yang anda inginkan seperti *hasil export*
+6. masukkan nama berkas (**drawing.svg**)
+7. lalu masukkan pola nama object id (**obj**)
+8. tool ini akan mengekspor berkas ke folder baru, masukkan nama yang anda inginkan seperti **hasil export**
 9. berkas anda akan diproses dan selamat berkas berhasil terekspor
 
 Sekian dari saya, bila anda ingin berdiskusi, memberikan feedback, saran, atau tanya2 tentang inkporter.bat ini bisa PM saya lewat telegram @RJ95ID
