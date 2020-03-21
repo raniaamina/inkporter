@@ -11,8 +11,7 @@ dalam versi .bat ini saya menambahkan export bedasarkan page
 
 Aplikasi yang dibutuhkan yang dibutuhkan :
 - **Inkscape** : https://inkscape.org/
-- **Ghostscript** untuk export pdf-cmyk : https://www.ghostscript.com/download/gsdnld.html 
-	-(gunakan ghostscript 32bit, karena inkporter.bat ini saya tulis agar menggunakan gswin32 sehingga dapat berjalan di semua arsitektur)
+- **Ghostscript** untuk export pdf-cmyk : https://www.ghostscript.com/download/gsdnld.html (gunakan ghostscript 32bit, karena inkporter.bat ini saya tulis agar menggunakan gswin32 sehingga dapat berjalan di semua arsitektur)
 
 Petunjuk Instalasi
 
