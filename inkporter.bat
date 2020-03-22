@@ -66,11 +66,11 @@ goto main
 cls
 echo.
 echo.
-echo .bat ini merupakan hasil re-write dari inkporter yang ditulis dalam bash
-echo =========================================================================
+echo .bat ini merupakan hasil re-write dari inkporter yang ditulis dalam bash oleh Rania Amina
+echo ==========================================================================================
 echo Tool ini dibuat untuk melakukan batch exporting pada file .svg melalui Inkscape command line
 echo ============================================================================================
-echo Ditulis oleh Mas RJ95
+echo Inkporter.bat ditulis oleh Mas RJ95
 echo Kota Tahu, 2020
 echo.
 echo Tekan ENTER untuk kembali
