@@ -66,6 +66,8 @@ goto main
 :credits
 cls
 echo.
+echo Inkporter For Windows
+echo Version 1.0a
 echo.
 echo .bat ini merupakan hasil re-write dari inkporter yang ditulis dalam bash oleh Rania Amina
 echo ==========================================================================================
