@@ -25,7 +25,7 @@ Petunjuk Instalasi
 	- Edit System variable *Path*
 	- ![image set_path 3](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/5.png)
 	- lalu tambahkan direktori installasi Inkscape (C:\Program Files\Inkscape) dan Ghostscript (untuk versi terbaru saat ini ditulis = C:\Program Files\gs\gs9.52\bin)
-	![image set_path 4](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/6.png)
+	- ![image set_path 4](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/6.png)
 
 Petunjuk pemakaian :
 
