@@ -15,12 +15,16 @@ echo Direktori saat ini %cd%
 echo.
 echo Silahkan Pilih Target Export Anda
 echo.
-echo Pilihan : 
+echo Pilihan :
+echo.
+echo Export menurut ukuran Page
 echo 1="png"
 echo 2="pdf"
 echo 3="pdf_cmyk"
 echo 4="eps_default"
 echo 5="svg_plain"
+echo.
+echo Export menurut pola pada nama Object ID
 echo 6="png_batch"
 echo 7="pdf_batch"
 echo 8="pdf_cmyk_batch"
