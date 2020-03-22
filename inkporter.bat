@@ -32,7 +32,7 @@ echo 9="eps_default_batch"
 echo 10="svg_plain_batch"
 echo.
 echo Untuk informasi pengembang, silahkan ketik "about"
-echo untuk mengunjungi laman online bantuan' silahkan ketik "help"
+echo untuk mengunjungi laman online bantuan silahkan ketik "help"
 echo.
 set /p target=Pilihan Anda : 
 if %target%== png goto PNGFULL
