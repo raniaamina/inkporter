@@ -53,6 +53,7 @@ dengan objek yang ingin saya export adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-
 
 	* di sana saya akan menjalankan inkporter, untuk menjalankannya ketik **inkporter** lalu tekan enter
 	* pilih format yang dinginkan (disini saya ambil contoh pdf maka saya akan memasukkan angka 6)
+	* setelah memilih format output maka akan muncul semua nama berkas svg yang ada di direktori saat ini
 	* masukkan nama berkas (**drawing.svg**)
 	* lalu masukkan pola nama object id (**obj**)
 	* tool ini akan mengekspor berkas ke folder baru, masukkan nama yang anda inginkan seperti **hasil export**
