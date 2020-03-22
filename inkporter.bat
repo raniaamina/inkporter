@@ -1,6 +1,8 @@
 @echo off
+
 :main
 cls
+rem inkporter version = 1.0
 echo.
 echo.
 echo "|| Selamat Datang di                                                    ||"
@@ -14,8 +16,6 @@ echo.
 echo Direktori saat ini %cd%
 echo.
 echo Silahkan Pilih Target Export Anda
-echo.
-echo Pilihan :
 echo.
 echo Export menurut ukuran Page
 echo 1="png"
@@ -55,10 +55,10 @@ if %target%== 7 goto PDFBATCH
 if %target%== 8 goto PDFCMYKBATCH
 if %target%== 9 goto EPSBATCH
 if %target%== 10 goto SVGPLAINBATCH
-if %target%== help goto HELP
+if %target%== help goto help
 if %target%== about goto credits
 if %target%== exit goto langsung_end
-echo Silahkan Pilih Pilihan Yang Tersedia
+echo Silahkan pilih target yang tersedia
 echo Tekan Enter Untuk Kembali
 pause >nul
 goto main
@@ -80,9 +80,9 @@ echo Tekan ENTER untuk kembali
 pause >nul
 goto main
 
-:HELP
+:help
 start https://github.com/maslanangdev/inkporter/blob/windows/README.md
-goto main 
+goto main
 
 :PNGFULL
 echo Bersiap mengekspor berkas SVG (Page) ke PNG
@@ -290,7 +290,6 @@ goto end
 :end
 echo.
 echo Permintaan anda telah diselesaikan
-echo Have a Nice Day...
 
 :langsung_end
-echo See You
+echo Sampai jumpa
