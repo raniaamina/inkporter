@@ -32,6 +32,7 @@ echo 9="eps_default_batch"
 echo 10="svg_plain_batch"
 echo.
 echo Untuk informasi pengembang, silahkan ketik "about"
+echo untuk mengunjungi laman online bantuan' silahkan ketik "help"
 echo.
 set /p target=Pilihan Anda : 
 if %target%== png goto PNGFULL
@@ -78,9 +79,7 @@ pause >nul
 goto main
 
 :HELP
-echo ==================================================================================================
-echo Anda harus tambahkan folder direktori installasi Inkscape ke Environment Variables PATH
-echo Bagian ini belum selesai :v
+start https://github.com/maslanangdev/inkporter/blob/windows/README.md
 goto main 
 
 :PNGFULL
