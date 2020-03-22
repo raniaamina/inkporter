@@ -22,8 +22,11 @@ Petunjuk Instalasi
 	- klik pada pojok atas kiri *Advanced system setting* lalu akan muncul system properties
 	
 	 ![image set path 1](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/3.png)
-	 
+
 	- masuk ke *Environment Variables...*
+	
+	 ![image set path 2](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/4.png)
+	
 	- Edit System variable *Path*
 	
 	 ![image set_path 3](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/5.png)
