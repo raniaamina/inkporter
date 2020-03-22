@@ -7,7 +7,7 @@ Inkporter merupakan tool sederhana yang dikembangkan oleh @raniaamina untuk meng
 
 ![image of tampilan_inkporter](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/tampilan_inkporter.png)
 
-ini merupakan versi .bat dari Inkporter untuk CMD Windows (native) yang ditulis oleh RJ95
+Tool ini merupakan versi .bat dari Inkporter untuk CMD Windows (native) yang ditulis oleh RJ95
 sehingga pengguna Windows dapat melakukan batch export svg tanpa menginstall WSL (Windows Subsystem for Linux). Dalam versi .bat ini saya juga menambahkan export bedasarkan ukuran page
 
 Aplikasi yang dibutuhkan yang dibutuhkan :
