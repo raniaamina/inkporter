@@ -32,7 +32,7 @@ echo 9="eps_default_batch"
 echo 10="svg_plain_batch"
 echo.
 echo Untuk informasi pengembang, silahkan ketik "about"
-echo untuk mengunjungi laman online bantuan silahkan ketik "help"
+echo untuk mengunjungi laman bantuan online, silahkan ketik "help"
 echo.
 set /p target=Pilihan Anda : 
 if %target%== png goto PNGFULL
@@ -71,7 +71,7 @@ echo .bat ini merupakan hasil re-write dari inkporter yang ditulis dalam bash ol
 echo ==========================================================================================
 echo Tool ini dibuat untuk melakukan batch exporting pada file .svg melalui Inkscape command line
 echo ============================================================================================
-echo Inkporter.bat ditulis oleh Mas RJ95
+echo inkporter.bat ditulis oleh Mas RJ95
 echo Kota Tahu, 2020
 echo.
 echo Tekan ENTER untuk kembali
