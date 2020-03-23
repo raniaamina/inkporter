@@ -8,8 +8,7 @@ Inkporter merupakan tool sederhana yang dikembangkan oleh @raniaamina untuk meng
 ![image of tampilan_inkporter](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/tampilan_inkporter.png)
 
 Tool ini merupakan versi .bat dari Inkporter untuk CMD Windows (native) yang ditulis oleh RJ95
-sehingga pengguna Windows dapat melakukan batch expor svg tanpa menginstall WSL (Windows Subsystem for Linux) dan dapat digunakan oleh pengguna Windows 8.1, 8, 7 kebawah.
-
+sehingga pengguna Windows dapat melakukan batch expor svg tanpa menginstall WSL (Windows Subsystem for Linux)
 Aplikasi yang dibutuhkan yang dibutuhkan :
 - **Inkscape** : https://inkscape.org/
 - **Ghostscript** untuk expor pdf-cmyk : https://www.ghostscript.com/download/gsdnld.html (gunakan ghostscript 32bit, karena inkporter.bat ini saya tulis agar menggunakan gswin32 sehingga dapat berjalan di semua arsitektur)
@@ -19,7 +18,7 @@ Petunjuk Instalasi
 - Unduh dan salin inkporter.bat ke direktori installasi Inkscape
 - tambahkan direktori installasi inkscape dan ghostscript ke %PATH%
 	- buka Control Panel -> System and Security -> System 
-	- klik pada pojok atas kiri *Advanced system setting* lalu akan muncul system properties
+	- klik pada pojok kiri atas *Advanced system setting* lalu akan muncul system properties
 	
 	 ![image set path 1](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/3.png)
 
@@ -37,9 +36,6 @@ Petunjuk Instalasi
 
 Petunjuk pemakaian :
 
-Pilihan 1-5 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berkas bedasarkan ukuran page,
-sedangkan pilihan 6-10 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berkas bedasarkan pola nama object id
-
 saya akan menggunakan contoh bahwa saya memiliki berkas svg bernama *drawing.svg* di direktori D:\project
 dengan objek yang ingin saya expor adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-5* *obj-6*
 
@@ -52,7 +48,7 @@ dengan objek yang ingin saya expor adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-5
 * untuk menggunakan inkporter
 
 	* di sana saya akan menjalankan inkporter, untuk menjalankannya ketik **inkporter** lalu tekan enter
-	* pilih format yang dinginkan (disini saya ambil contoh pdf maka saya akan memasukkan angka 6)
+	* pilih format yang dinginkan (disini saya ambil contoh pdf maka saya akan memasukkan angka 2)
 	* setelah memilih format output maka akan muncul semua nama berkas svg yang ada di direktori saat ini
 	* masukkan nama berkas (**drawing.svg**)
 	* lalu masukkan pola nama object id (**obj**)
