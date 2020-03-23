@@ -14,21 +14,21 @@ echo.
 echo Direktori saat ini %cd%
 echo.
 echo Silakan Pilih Target Export Anda
-echo 1.PNG                      
-echo 2.PDF                       
-echo 3.PDF-CMYK                   
-echo 4.EPS-Default                 
-echo 5.SVG-Plain                    
+echo 1) PNG                      
+echo 2) PDF                       
+echo 3) PDF-CMYK                   
+echo 4) EPS-Default                 
+echo 5) SVG-Plain                    
 echo.
 echo Untuk informasi pengembang, Silakan ketik "about"
 echo untuk mengunjungi laman bantuan online, Silakan ketik "help"
 echo.
 set /p target=Pilihan Anda : 
-if %target%== 6 goto PNGBATCH
-if %target%== 7 goto PDFBATCH
-if %target%== 8 goto PDFCMYKBATCH
-if %target%== 9 goto EPSBATCH
-if %target%== 10 goto SVGPLAINBATCH
+if %target%== 1 goto PNGBATCH
+if %target%== 2 goto PDFBATCH
+if %target%== 3 goto PDFCMYKBATCH
+if %target%== 4 goto EPSBATCH
+if %target%== 5 goto SVGPLAINBATCH
 if %target%== help goto help
 if %target%== about goto credits
 if %target%== exit goto langsung_end
