@@ -13,15 +13,15 @@ echo "||                |_|                                                   ||
 echo.
 echo Direktori saat ini %cd%
 echo.
-echo Silahkan Pilih Target Export Anda
-echo 1=PNG                      
-echo 2=PDF                       
-echo 3=PDF-CMYK                   
-echo 4=EPS-Default                 
-echo 5=SVG-Plain                    
+echo Silakan Pilih Target Export Anda
+echo 1.PNG                      
+echo 2.PDF                       
+echo 3.PDF-CMYK                   
+echo 4.EPS-Default                 
+echo 5.SVG-Plain                    
 echo.
-echo Untuk informasi pengembang, silahkan ketik "about"
-echo untuk mengunjungi laman bantuan online, silahkan ketik "help"
+echo Untuk informasi pengembang, Silakan ketik "about"
+echo untuk mengunjungi laman bantuan online, Silakan ketik "help"
 echo.
 set /p target=Pilihan Anda : 
 if %target%== 6 goto PNGBATCH
@@ -32,7 +32,7 @@ if %target%== 10 goto SVGPLAINBATCH
 if %target%== help goto help
 if %target%== about goto credits
 if %target%== exit goto langsung_end
-echo Silahkan pilih target yang tersedia
+echo Silakan pilih target yang tersedia
 echo Tekan Enter Untuk Kembali
 pause >nul
 goto main
@@ -45,7 +45,7 @@ echo Version 1.0c
 echo.
 echo .bat ini merupakan hasil re-write dari inkporter yang ditulis dalam bash oleh Rania Amina
 echo ==========================================================================================
-echo Tool ini dibuat untuk melakukan batch exporting pada file .svg melalui Inkscape command line
+echo Tool ini dibuat untuk melakukan batch exporting pada berkas .svg melalui Inkscape command line
 echo =============================================================================================
 echo Inkporter menggunakan teknologi dari : 
 echo Inkscape (https://inkscape.org/)
@@ -63,17 +63,17 @@ start https://github.com/maslanangdev/inkporter/blob/windows/README.md
 goto main
 
 :PNGBATCH
-echo Bersiap mengekspor file SVG (object ID) ke PNG
-echo file SVG yang tersedia :
+echo Bersiap mengekspor berkas SVG (object ID) ke PNG
+echo Berkas SVG yang tersedia :
 echo.
-echo Waktu dibuat            Ukuran File Nama File
+echo Waktu dibuat            Ukuran berkas Nama berkas
 echo ================================================
 dir | findstr .svg
 echo.
-set /p svg="File yang ingin anda proses : "
+set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
 set /p fold="Buat folder hasil export : "
-echo File akan disimpan di %cd%\%fold%
+echo berkas akan disimpan di %cd%\%fold%
 md "%fold%" 2>nul
 set der=%cd%
 
@@ -86,17 +86,17 @@ for /f "delims=," %%d in ('inkscape --query-all ""%svg%"" ^| findstr %objID%') d
 goto end
 
 :PDFBATCH
-echo Bersiap mengekspor file SVG (object ID) ke PDF
-echo file SVG yang tersedia :
+echo Bersiap mengekspor berkas SVG (object ID) ke PDF
+echo Berkas SVG yang tersedia :
 echo.
-echo Waktu dibuat            Ukuran File Nama File
+echo Waktu dibuat            Ukuran berkas Nama berkas
 echo ================================================
 dir | findstr .svg
 echo.
-set /p svg="File yang ingin anda proses : "
+set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
 set /p fold="Buat folder hasil export : "
-echo File akan disimpan di %cd%\%fold%
+echo berkas akan disimpan di %cd%\%fold%
 md "%fold%" 2>nul
 set der=%cd%
 
@@ -108,21 +108,21 @@ for /f "delims=," %%d in ('inkscape --query-all "%svg%" ^| findstr %objID%') do 
 	del %%d.svg
 	echo.
 	move %%d.pdf "%der%\%fold%\" >nul
-	echo file %%d.pdf telah dibuat
+	echo berkas %%d.pdf telah dibuat
 	)
 goto end
 
 :EPSBATCH
-echo Bersiap mengekspor file SVG (object ID) ke EPS
-echo file SVG yang tersedia :
+echo Bersiap mengekspor berkas SVG (object ID) ke EPS
+echo Berkas SVG yang tersedia :
 echo.
-echo Waktu dibuat            Ukuran File Nama File
+echo Waktu dibuat            Ukuran berkas Nama berkas
 echo ================================================
 dir | findstr .svg
 echo.
-set /p svg="File yang ingin anda proses : "
+set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
-echo File akan disimpan di %cd%\%fold%
+echo berkas akan disimpan di %cd%\%fold%
 set /p fold="Buat folder hasil export : "
 md "%fold%" 2>nul
 set der=%cd%
@@ -134,22 +134,22 @@ for /f "delims=," %%d in ('inkscape --query-all "%svg%" ^| findstr %objID%') do 
 	del %%d.svg
 	echo.
 	move %%d.eps "%der%\%fold%\" >nul
-	echo file %%d.eps telah dibuat
+	echo berkas %%d.eps telah dibuat
 	)
 goto end
 
 :PDFCMYKBATCH
-echo Bersiap mengekspor file SVG (object ID) ke PDF dengan color space CMYK
-echo file SVG yang tersedia :
+echo Bersiap mengekspor berkas SVG (object ID) ke PDF dengan color space CMYK
+echo Berkas SVG yang tersedia :
 echo.
-echo Waktu dibuat            Ukuran File Nama File
+echo Waktu dibuat            Ukuran berkas Nama berkas
 echo ================================================
 dir | findstr .svg
 echo.
-set /p svg="File yang ingin anda proses : "
+set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
 set /p fold="Buat folder hasil export : "
-echo File akan disimpan di %cd%\%fold%
+echo berkas akan disimpan di %cd%\%fold%
 md "%fold%" 2>nul
 set der=%cd%
 
@@ -158,27 +158,27 @@ set der=%cd%
 for /f "delims=," %%d in ('inkscape --query-all "%svg%" ^| findstr %objID%') do (
 	inkscape --export-id=%%d --export-plain-svg=%%d.svg "%svg%"
 	inkscape --export-area-page --without-gui --export-pdf=%%d-rgb.pdf %%d.svg
-	gswin32 -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%%d.pdf %%d-rgb.pdf
+	gswin32 -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputberkas=%%d.pdf %%d-rgb.pdf
 	del %%d.svg
 	del %%d-rgb.pdf
 	move %%d.pdf "%der%\%fold%\" >nul
 	echo.
-	echo file %%d.pdf dengan warna CMYK telah dibuat
+	echo berkas %%d.pdf dengan warna CMYK telah dibuat
 	)
 goto end
 
 :SVGPLAINBATCH
-echo Bersiap mengekspor file SVG (object ID) ke SVG Plain
-echo file SVG yang tersedia :
+echo Bersiap mengekspor berkas SVG (object ID) ke SVG Plain
+echo Berkas SVG yang tersedia :
 echo.
-echo Waktu dibuat            Ukuran File Nama File
+echo Waktu dibuat            Ukuran berkas Nama berkas
 echo ================================================
 dir | findstr .svg
 echo.
-set /p svg="File yang ingin anda proses : "
+set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
 set /p fold="Buat folder hasil export : "
-echo File akan disimpan di %cd%\%fold%
+echo berkas akan disimpan di %cd%\%fold%
 md "%fold%" 2>nul
 set der=%cd%
 
@@ -188,7 +188,7 @@ for /f "delims=," %%d in ('inkscape --query-all "%svg%" ^| findstr %objID%') do 
 	inkscape --export-id=%%d --export-plain-svg=%%d.svg "%svg%"
 	move %%d.svg "%der%\%fold%\" >nul
 	echo.
-	echo file %%d.svg telah dibuat
+	echo berkas %%d.svg telah dibuat
 	)
 goto end
 
@@ -197,7 +197,7 @@ goto end
 cls
 echo.
 echo Permintaan anda telah diselesaikan
-echo file anda telah disimpan di %cd%\%fold%
+echo berkas anda telah disimpan di %cd%\%fold%
 
 
 :langsung_end
