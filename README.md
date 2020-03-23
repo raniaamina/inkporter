@@ -9,6 +9,7 @@ Inkporter merupakan tool sederhana yang dikembangkan oleh @raniaamina untuk meng
 
 Tool ini merupakan versi .bat dari Inkporter untuk CMD Windows (native) yang ditulis oleh RJ95
 sehingga pengguna Windows dapat melakukan batch expor svg tanpa menginstall WSL (Windows Subsystem for Linux)
+
 Aplikasi yang dibutuhkan yang dibutuhkan :
 - **Inkscape** : https://inkscape.org/
 - **Ghostscript** untuk expor pdf-cmyk : https://www.ghostscript.com/download/gsdnld.html (gunakan ghostscript 32bit, karena inkporter.bat ini saya tulis agar menggunakan gswin32 sehingga dapat berjalan di semua arsitektur)
