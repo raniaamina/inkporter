@@ -8,11 +8,11 @@ Inkporter merupakan tool sederhana yang dikembangkan oleh @raniaamina untuk meng
 ![image of tampilan_inkporter](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/tampilan_inkporter.png)
 
 Tool ini merupakan versi .bat dari Inkporter untuk CMD Windows (native) yang ditulis oleh RJ95
-sehingga pengguna Windows dapat melakukan batch export svg tanpa menginstall WSL (Windows Subsystem for Linux) dan dapat digunakan oleh pengguna Windows 8.1, 8, 7 kebawah.
+sehingga pengguna Windows dapat melakukan batch expor svg tanpa menginstall WSL (Windows Subsystem for Linux) dan dapat digunakan oleh pengguna Windows 8.1, 8, 7 kebawah.
 
 Aplikasi yang dibutuhkan yang dibutuhkan :
 - **Inkscape** : https://inkscape.org/
-- **Ghostscript** untuk export pdf-cmyk : https://www.ghostscript.com/download/gsdnld.html (gunakan ghostscript 32bit, karena inkporter.bat ini saya tulis agar menggunakan gswin32 sehingga dapat berjalan di semua arsitektur)
+- **Ghostscript** untuk expor pdf-cmyk : https://www.ghostscript.com/download/gsdnld.html (gunakan ghostscript 32bit, karena inkporter.bat ini saya tulis agar menggunakan gswin32 sehingga dapat berjalan di semua arsitektur)
 
 Petunjuk Instalasi
 
@@ -41,7 +41,7 @@ Pilihan 1-5 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berkas bedasark
 sedangkan pilihan 6-10 (png, pdf, pdf-cmyk, eps, svg-plain) akan mengekspor berkas bedasarkan pola nama object id
 
 saya akan menggunakan contoh bahwa saya memiliki berkas svg bernama *drawing.svg* di direktori D:\project
-dengan objek yang ingin saya export adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-5* *obj-6*
+dengan objek yang ingin saya expor adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-5* *obj-6*
 
 * untuk mengarahkan CMD pada direktori yang di tuju
 
@@ -56,7 +56,7 @@ dengan objek yang ingin saya export adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-
 	* setelah memilih format output maka akan muncul semua nama berkas svg yang ada di direktori saat ini
 	* masukkan nama berkas (**drawing.svg**)
 	* lalu masukkan pola nama object id (**obj**)
-	* tool ini akan mengekspor berkas ke folder baru, masukkan nama yang anda inginkan seperti **hasil export**
+	* tool ini akan mengekspor berkas ke folder baru, masukkan nama yang anda inginkan seperti **hasil expor**
 	* berkas akan diproses dan selamat berkas berhasil terekspor
 
 Sekian dari saya, bila anda ingin berdiskusi, memberikan feedback, saran, atau tanya2 tentang inkporter.bat ini bisa PM saya lewat telegram @RJ95ID
