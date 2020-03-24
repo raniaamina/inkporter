@@ -13,7 +13,7 @@ echo "||                |_|                                                   ||
 echo.
 echo Direktori saat ini %cd%
 echo.
-echo Silakan Pilih Target Export Anda
+echo Silakan Pilih Target Ekspor Anda
 echo 1) PNG                      
 echo 2) PDF                       
 echo 3) PDF-CMYK                   
@@ -43,10 +43,10 @@ echo.
 echo Inkporter For Windows
 echo Version 1.0c
 echo.
-echo .bat ini merupakan hasil re-write dari inkporter yang ditulis dalam bash oleh Rania Amina
-echo ==========================================================================================
-echo Tool ini dibuat untuk melakukan batch exporting pada berkas .svg melalui Inkscape command line
-echo ==============================================================================================
+echo Tool ini dibuat untuk melakukan batch ekspor pada berkas .svg melalui Inkscape command line
+echo ===========================================================================================
+echo Batch file ini merupakan hasil re-write dari inkporter yang ditulis dalam bash oleh Rania Amina
+echo ================================================================================================
 echo Inkporter menggunakan teknologi dari : 
 echo Inkscape (https://inkscape.org/)
 echo Ghostscript (https://www.ghostscript.com/)
@@ -72,7 +72,7 @@ dir | findstr .svg
 echo.
 set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
-set /p fold="Buat folder hasil export : "
+set /p fold="Buat folder hasil ekspor : "
 echo Berkas akan disimpan di %cd%\%fold%
 md "%fold%" 2>nul
 set der=%cd%
@@ -96,7 +96,7 @@ dir | findstr .svg
 echo.
 set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
-set /p fold="Buat folder hasil export : "
+set /p fold="Buat folder hasil ekspor : "
 echo Berkas akan disimpan di %cd%\%fold%
 md "%fold%" 2>nul
 set der=%cd%
@@ -123,7 +123,7 @@ dir | findstr .svg
 echo.
 set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
-set /p fold="Buat folder hasil export : "
+set /p fold="Buat folder hasil ekspor : "
 echo Berkas akan disimpan di %cd%\%fold%
 md "%fold%" 2>nul
 set der=%cd%
@@ -149,7 +149,7 @@ dir | findstr .svg
 echo.
 set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
-set /p fold="Buat folder hasil export : "
+set /p fold="Buat folder hasil ekspor : "
 echo Berkas akan disimpan di %cd%\%fold%
 md "%fold%" 2>nul
 set der=%cd%
@@ -178,7 +178,7 @@ dir | findstr .svg
 echo.
 set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
-set /p fold="Buat folder hasil export : "
+set /p fold="Buat folder hasil ekspor : "
 echo Berkas akan disimpan di %cd%\%fold%
 md "%fold%" 2>nul
 set der=%cd%
