@@ -34,7 +34,12 @@ Petunjuk Instalasi
 	- lalu tambahkan direktori installasi Inkscape (C:\Program Files\Inkscape) dan Ghostscript (untuk versi terbaru saat ini ditulis = C:\Program Files\gs\gs9.52\bin)
 	
 	![image set_path 4](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/7.png)
-
+	
+	- **TIP** Jika kalian menggunakan Python, pastikan untuk meletakkan direktori Inkscape dibawah direktori python agar saat hendak menjalankan Python lewat CMD tidak menjalankan Python dari direktori Inkscape, karena di dalam folder Inkscape juga terdapat Python
+	
+	![image tip](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/tip1.png)
+	
+	
 Petunjuk pemakaian :
 
 saya akan menggunakan contoh bahwa saya memiliki berkas svg bernama *drawing.svg* di direktori D:\project
