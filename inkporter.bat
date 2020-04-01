@@ -73,7 +73,7 @@ dir | findstr .svg
 echo.
 set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
-set /p dpi="Tentukan nilai DPI hasil expor : "
+set /p dpi="Tentukan nilai DPI hasil expor (default=96) : "
 set /p fold="Buat folder hasil ekspor : "
 set svgin="%svg%"
 echo Berkas akan disimpan di %cd%\%fold%
