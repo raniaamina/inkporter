@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+        <name>Inkporter</name>
+        <id>id.gimpscape.inkporter</id>
+
+        <!-- start notebook -->
+        <param name='active-tab' type="notebook">
+                <!-- one per page(tab) - unique names. Can discover which page in program-->
+                <page name="main" gui-text="Main">
+                        <param name="format" type="optiongroup" appearance="minimal" gui-text="Export Format">
+                                <option value="png">PNG</option>
+                                <option value="jpg">JPG</option>
+                                <option value="pdf">PDF</option>
+                                <option value="svg">SVG</option>
+                                <option value="eps-default">EPS</option>
+                                <option value="booklet">Booklet (PDF)</option>
+                        </param>
+                        <param name="dpi" type="int" min="0" max="10000" gui-text="DPI (for PNG/JPG)">96</param>
+                        <param name="quality" type="int" min="0" max="100" gui-text="Quality (for JPG)">100</param>
+                        <param name="bg_color" type="string" gui-text="Background Color (for JPG)">#ffffff</param>
+                        <param name="output_dir" type="string" mode="folder" gui-text="Output Directory">$HOME/inkporter-output/</param>
+                </page>
+                <!-- next tab -->
+                <page name='help' gui-text='Help'>
+                        <label>Some inline help.</label>
+                        <param name="helptab_text" type="description">Nganu ini lho ya!!</param>
+                </page>
+        </param>
+        <!-- classify which menu it appears under - can be new name -->
+        <effect needs-live-preview="false">
+        <object-type>all</object-type>
+                <effects-menu>
+                        <submenu _name="Export"/> <!-- which menu under Extensions -->
+                </effects-menu>
+        </effect>
+        <!-- py file again -->
+        <script>
+                <command reldir="extensions" interpreter="python">inkporter.py</command>
+        </script>
+</inkscape-extension>
