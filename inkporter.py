@@ -1,42 +1,81 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import inkex
 inkex.localize()
 
 import os
+import sys
 import simplestyle
 
+
 class Inkporter(inkex.Effect):
-    def __init__(self):
-        inkex.Effect.__init__(self)
+    def __init__(self, *args, **kwargs):
+        inkex.Effect.__init__(self, *args, **kwargs)
         try:
             self.tty = open("/dev/tty", 'w')
         except:
             self.tty = open(os.devnull, 'w')  # '/dev/null' for POSIX, 'nul' for Windows.
             # print >>self.tty, "gears-dev " + __version__
-        self.arg_parser.add_argument("-f", "--format", 
-                                    type=str, dest="format",
+        self.OptionParser.add_option('--tab')
+        self.OptionParser.add_option("-f", "--format", 
+                                    type="string", action="store", dest="format",
                                     help="Preferred output format", default="png")
-        self.arg_parser.add_argument("", "--dpi",
-                                    type=int, dest="dpi",
+        self.OptionParser.add_option("", "--dpi",
+                                    type="int", action="store", dest="dpi",
                                     help="DPI for bitmap image output format", default=96)
-        self.arg_parser.add_argument("-D", "--output-dir",
-                                    type=str, dest="output_dir",
+        self.OptionParser.add_option("-D", "--output-dir",
+                                    type="string", action="store", dest="output_dir",
                                     help="Destination folder for saving your exports", default=os.path.expanduser("~"))
-        self.arg_parser.add_argument("", "--bg-color",
-                                    type=str, dest="bg_color",
+        self.OptionParser.add_option("", "--bg-color",
+                                    type="string", action="store", dest="bg_color",
                                     help="Background color for JPG Export", default="white")
-        self.arg_parser.add_argument("-q", "--quality",
-                                    type=int, dest="quality",
+        self.OptionParser.add_option("-q", "--quality",
+                                    type="int", action="store", dest="quality",
                                     help="Quality of image export, 0-100, higher better but slower",  default=100)
+        # temporary svg out file
+        self.format_options = {
+            "jpg": self.do_jpg,
+            "pdf": self.do_pdf,
+            "svg": self.do_svg,
+            "eps": self.do_eps,
+            "booklet": self.do_booklet,
+        }
+        self.svgout = {}
+
+    def do_jpg(self):
+        if not self.has_imagemagick():
+            inkex.errmsg("Please install Imagemagick to do JPG/Booklet export")
+            return
+        pass
+
+    def do_pdf(self):
+        if not self.has_ghostscript():
+            inkex.errmsg("Please install Ghostscript to do PDF export")
+            return
+        pass
+
+    def do_svg(self):
+        pass
+
+    def do_eps(self):
+        pass
+
+    def do_booklet(self):
+        if not self.has_imagemagick():
+            inkex.errmsg("Please install Imagemagick to do JPG/Booklet export")
+            return
+        pass
+
+    def has_ghostscript(self):
+        status, output = self.get_cmd_output('gs --help')
+        return status == 0 and 'Ghostscript' in output
+
+    def has_imagemagick(self):
+        status, output = self.get_cmd_output('convert --version')
+        return status == 0 and 'ImageMagick' in output
 
     def get_cmd_output(self, cmd):
         # Adapted from webslicer extension (extensions > web > slicer)
-        # This solution comes from Andrew Reedick <jr9445 at ATT.COM>
-        # http://mail.python.org/pipermail/python-win32/2008-January/006606.html
-        # This method replaces the commands.getstatusoutput() usage, with the
-        # hope to correct the windows exporting bug:
-        # https://bugs.launchpad.net/inkscape/+bug/563722
         if sys.platform != "win32":
             cmd = '{ ' + cmd + '; }'
         pipe = os.popen(cmd + ' 2>&1', 'r')
@@ -50,8 +89,7 @@ class Inkporter(inkex.Effect):
 
     # called when extension is running
     def effect(self):
-        pass
-    pass
+        inkex.debug(self.options)
 
 if __name__ == '__main__':
     e = Inkporter()
