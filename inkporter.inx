@@ -5,7 +5,7 @@
         <_param name="welcome" type="description" appearance="header" indent="1">Welcome to Inkporter!</_param>
         <_param name="descriptions" type="description" xml:space="preserve">Export your work based on special ID to several document formats easily.</_param>
         <!-- start notebook -->
-        <param name='active-tab' type="notebook">
+        <param name='tab' type="notebook">
                 <!-- one per page(tab) - unique names. Can discover which page in program-->
                 <page name="main" gui-text="Main">
                         <param name="format" type="enum" appearance="minimal" gui-text="Export Format">
