@@ -43,7 +43,7 @@ class Inkporter(inkex.Effect):
         # temporary svg out file
         self.id_to_process = None
         self.tmpdir = tempfile.mkdtemp(prefix="inkporter")
-        self.tmplog = tempfile.mkstemp(prefix="inkporter",suffix=".log")
+        self.tmplog_fd, self.tmplog_path = tempfile.mkstemp(prefix="inkporter",suffix=".log")
         self.tmpout = []
 
     def do_jpg(self):
@@ -55,28 +55,54 @@ class Inkporter(inkex.Effect):
             options = "-colorspace CMYK"
         for item in self.selected:
             tmpfile_export = self.tmpdir + "/" + item + ".png"
-            command = "inkscape -z -j -i '%s' -e %s -d %d -f %s &>>%s" % (item, tmpfile_export, self.options.dpi, self.svg_file, self.tmplog)
+            command = "inkscape -z -j -i '%s' -e %s -d %d -f %s &>>%s" % (item, tmpfile_export, self.options.dpi, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmpfile_export)
             file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg"
             command2 = "convert '%s' -background '%s' -flatten -quality %d %s '%s' &>>%s" % (tmpfile_export, 
                         self.options.bg_color, 
                         self.options.quality, options,
-                        file_export, self.tmplog)
+                        file_export, self.tmplog_path)
             os.system(command2)
+        os.close(self.tmplog_fd)
 
     def do_pdf(self):
-        # TODO
-        if not self.has_ghostscript():
-            inkex.debug("Please install Ghostscript to do PDF export")
-            return
-        command = ""
+        if self.options.with_cmyk:
+            if not self.has_ghostscript():
+                inkex.debug("Please install Ghostscript to do PDF export")
+                return
+            for item in self.selected:
+                tmpsvg_export = self.tmpdir + "/" + item + ".svg"
+                command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(item, tmpsvg_export, self.svg_file, self.tmplog_path)
+                os.system(command)
+                self.tmpout.append(tmpsvg_export)
+                tmppdf_export = self.tmpdir + "/" + item + ".pdf"
+                command = "inkscape -z --export-area-page -A {0} -f {1} &>>{2}".format(tmppdf_export, tmpsvg_export, self.tmplog_path)
+                os.system(command)
+                self.tmpout.append(tmppdf_export)
+                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
+                command2 = "gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK " \
+                    + "-dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode " \
+                    + "-dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile={0} {1} &>>{2}".format(export_path, tmppdf_export, self.tmplog_path)
+                os.system(command2)
+        else:
+            for item in self.selected:
+                tmpsvg_export = self.tmpdir + "/" + item + ".svg"
+                command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(item, tmpsvg_export, self.svg_file, self.tmplog_path)
+                os.system(command)
+                self.tmpout.append(tmpsvg_export)
+                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
+                command2 = "inkscape -z --export-area-page -A {0} -f {1} &>>{2}".format(export_path, tmpsvg_export, self.tmplog_path)
+                os.system(command2)
+        os.close(self.tmplog_fd)
+
 
     def do_svg(self):
         for item in self.selected:
             file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".svg"
-            command = "inkscape -z -j -i %s -l %s -f %s &>>%s" % (item, file_export, self.svg_file, self.tmplog)
+            command = "inkscape -z -j -i %s -l %s -f %s &>>%s" % (item, file_export, self.svg_file, self.tmplog_path)
             os.system(command)
+        os.close(self.tmplog_fd)
 
     def do_eps(self):
         # TODO
