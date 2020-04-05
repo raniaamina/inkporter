@@ -43,21 +43,26 @@ class Inkporter(inkex.Effect):
         # temporary svg out file
         self.id_to_process = None
         self.tmpdir = tempfile.mkdtemp(prefix="inkporter")
+        self.tmplog = tempfile.mkstemp(prefix="inkporter",suffix=".log")
         self.tmpout = []
 
     def do_jpg(self):
         if not self.has_imagemagick():
             inkex.debug("Please install Imagemagick to do JPG/Booklet export")
             return
+        options = ""
+        if self.options.with_cmyk:
+            options = "-colorspace CMYK"
         for item in self.selected:
             tmpfile_export = self.tmpdir + "/" + item + ".png"
-            command = "inkscape -z -j -i '%s' -e %s -d %d -f %s" % (item, tmpfile_export, self.options.dpi, os.path.abspath(self.svg_file))
+            command = "inkscape -z -j -i '%s' -e %s -d %d -f %s &>>%s" % (item, tmpfile_export, self.options.dpi, self.svg_file, self.tmplog)
             os.system(command)
             self.tmpout.append(tmpfile_export)
-            command2 = "convert '%s' -background '%s' -flatten -quality %d -colorspace CMYK '%s'" % (tmpfile_export, 
+            file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg"
+            command2 = "convert '%s' -background '%s' -flatten -quality %d %s '%s' &>>%s" % (tmpfile_export, 
                         self.options.bg_color, 
-                        self.options.quality, 
-                        os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg")
+                        self.options.quality, options,
+                        file_export, self.tmplog)
             os.system(command2)
 
     def do_pdf(self):
@@ -70,7 +75,7 @@ class Inkporter(inkex.Effect):
     def do_svg(self):
         for item in self.selected:
             file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".svg"
-            command = "inkscape -z -j -i %s -l %s -f %s" % (item, file_export, os.path.abspath(self.svg_file))
+            command = "inkscape -z -j -i %s -l %s -f %s &>>%s" % (item, file_export, self.svg_file, self.tmplog)
             os.system(command)
 
     def do_eps(self):
@@ -118,8 +123,11 @@ class Inkporter(inkex.Effect):
 
     # called when extension is running
     def effect(self):
+        if not self.has_rsvg():
+            inkex.debug("This extension requires rsvg-convert (from librsvg/librsvg-bin) to run, please install it before start exporting")
+            return
         if len(self.selected) < 1:
-            inkex.errormsg("Please select at least 1 object to use this extension!")
+            inkex.debug("Please select at least 1 object to use this extension!")
             return
         try:
             if not os.path.isdir(os.path.expandvars(self.options.output_dir)):
@@ -136,9 +144,9 @@ class Inkporter(inkex.Effect):
                 self.do_booklet()
             self.do_cleanup()
         except Exception as e:
+            inkex.debug(e)
             import traceback
             inkex.debug(traceback.print_exc())
-            inkex.debug(e)
 
 if __name__ == '__main__':
     e = Inkporter()
