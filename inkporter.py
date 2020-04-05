@@ -22,6 +22,8 @@ class Inkporter(inkex.Effect):
         self.OptionParser.add_option("-f", "--format", 
                                     type="string", action="store", dest="format",
                                     help="Preferred output format", default="png")
+        self.OptionParser.add_option("--id-pattern", type="string", dest="id_pattern",
+                                    help="IDs to export")
         self.OptionParser.add_option("", "--dpi",
                                     type="int", action="store", dest="dpi",
                                     help="DPI for bitmap image output format", default=96)
@@ -44,7 +46,7 @@ class Inkporter(inkex.Effect):
             return
         for item in self.selected:
             tmpfile_export = self.tmpdir + "/" + item + ".png"
-            command = "inkscape -z -j -i '%s' -e %s -d %d -f %s @>/dev/null" % (item, tmpfile_export, self.options.dpi, os.path.abspath(self.svg_file))
+            command = "inkscape -z -j -i '%s' -e %s -d %d -f %s 2>/dev/null" % (item, tmpfile_export, self.options.dpi, os.path.abspath(self.svg_file))
             os.system(command)
             self.tmpout.append(tmpfile_export)
             command2 = "convert '%s' -background '%s' -flatten -quality %d -colorspace CMYK '%s'" % (tmpfile_export, 
@@ -63,7 +65,7 @@ class Inkporter(inkex.Effect):
     def do_svg(self):
         for item in self.selected:
             file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".svg"
-            command = "inkscape -z -j -i '%s' -l '%s' -f %s @>/dev/null" % (item, file_export, os.path.abspath(self.svg_file))
+            command = "inkscape -z -j -i '%s' -l '%s' -f %s 2>/dev/null" % (item, file_export, os.path.abspath(self.svg_file))
             os.system(command)
 
     def do_eps(self):
@@ -112,10 +114,10 @@ class Inkporter(inkex.Effect):
     # called when extension is running
     def effect(self):
         if len(self.selected) < 1:
-            inkex.errmsg("Please select at least 1 object or id to use this extension!")
+            inkex.errormsg("Please select at least 1 object to use this extension!")
             return
         try:
-            if not os.path.isdir(self.options.output_dir):
+            if not os.path.isdir(os.path.expandvars(self.options.output_dir)):
                 os.mkdir(os.path.expandvars(self.options.output_dir))
             if self.options.format == "jpg":
                 self.do_jpg()
