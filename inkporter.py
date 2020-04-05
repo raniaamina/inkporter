@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 
+import tempfile
+import re
+import simplestyle
+import sys
+import shutil
+import os
 import inkex
 inkex.localize()
 
-import os
-import shutil
-import sys
-import simplestyle
-import tempfile
+
+def atoi(text):
+    return int(text) if text.isdigit() else text
 
 
 class Inkporter(inkex.Effect):
@@ -16,34 +20,35 @@ class Inkporter(inkex.Effect):
         try:
             self.tty = open("/dev/tty", 'w')
         except:
-            self.tty = open(os.devnull, 'w')  # '/dev/null' for POSIX, 'nul' for Windows.
+            # '/dev/null' for POSIX, 'nul' for Windows.
+            self.tty = open(os.devnull, 'w')
             # print >>self.tty, "gears-dev " + __version__
         self.OptionParser.add_option('--tab')
-        self.OptionParser.add_option("-f", "--format", 
-                                    type="string", action="store", dest="format",
-                                    help="Preferred output format", default="png")
+        self.OptionParser.add_option("-f", "--format",
+                                     type="string", action="store", dest="format",
+                                     help="Preferred output format", default="png")
         self.OptionParser.add_option("--id-pattern",
-                                    action="store", type="string", dest="id_pattern",
-                                    help="IDs to export")
-        self.OptionParser.add_option("--with-cmyk", 
-                                    action="store", type="inkbool", dest="with_cmyk",
-                                    help="Use CMYK instead of RGB (for JPG/PDF)")
+                                     action="store", type="string", dest="id_pattern",
+                                     help="IDs to export")
+        self.OptionParser.add_option("--with-cmyk",
+                                     action="store", type="inkbool", dest="with_cmyk",
+                                     help="Use CMYK instead of RGB (for JPG/PDF)")
         self.OptionParser.add_option("", "--dpi",
-                                    type="int", action="store", dest="dpi",
-                                    help="DPI for bitmap image output format", default=96)
+                                     type="int", action="store", dest="dpi",
+                                     help="DPI for bitmap image output format", default=96)
         self.OptionParser.add_option("-D", "--output-dir",
-                                    type="string", action="store", dest="output_dir",
-                                    help="Destination folder for saving your exports", default=os.path.expanduser("~"))
+                                     type="string", action="store", dest="output_dir",
+                                     help="Destination folder for saving your exports", default=os.path.expanduser("~"))
         self.OptionParser.add_option("", "--bg-color",
-                                    type="string", action="store", dest="bg_color",
-                                    help="Background color for JPG Export", default="white")
+                                     type="string", action="store", dest="bg_color",
+                                     help="Background color for JPG Export", default="white")
         self.OptionParser.add_option("-q", "--quality",
-                                    type="int", action="store", dest="quality",
-                                    help="Quality of image export, 0-100, higher better but slower",  default=100)
+                                     type="int", action="store", dest="quality",
+                                     help="Quality of image export, 0-100, higher better but slower",  default=100)
         # temporary svg out file
         self.id_to_process = None
         self.tmpdir = tempfile.mkdtemp(prefix="inkporter")
-        self.tmplog_fd, self.tmplog_path = tempfile.mkstemp(prefix="inkporter",suffix=".log")
+        self.tmplog_fd, self.tmplog_path = tempfile.mkstemp(prefix="inkporter", suffix=".log")
         self.tmpout = []
 
     def do_jpg(self):
@@ -55,14 +60,13 @@ class Inkporter(inkex.Effect):
             options = "-colorspace CMYK"
         for item in self.selected:
             tmpfile_export = self.tmpdir + "/" + item + ".png"
-            command = "inkscape -z -j -i '%s' -e %s -d %d -f %s &>>%s" % (item, tmpfile_export, self.options.dpi, self.svg_file, self.tmplog_path)
+            command = "inkscape -z -j -i {0} -e {1} -d {2} -f {3} &>>{4}".format(
+                item, tmpfile_export, self.options.dpi, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmpfile_export)
             file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg"
-            command2 = "convert '%s' -background '%s' -flatten -quality %d %s '%s' &>>%s" % (tmpfile_export, 
-                        self.options.bg_color, 
-                        self.options.quality, options,
-                        file_export, self.tmplog_path)
+            command2 = "convert {0} -background {1} -flatten -quality {2} {3} '{4}' &>>{5}".format(
+                tmpfile_export, self.options.bg_color, self.options.quality, options, file_export, self.tmplog_path)
             os.system(command2)
         os.close(self.tmplog_fd)
 
@@ -73,55 +77,72 @@ class Inkporter(inkex.Effect):
                 return
             for item in self.selected:
                 tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-                command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(item, tmpsvg_export, self.svg_file, self.tmplog_path)
+                command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(
+                    item, tmpsvg_export, self.svg_file, self.tmplog_path)
                 os.system(command)
                 self.tmpout.append(tmpsvg_export)
                 tmppdf_export = self.tmpdir + "/" + item + ".pdf"
-                command = "inkscape -z --export-area-page -A {0} -f {1} &>>{2}".format(tmppdf_export, tmpsvg_export, self.tmplog_path)
+                command = "inkscape -z --export-area-page -A {0} -f {1} &>>{2}".format(
+                    tmppdf_export, tmpsvg_export, self.tmplog_path)
                 os.system(command)
                 self.tmpout.append(tmppdf_export)
                 export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
                 command2 = "gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK " \
                     + "-dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode " \
-                    + "-dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile={0} {1} &>>{2}".format(export_path, tmppdf_export, self.tmplog_path)
+                    + "-dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile={0} {1} &>>{2}".format(
+                        export_path, tmppdf_export, self.tmplog_path)
                 os.system(command2)
         else:
             for item in self.selected:
                 tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-                command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(item, tmpsvg_export, self.svg_file, self.tmplog_path)
+                command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(
+                    item, tmpsvg_export, self.svg_file, self.tmplog_path)
                 os.system(command)
                 self.tmpout.append(tmpsvg_export)
-                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
-                command2 = "inkscape -z --export-area-page -A {0} -f {1} &>>{2}".format(export_path, tmpsvg_export, self.tmplog_path)
+                export_path = os.path.expandvars(
+                    self.options.output_dir) + "/" + item + ".pdf"
+                command2 = "inkscape -z --export-area-page -A {0} -f {1} &>>{2}".format(
+                    export_path, tmpsvg_export, self.tmplog_path)
                 os.system(command2)
         os.close(self.tmplog_fd)
 
-
     def do_svg(self):
         for item in self.selected:
-            file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".svg"
-            command = "inkscape -z -j -i %s -l %s -f %s &>>%s" % (item, file_export, self.svg_file, self.tmplog_path)
+            file_export = os.path.expandvars(
+                self.options.output_dir) + "/" + item + ".svg"
+            command = "inkscape -z -j -i %s -l %s -f %s &>>%s" % (
+                item, file_export, self.svg_file, self.tmplog_path)
             os.system(command)
         os.close(self.tmplog_fd)
 
     def do_eps(self):
         for item in self.selected:
             tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-            command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(item, tmpsvg_export, self.svg_file, self.tmplog_path)
+            command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(
+                item, tmpsvg_export, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmpsvg_export)
             export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".eps"
-            command2 = "inkscape -z -E {0} -f {1} --export-area-page --export-ignore-filters --export-text-to-path --export-ps-level=3 &>>{2}".format(export_path, tmpsvg_export, self.tmplog_path)
+            command2 = "inkscape -z -E {0} -f {1} --export-area-page --export-ignore-filters --export-text-to-path --export-ps-level=3 &>>{2}".format(
+                export_path, tmpsvg_export, self.tmplog_path)
             os.system(command2)
         os.close(self.tmplog_fd)
 
-
     def do_booklet(self):
-        # TODO
         if not self.has_imagemagick():
             inkex.debug("Please install Imagemagick to do JPG/Booklet export")
             return
-        command = ""
+        for item in self.selected:
+            tmpsvg_export = self.tmpdir + "/" + item + ".svg"
+            command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(
+                item, tmpsvg_export, self.svg_file, self.tmplog_path)
+            os.system(command)
+            self.tmpout.append(tmpsvg_export)
+        export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
+        sorted_tmpsvg = self.tmpout.sort(key=lambda s: [atoi(u) for u in re.split(r'(\d+)', s)])
+        command = "rsvg-convert -f pdf -o {0} {1}".format(
+            export_path, "".join(f + " " for f in sorted_tmpsvg))
+        os.system(command)
 
     def has_ghostscript(self):
         status, output = self.get_cmd_output('gs --help')
@@ -130,7 +151,7 @@ class Inkporter(inkex.Effect):
     def has_imagemagick(self):
         status, output = self.get_cmd_output('convert --version')
         return status == 0 and 'ImageMagick' in output
-    
+
     def has_rsvg(self):
         status, output = self.get_cmd_output('rsvg-convert --version')
         return status == 0 and 'rsvg-convert' in output
@@ -158,10 +179,12 @@ class Inkporter(inkex.Effect):
     # called when extension is running
     def effect(self):
         if not self.has_rsvg():
-            inkex.debug("This extension requires rsvg-convert (from librsvg/librsvg-bin) to run, please install it before start exporting")
+            inkex.debug(
+                "This extension requires rsvg-convert (from librsvg/librsvg-bin) to run, please install it before start exporting")
             return
         if len(self.selected) < 1:
-            inkex.debug("Please select at least 1 object to use this extension!")
+            inkex.debug(
+                "Please select at least 1 object to use this extension!")
             return
         try:
             if not os.path.isdir(os.path.expandvars(self.options.output_dir)):
@@ -181,6 +204,7 @@ class Inkporter(inkex.Effect):
             inkex.debug(e)
             import traceback
             inkex.debug(traceback.print_exc())
+
 
 if __name__ == '__main__':
     e = Inkporter()
