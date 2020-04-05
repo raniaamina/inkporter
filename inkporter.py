@@ -111,7 +111,7 @@ class Inkporter(inkex.Effect):
 
     # called when extension is running
     def effect(self):
-        if len(self.selected) < 1 or len(self.options.id) < 1:
+        if len(self.selected) < 1:
             inkex.errmsg("Please select at least 1 object or id to use this extension!")
             return
         try:

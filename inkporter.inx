@@ -15,7 +15,7 @@
                                 <item value="eps-default">EPS</item>
                                 <item value="booklet">Booklet (PDF)</item>
                         </param>
-                         <param name="id" type="string" gui-text="ID Pattern        "></param>
+                         <param name="id-pattern" type="string" gui-text="ID Pattern        "></param>
                         <param name="dpi" type="int" min="0" max="10000" gui-text="DPI (for JPG)">96</param>
                         <param name="quality" type="int" min="0" max="100" gui-text="Quality (for JPG)">100</param>
                         <param name="bg-color" type="string" gui-text="Bg Color (for JPG)">#ffffff</param>
