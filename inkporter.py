@@ -105,8 +105,16 @@ class Inkporter(inkex.Effect):
         os.close(self.tmplog_fd)
 
     def do_eps(self):
-        # TODO
-        command = ""
+        for item in self.selected:
+            tmpsvg_export = self.tmpdir + "/" + item + ".svg"
+            command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(item, tmpsvg_export, self.svg_file, self.tmplog_path)
+            os.system(command)
+            self.tmpout.append(tmpsvg_export)
+            export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".eps"
+            command2 = "inkscape -z -E {0} -f {1} --export-area-page --export-ignore-filters --export-text-to-path --export-ps-level=3 &>>{2}".format(export_path, tmpsvg_export, self.tmplog_path)
+            os.system(command2)
+        os.close(self.tmplog_fd)
+
 
     def do_booklet(self):
         # TODO
