@@ -2,7 +2,7 @@
 
 import tempfile
 import re
-import simplestyle
+from lxml import etree
 import sys
 import shutil
 import os
@@ -182,6 +182,12 @@ class Inkporter(inkex.Effect):
             inkex.debug(
                 "This extension requires rsvg-convert (from librsvg/librsvg-bin) to run, please install it before start exporting")
             return
+        if len(self.options.id_pattern) > 0:
+            new_nss = inkex.NSS
+            new_nss[u're'] = u'http://exslt.org/regular-expressions'
+            path_to_compile = "//*[re:match(@id,'(%s)','g')]" % self.options.id_pattern
+            self.id_to_process = self.document.xpath(path_to_compile, namespaces=new_nss)
+            self.selected = self.id_to_process
         if len(self.selected) < 1:
             inkex.debug(
                 "Please select at least 1 object to use this extension!")
