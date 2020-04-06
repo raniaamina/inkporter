@@ -6,7 +6,7 @@ Ekstensi Inkpoter untuk Inkscape
 - [x] Inkporter CLI
 - [x] Riset untuk GUI
 - [x] UI Development (Fase 1)
-- [ ] Backend Development (Fase 2)
+- [x] Backend Development (Fase 2)
 - [ ] Testing 
   - [ ] Linux (default, flatpak, snap)
   - [ ] MacOS
