@@ -138,10 +138,10 @@ class Inkporter(inkex.Effect):
                 item, tmpsvg_export, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmpsvg_export)
-        export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
-        sorted_tmpsvg = self.tmpout.sort(key=lambda s: [atoi(u) for u in re.split(r'(\d+)', s)])
+        export_path = os.path.expandvars(self.options.output_dir) + "/booklet.pdf"
+        self.tmpout.sort(key=lambda s: [atoi(u) for u in re.split(r'(\d+)', s)])
         command = "rsvg-convert -f pdf -o {0} {1}".format(
-            export_path, "".join(f + " " for f in sorted_tmpsvg))
+            export_path, "".join(f + " " for f in self.tmpout))
         os.system(command)
 
     def has_ghostscript(self):
@@ -207,7 +207,7 @@ class Inkporter(inkex.Effect):
                 self.do_eps()
             elif self.options.format == "booklet":
                 self.do_booklet()
-            self.do_cleanup()
+            # self.do_cleanup()
         except Exception as e:
             inkex.debug(e)
             import traceback
