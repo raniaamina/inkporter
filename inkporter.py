@@ -61,13 +61,13 @@ class Inkporter(inkex.Effect):
             options = "-colorspace CMYK"
         for item in self.selected:
             tmpfile_export = self.tmpdir + "/" + item + ".png"
-            command = "inkscape -z -j -i {0} -e {1} -d {2} -f {3} &>>{4}".format(
+            command = "inkscape -z -j -i {0} -e '{1}' -d {2} -f '{3}' &>>{4}".format(
                 item, tmpfile_export, self.options.dpi, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmpfile_export)
             sleep(1)
             file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg"
-            command2 = "convert -background '{1}' -flatten -quality {2} {3} \"{0}\" \"{4}\"".format(
+            command2 = "convert '{0}' -background '{1}' -flatten -quality {2} {3} '{4}'".format(
                 tmpfile_export, self.options.bg_color, self.options.quality, options, file_export)
             os.system(command2)
         os.close(self.tmplog_fd)
@@ -79,12 +79,12 @@ class Inkporter(inkex.Effect):
                 return
             for item in self.selected:
                 tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-                command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(
+                command = "inkscape -z -i {0} -l '{1}' -f '{2}' &>>{3}".format(
                     item, tmpsvg_export, self.svg_file, self.tmplog_path)
                 os.system(command)
                 self.tmpout.append(tmpsvg_export)
                 tmppdf_export = self.tmpdir + "/" + item + ".pdf"
-                command = "inkscape -z --export-area-page -A {0} -f {1} &>>{2}".format(
+                command = "inkscape -z --export-area-page -A '{0}' -f '{1}' &>>{2}".format(
                     tmppdf_export, tmpsvg_export, self.tmplog_path)
                 os.system(command)
                 self.tmpout.append(tmppdf_export)
@@ -92,20 +92,20 @@ class Inkporter(inkex.Effect):
                 export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
                 command2 = "gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK " \
                     + "-dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode " \
-                    + "-dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile={0} {1} &>>{2}".format(
+                    + "-dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile='{0}' '{1}' &>>{2}".format(
                         export_path, tmppdf_export, self.tmplog_path)
                 os.system(command2)
         else:
             for item in self.selected:
                 tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-                command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(
+                command = "inkscape -z -i {0} -l '{1}' -f '{2}' &>>{3}".format(
                     item, tmpsvg_export, self.svg_file, self.tmplog_path)
                 os.system(command)
                 self.tmpout.append(tmpsvg_export)
                 sleep(1)
                 export_path = os.path.expandvars(
                     self.options.output_dir) + "/" + item + ".pdf"
-                command2 = "inkscape -z --export-area-page -A {0} -f {1} &>>{2}".format(
+                command2 = "inkscape -z --export-area-page -A '{0}' -f '{1}' &>>{2}".format(
                     export_path, tmpsvg_export, self.tmplog_path)
                 os.system(command2)
         os.close(self.tmplog_fd)
@@ -114,7 +114,7 @@ class Inkporter(inkex.Effect):
         for item in self.selected:
             file_export = os.path.expandvars(
                 self.options.output_dir) + "/" + item + ".svg"
-            command = "inkscape -z -j -i %s -l %s -f %s &>>%s" % (
+            command = "inkscape -z -j -i %s -l '%s' -f '%s' &>>%s" % (
                 item, file_export, self.svg_file, self.tmplog_path)
             os.system(command)
         os.close(self.tmplog_fd)
@@ -122,13 +122,13 @@ class Inkporter(inkex.Effect):
     def do_eps(self):
         for item in self.selected:
             tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-            command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(
+            command = "inkscape -z -i {0} -l '{1}' -f '{2}' &>>{3}".format(
                 item, tmpsvg_export, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmpsvg_export)
             sleep(1)
             export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".eps"
-            command2 = "inkscape -z -E {0} -f {1} --export-area-page --export-ignore-filters --export-text-to-path --export-ps-level=3 &>>{2}".format(
+            command2 = "inkscape -z -E '{0}' -f '{1}' --export-area-page --export-ignore-filters --export-text-to-path --export-ps-level=3 &>>{2}".format(
                 export_path, tmpsvg_export, self.tmplog_path)
             os.system(command2)
         os.close(self.tmplog_fd)
@@ -139,16 +139,17 @@ class Inkporter(inkex.Effect):
             return
         for item in self.selected:
             tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-            command = "inkscape -z -i {0} -l '{1}' -f {2} &>>{3}".format(
+            command = "inkscape -z -i {0} -l '{1}' -f '{2}' &>>{3}".format(
                 item, tmpsvg_export, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmpsvg_export)
             sleep(1)
-        export_path = os.path.expandvars(self.options.output_dir) + "/booklet.pdf"
+        export_path = os.path.expandvars(self.options.output_dir) + "/" + self.options.id_pattern + ".pdf"
         self.tmpout.sort(key=lambda s: [atoi(u) for u in re.split(r'(\d+)', s)])
-        command = "rsvg-convert -f pdf -o {0} {1}".format(
+        command = "rsvg-convert -f pdf -o '{0}' {1}".format(
             export_path, "".join(f + " " for f in self.tmpout))
         os.system(command)
+        os.close(self.tmplog_fd)
     
     def do_webp(self):
         if not self.has_webp():
@@ -156,13 +157,13 @@ class Inkporter(inkex.Effect):
             return
         for item in self.selected:
             tmppng_export = self.tmpdir + "/" + item + ".png"
-            command = "inkscape -z -j -i {0} -e {1} -d {2} -f {3} &>>{4}".format(
+            command = "inkscape -z -j -i {0} -e '{1}' -d {2} -f '{3}' &>>{4}".format(
                 item, tmppng_export, self.options.dpi, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmppng_export)
             sleep(1)
             export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".webp"
-            command = "cwebp {0} -o {1}".format(
+            command = "cwebp '{0}' -o '{1}'".format(
                 tmppng_export, export_path)
             os.system(command)
         os.close(self.tmplog_fd)
@@ -220,7 +221,7 @@ class Inkporter(inkex.Effect):
                 self.selected[item.attrib['id']] = item
         if len(self.selected) < 1:
             inkex.debug(
-                "Please select at least 1 object to use this extension!")
+                "Please select at least 1 object or fill ID Pattern to use this extension!")
             return
         try:
             if not os.path.isdir(os.path.expandvars(self.options.output_dir)):
@@ -237,7 +238,7 @@ class Inkporter(inkex.Effect):
                 self.do_booklet()
             elif self.options.format == "webp":
                 self.do_webp()
-            # self.do_cleanup()
+            self.do_cleanup()
         except Exception as e:
             inkex.debug(e)
             import traceback
