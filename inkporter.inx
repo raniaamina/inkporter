@@ -14,6 +14,7 @@
                                 <item value="svg">SVG</item>
                                 <item value="eps">EPS</item>
                                 <item value="booklet">Booklet (PDF)</item>
+                                <item value="webp">webp</item>
                         </param>
                         <param name="id-pattern" type="string" gui-text="ID Pattern        "></param>
                         <param name="with-cmyk" type="boolean" gui-text="Use CMYK ? (JPG/PDF)">false</param>
