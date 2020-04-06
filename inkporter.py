@@ -65,7 +65,7 @@ class Inkporter(inkex.Effect):
             os.system(command)
             self.tmpout.append(tmpfile_export)
             file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg"
-            command2 = "convert {0} -background {1} -flatten -quality {2} {3} '{4}' &>>{5}".format(
+            command2 = "convert {0} -background '{1}' -flatten -quality {2} {3} '{4}' &>>{5}".format(
                 tmpfile_export, self.options.bg_color, self.options.quality, options, file_export, self.tmplog_path)
             os.system(command2)
         os.close(self.tmplog_fd)
@@ -187,7 +187,9 @@ class Inkporter(inkex.Effect):
             new_nss[u're'] = u'http://exslt.org/regular-expressions'
             path_to_compile = "//*[re:match(@id,'(%s)','g')]" % self.options.id_pattern
             self.id_to_process = self.document.xpath(path_to_compile, namespaces=new_nss)
-            self.selected = self.id_to_process
+            self.selected = {}
+            for item in self.id_to_process:
+                self.selected[item.attrib['id']] = item
         if len(self.selected) < 1:
             inkex.debug(
                 "Please select at least 1 object to use this extension!")
