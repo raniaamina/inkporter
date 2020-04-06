@@ -60,7 +60,7 @@ pause >nul
 goto main
 
 :help
-start https://github.com/maslanangdev/inkporter/blob/windows/README.md
+start https://catatan.raniaamina.id/tools/inkporter-win
 goto main
 
 :PNGBATCH
