@@ -12,7 +12,7 @@
                                 <item value="jpg">JPG</item>
                                 <item value="pdf">PDF</item>
                                 <item value="svg">SVG</item>
-                                <item value="eps-default">EPS</item>
+                                <item value="eps">EPS</item>
                                 <item value="booklet">Booklet (PDF)</item>
                         </param>
                         <param name="id-pattern" type="string" gui-text="ID Pattern        "></param>
