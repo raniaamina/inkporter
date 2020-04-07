@@ -2,7 +2,7 @@
 <img class="not-gallery-item" height="128" src="/inkporter.svg" alt="logo">
 <br><b>Inkporter</b></br>
 <br>
-Export SVG Document to Several Format by Its ID!
+Export SVG Document to Several Format Based on Its ID!
 <br>
 
 # Inkpoter GUI
