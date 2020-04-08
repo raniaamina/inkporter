@@ -81,10 +81,11 @@ do
             echo "Sedang memproses $id ke $DIRECTORY/$id.pdf"
             done
             rm *.svg
-            for i in *.pdf; do gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile="$i" "$i" >> /tmp/inkporter-pdf-gs.log; 
+            for i in *.pdf; do gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -sOutputFile="../${i%.*}.pdf" "$i"; >> /tmp/inkporter-pdf-gs.log; 
             echo "Sedang mengoptimasi berkas $id.pdf ke CMYK"
+            sleep 1
             done
-            mv ./* ../ && cd .. && rm -r .temp && cd ..
+            cd .. && rm -r .temp && cd ..
             cd .. 
             break
             ;;
