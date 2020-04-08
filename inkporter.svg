@@ -10,9 +10,9 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="50.270832mm"
-   height="50.270832mm"
-   viewBox="0 0 50.270832 50.270832"
+   width="285.75mm"
+   height="285.75mm"
+   viewBox="0 0 285.75 285.75"
    version="1.1"
    id="svg4108"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
@@ -225,17 +225,17 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-199.76042,-2.1218736)">
+     transform="translate(-199.76042,233.3573)">
     <rect
-       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:none;stroke-width:0.29687503;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+       style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:none;stroke-width:1.68750024;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
        id="rect7991"
-       width="50.270832"
-       height="50.270832"
+       width="285.75"
+       height="285.75"
        x="199.76042"
-       y="2.1218736" />
+       y="-233.3573" />
     <g
        id="g8134"
-       transform="matrix(1.5865333,0,0,1.5865333,-262.85301,-52.952377)">
+       transform="matrix(7.0423417,0,0,7.0423417,-1822.3957,-474.5647)">
       <g
          transform="rotate(-1.2375126,332.47634,113.26423)"
          id="g7291">
@@ -918,5 +918,16 @@
          d="m 296.93639,58.4983 5.65161,3.262963 v 2.567009 l -5.65161,-3.082914 z"
          style="opacity:1;vector-effect:none;fill:#002547;fill-opacity:1;stroke:none;stroke-width:0.25;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke" />
     </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:36.21185684px;line-height:42.6782608px;font-family:'Inter UI';-inkscape-font-specification:'Inter UI';text-align:center;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:middle;opacity:1;vector-effect:none;fill:#003568;fill-opacity:1;stroke:none;stroke-width:1.83299637;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+       x="341.67746"
+       y="19.820482"
+       id="text8157"><tspan
+         sodipodi:role="line"
+         id="tspan8155"
+         x="341.67746"
+         y="19.820482"
+         style="font-weight:bold;fill:#003568;fill-opacity:1;stroke-width:1.83299637">Inkporter</tspan></text>
   </g>
 </svg>
