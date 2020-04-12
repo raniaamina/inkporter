@@ -36,7 +36,7 @@ If the installation is correct, you'll find Inkporter menu on Extensions -> Expo
 - [ ] Testing (Phase 3)
   - [x] Linux (default, flatpak, snap)
   - [ ] MacOS
-  - [x] Windows
+  - [x] Windows (with limited features)
 
 
 ## Contributor
