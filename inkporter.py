@@ -51,6 +51,15 @@ class Inkporter(inkex.Effect):
         self.tmpdir = tempfile.mkdtemp(prefix="inkporter")
         self.tmplog_fd, self.tmplog_path = tempfile.mkstemp(prefix="inkporter", suffix=".log")
         self.tmpout = []
+    
+    def do_png(self):
+        for item in self.selected:
+            file_export = os.path.expandvars(
+                self.options.output_dir) + "/" + item + ".png"
+            command = "inkscape -z -j -i {0} -e '{1}' -d {2} -f '{3}' &>>{4}".format(
+                item, file_export, self.options.dpi, self.svg_file, self.tmplog_path)
+            os.system(command)
+        os.close(self.tmplog_fd)
 
     def do_jpg(self):
         if not self.has_imagemagick():
@@ -232,7 +241,9 @@ class Inkporter(inkex.Effect):
         try:
             if not os.path.isdir(os.path.expandvars(self.options.output_dir)):
                 os.mkdir(os.path.expandvars(self.options.output_dir))
-            if self.options.format == "jpg":
+            if self.options.format == "png":
+                self.do_png()
+            elif self.options.format == "jpg":
                 self.do_jpg()
             elif self.options.format == "pdf":
                 self.do_pdf()

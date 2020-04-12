@@ -9,6 +9,7 @@
                 <!-- one per page(tab) - unique names. Can discover which page in program-->
                 <page name="main" gui-text="Main">
                         <param name="format" type="enum" appearance="minimal" gui-text="Export Format">
+                                <item value="png">PNG</item>
                                 <item value="jpg">JPG</item>
                                 <item value="pdf">PDF</item>
                                 <item value="svg">SVG</item>
