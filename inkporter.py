@@ -65,7 +65,8 @@ class Inkporter(inkex.Effect):
                 item, tmpfile_export, self.options.dpi, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmpfile_export)
-            sleep(1)
+            while not os.path.exists(tmpfile_export):
+                sleep(1)
             file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg"
             command2 = "convert '{0}' -background '{1}' -flatten -quality {2} {3} '{4}'".format(
                 tmpfile_export, self.options.bg_color, self.options.quality, options, file_export)
@@ -88,7 +89,8 @@ class Inkporter(inkex.Effect):
                     tmppdf_export, tmpsvg_export, self.tmplog_path)
                 os.system(command)
                 self.tmpout.append(tmppdf_export)
-                sleep(1)
+                while not os.path.exists(tmpsvg_export):
+                    sleep(1)
                 export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
                 command2 = "gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK " \
                     + "-dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode " \
@@ -102,7 +104,8 @@ class Inkporter(inkex.Effect):
                     item, tmpsvg_export, self.svg_file, self.tmplog_path)
                 os.system(command)
                 self.tmpout.append(tmpsvg_export)
-                sleep(1)
+                while not os.path.exists(tmpsvg_export):
+                    sleep(1)
                 export_path = os.path.expandvars(
                     self.options.output_dir) + "/" + item + ".pdf"
                 command2 = "inkscape -z --export-area-page -A '{0}' -f '{1}' &>>{2}".format(
@@ -126,7 +129,8 @@ class Inkporter(inkex.Effect):
                 item, tmpsvg_export, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmpsvg_export)
-            sleep(1)
+            while not os.path.exists(tmpsvg_export):
+                sleep(1)
             export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".eps"
             command2 = "inkscape -z -E '{0}' -f '{1}' --export-area-page --export-ignore-filters --export-text-to-path --export-ps-level=3 &>>{2}".format(
                 export_path, tmpsvg_export, self.tmplog_path)
@@ -143,7 +147,8 @@ class Inkporter(inkex.Effect):
                 item, tmpsvg_export, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmpsvg_export)
-            sleep(1)
+            while not os.path.exists(tmpsvg_export):
+                sleep(1)
         export_path = os.path.expandvars(self.options.output_dir) + "/" + self.options.id_pattern + ".pdf"
         self.tmpout.sort(key=lambda s: [atoi(u) for u in re.split(r'(\d+)', s)])
         command = "rsvg-convert -f pdf -o '{0}' {1}".format(
@@ -161,7 +166,8 @@ class Inkporter(inkex.Effect):
                 item, tmppng_export, self.options.dpi, self.svg_file, self.tmplog_path)
             os.system(command)
             self.tmpout.append(tmppng_export)
-            sleep(1)
+            while not os.path.exists(tmppng_export):
+                sleep(1)
             export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".webp"
             command = "cwebp '{0}' -o '{1}'".format(
                 tmppng_export, export_path)
