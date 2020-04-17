@@ -13,7 +13,9 @@ sehingga pengguna Windows dapat melakukan batch expor svg tanpa menginstall WSL 
 Aplikasi yang dibutuhkan :
 - **Inkscape** : https://inkscape.org/
 - **Ghostscript** untuk expor pdf-cmyk : https://www.ghostscript.com/download/gsdnld.html (gunakan ghostscript 32bit, karena inkporter.bat ini saya tulis agar menggunakan gswin32 sehingga dapat berjalan di semua arsitektur)
-
+- **ImageMagick** untuk expor JPEG : https://imagemagick.org
+- **libwebp** untuk expor webp : https://developers.google.com/speed/webp/download
+- **7zip** untuk expor zip : https://www.7-zip.org
 Petunjuk Instalasi
 
 - Unduh dan salin inkporter.bat ke direktori installasi Inkscape
@@ -31,7 +33,7 @@ Petunjuk Instalasi
 	
 	 ![image set_path 3](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/5.png)
 	
-	- lalu tambahkan direktori installasi Inkscape (C:\Program Files\Inkscape) dan Ghostscript (untuk versi terbaru saat ini ditulis = C:\Program Files\gs\gs9.52\bin)
+	- lalu tambahkan direktori installasi Inkscape, Ghostscript, 7zip, dan direktori ekstrak dari ImageMagick dan libwebp 
 	
 	![image set_path 4](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/7.png)
 	- pada tahap ini, untuk Windows 8.1 kebawah terdapat perbedaan yaitu pisahkan setiap direktori dengan tanda semicolon (;) seperti **C:\Program Files\Inkscape;C:\Program Files\gs\bin**
