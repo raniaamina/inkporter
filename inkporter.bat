@@ -49,7 +49,7 @@ goto main
 cls
 echo.
 echo Inkporter CLI For Windows
-echo Version 1.4
+echo Version 1.4b
 echo.
 echo Tool ini dibuat untuk melakukan batch ekspor pada berkas .svg melalui Inkscape command line
 echo bedasarkan pola pada nama Object ID
@@ -217,7 +217,7 @@ goto end
 
 :JPEG
 set dpi = 96
-echo Bersiap mengekspor berkas SVG ke PNG
+echo Bersiap mengekspor berkas SVG ke JPEG
 echo Berkas SVG yang tersedia :
 echo.
 echo Waktu dibuat            Ukuran berkas Nama berkas
@@ -236,11 +236,12 @@ set der=%cd%
 
 :JPEGBATCHPPROCESS
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-png=%%d.png --export-dpi=%dpi%  %svgin% >nul
-	magick convert %%d.png -background #ffffff -flatten -quality 100 
-	echo Berkas %%d.png telah dibuat
+	inkscape --export-id=%%d --export-png=%%d.png --export-dpi=%dpi% %svgin% >nul
+	magick convert %%d.png -background #ffffff -flatten -quality 100 %%d.jpeg
+	echo Berkas %%d.jpeg telah dibuat
 	echo.
-	move %%d.png "%der%\%fold%\" >nul
+	del %%d.png
+	move %%d.jpeg "%der%\%fold%\" >nul
 	)
 goto end
 
@@ -285,23 +286,22 @@ echo.
 set /p svg="Berkas yang ingin anda proses : "
 set /p objID="Pola nama Object ID : "
 set /p namaberkas="Nama berkas output : "
-set fold="testpen"
 set svgin="%svg%"
 echo Berkas akan disimpan di %cd%
-md "%fold%" 2>nul
-set der=%cd%
 
 :BOOKLETPPROCESS
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
+	echo sedang memproses Object ID = %%d
 	inkscape --export-id=%%d --export-id-only --export-plain-svg=%%d.svg %svgin%
 	inkscape --export-area-page --without-gui --export-pdf=pdftemp-%%d.pdfx %%d.svg
 	del %%d.svg
-	echo.
-	echo Berkas %%d.pdf telah dibuat
 	)
 dir /b | findstr pdftemp >> list.txt
-gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas%.pdf @list.txt
+echo.
+gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas% @list.txt
 del *.pdfx
+del list.txt
+goto end
 
 :BUNDLE
 echo Bersiap mengekspor berkas SVG ke ZIP Bundle (PNG + EPS Default)
@@ -328,6 +328,7 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	del %%d.svg
 	del %%d.png
 	del %%d.eps
+	move %%d.zip "%der%\%fold%\" >nul
 	echo.
 	echo Berkas %%d.zip telah dibuat
 	)
