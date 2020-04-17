@@ -16,6 +16,7 @@ Aplikasi yang dibutuhkan :
 - **ImageMagick** untuk expor JPEG : https://imagemagick.org
 - **libwebp** untuk expor webp : https://developers.google.com/speed/webp/download
 - **7zip** untuk expor zip : https://www.7-zip.org
+
 Petunjuk Instalasi
 
 - Unduh dan salin inkporter.bat ke direktori installasi Inkscape
