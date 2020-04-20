@@ -19,27 +19,12 @@ Aplikasi yang dibutuhkan :
 
 Petunjuk Instalasi
 
-- Unduh dan salin inkporter.bat ke direktori installasi Inkscape
-- tambahkan direktori installasi inkscape dan ghostscript ke %PATH%
-	- buka Control Panel -> System and Security -> System 
-	- klik pada pojok kiri atas *Advanced system setting* lalu akan muncul system properties
-	
-	 ![image set path 1](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/3.png)
+* Unduh [Installer inkporter-win](https://github.com/raniaamina/inkporter/releases/tag/1.4) lalu buka Installer untuk memasang inkporter-win
+* Unduh dan Install dependensi dibawah ini di direktori defaultnya (Program Files)
+	* [Ghostscript 9.52](https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/gs952w32.exe)
+	* [Imagemagick](https://imagemagick.org/script/download.php#windows)
+	* [7-zip](https://www.7-zip.org)
 
-	- masuk ke *Environment Variables...*
-	
-	 ![image set path 2](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/4.png)
-	
-	- Edit System variable *Path*
-	
-	 ![image set_path 3](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/5.png)
-	
-	- lalu tambahkan direktori installasi Inkscape, Ghostscript, 7zip, dan direktori ekstrak dari ImageMagick dan libwebp 
-	
-	![image set_path 4](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/7.png)
-	- pada tahap ini, untuk Windows 8.1 kebawah terdapat perbedaan yaitu pisahkan setiap direktori dengan tanda semicolon (;) seperti **C:\Program Files\Inkscape;C:\Program Files\gs\bin**
-	
-	![image win_8](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/7_untuk_8_kebawah.png)
 	- **TIP** : Jika kalian menggunakan Python, pastikan untuk meletakkan direktori Inkscape dibawah direktori python agar saat hendak menjalankan Python lewat CMD tidak menjalankan Python dari direktori Inkscape, karena di dalam folder Inkscape juga terdapat Python
 	
 	![image tip](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/tip1.png)
@@ -50,15 +35,10 @@ Petunjuk pemakaian :
 saya akan menggunakan contoh bahwa saya memiliki berkas svg bernama *drawing.svg* di direktori D:\project
 dengan objek yang ingin saya expor adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-5* *obj-6*
 
-* untuk mengarahkan CMD pada direktori yang di tuju
-
-	* buka cmd
-	* ketik **nama_partisi:** misal **D:** lalu enter untuk pindah ke partisi D:\
- 	* selanjutnya ketik **cd nama_folder** misal **cd project** lalu tekan enter untuk masuk ke folder bernama project
 
 * untuk menggunakan inkporter
 
-	* di sana saya akan menjalankan inkporter, untuk menjalankannya ketik **inkporter** lalu tekan enter
+	* Klik kanan pada folder project, lalu pilih "Buka Inkporter di sini" lalu jendela inkporter-win akan muncul
 	* pilih format yang dinginkan (disini saya ambil contoh pdf maka saya akan memasukkan angka 2)
 	* setelah memilih format output maka akan muncul semua nama berkas svg yang ada di direktori saat ini
 	* masukkan nama berkas (**drawing.svg**)
