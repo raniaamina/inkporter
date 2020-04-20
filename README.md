@@ -11,11 +11,12 @@ Tool ini merupakan versi .bat dari Inkporter untuk CMD Windows (native) yang dit
 sehingga pengguna Windows dapat melakukan batch expor svg tanpa menginstall WSL (Windows Subsystem for Linux)
 
 Aplikasi yang dibutuhkan :
-- **Inkscape** : https://inkscape.org/
-- **Ghostscript** untuk expor pdf-cmyk : https://www.ghostscript.com/download/gsdnld.html (gunakan ghostscript 32bit, karena inkporter.bat ini saya tulis agar menggunakan gswin32 sehingga dapat berjalan di semua arsitektur)
-- **ImageMagick** untuk expor JPEG : https://imagemagick.org
-- **libwebp** untuk expor webp : https://developers.google.com/speed/webp/download
-- **7zip** untuk expor zip : https://www.7-zip.org
+- [Inkscape](https://inkscape.org/)
+- [Ghostscript 9.52](https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/gs952w32.exe) untuk expor pdf-cmyk
+- [Imagemagick](https://imagemagick.org/script/download.php#windows) untuk expor JPEG
+- [libwebp](https://developers.google.com/speed/webp/download) untuk expor webp
+- [7-zip](https://www.7-zip.org) untuk expor zip
+-
 
 Petunjuk Instalasi
 
@@ -24,11 +25,7 @@ Petunjuk Instalasi
 	* [Ghostscript 9.52](https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/gs952w32.exe)
 	* [Imagemagick](https://imagemagick.org/script/download.php#windows)
 	* [7-zip](https://www.7-zip.org)
-
-	- **TIP** : Jika kalian menggunakan Python, pastikan untuk meletakkan direktori Inkscape dibawah direktori python agar saat hendak menjalankan Python lewat CMD tidak menjalankan Python dari direktori Inkscape, karena di dalam folder Inkscape juga terdapat Python
-	
-	![image tip](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/tip1.png)
-	
+	* [WebP](https://developers.google.com/speed/webp/download) ekstrak ke direktori %PROGRAMFILES%\Inkporter\deps\libwebp
 	
 Petunjuk pemakaian :
 
@@ -46,6 +43,6 @@ dengan objek yang ingin saya expor adalah *obj-1* *obj-2* *obj-3* *obj-4* *obj-5
 	* berkas akan diekspor ke folder baru, masukkan nama yang anda inginkan seperti **hasil expor**
 	* berkas akan diproses dan selamat berkas berhasil terekspor
 
-Sekian dari saya, bila anda ingin berdiskusi, memberikan feedback, saran, atau tanya2 tentang inkporter.bat ini bisa PM saya lewat telegram @RJ95ID
+Sekian dari saya, bila anda ingin berdiskusi, memberikan feedback, saran, atau tanya2 tentang inkporter.bat ini bisa hubungi saya lewat telegram [@RJ95ID](https://t.me/RJ95ID)
 
 sekian Terima Kasih
