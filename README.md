@@ -5,7 +5,7 @@ Bismillah
 
 Inkporter merupakan tool sederhana yang dikembangkan oleh @raniaamina untuk mengekspor berkas svg bedasarkan pola pada nama object id yang aslinya dikembangkan untuk sistem operasi linux
 
-![image of tampilan_inkporter](https://github.com/maslanangdev/inkporter/blob/windows/tutorial_image/tampilan_inkporter.png)
+![image of tampilan_inkporter](https://raw.githubusercontent.com/raniaamina/inkporter/windows/tutorial_image/tampilan_inkporter.png)
 
 Tool ini merupakan versi .bat dari Inkporter untuk CMD Windows (native) yang ditulis oleh RJ95
 sehingga pengguna Windows dapat melakukan batch expor svg tanpa menginstall WSL (Windows Subsystem for Linux)
@@ -16,7 +16,6 @@ Aplikasi yang dibutuhkan :
 - [Imagemagick](https://imagemagick.org/script/download.php#windows) untuk expor JPEG
 - [libwebp](https://developers.google.com/speed/webp/download) untuk expor webp
 - [7-zip](https://www.7-zip.org) untuk expor zip
--
 
 Petunjuk Instalasi
 
