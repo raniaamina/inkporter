@@ -56,7 +56,7 @@ Section "MainSection" SEC01
   File "inkporter.bat"
   File "inkporter.ico"
   File "license.txt"
-  File /r "C:\Users\HP-LAPTOP\Desktop\inkporter_cli_installer\deps\libwebp\letakan libwebp di sini.txt"
+  File /r "C:\Users\HP-LAPTOP\Desktop\inkporter_cli_installer\deps*"
 SectionEnd
 
 Section "setvar" SEC02
@@ -76,7 +76,7 @@ Section "setvar" SEC02
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
-  EnVar::AddValue "Path" "$INSTDIR\deps\libwebp"
+  EnVar::AddValue "Path" "$INSTDIR\deps\libwebp\bin"
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
@@ -84,7 +84,7 @@ Section "setvar" SEC02
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
-  EnVar::AddValue "Path" "%PROGRAMFILES%\gs\gs9.52"
+  EnVar::AddValue "Path" "$PROGRAMFILES\gs\gs9.52\bin"
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
 SectionEnd
@@ -132,7 +132,7 @@ Section Uninstall
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
   
-  EnVar::DeleteValue "Path" "$INSTDIR\deps\libwebp"
+  EnVar::DeleteValue "Path" "$INSTDIR\deps\libwebp\bin"
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
   
@@ -140,7 +140,7 @@ Section Uninstall
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
 
-  EnVar::DeleteValue "Path" "%PROGRAMFILES%\gs\gs9.52"
+  EnVar::DeleteValue "Path" "$PROGRAMFILES\gs\gs9.52\bin"
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
 
