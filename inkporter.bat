@@ -207,7 +207,7 @@ set der=%cd%
 :SVGPLAINBATCHPROCESS
 
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-id-only --export-plain-svg=%%d-uc.svg %svgin%
+	inkscape --export-id=%%d --export-id-only --export-plain-svg=%%d.svg %svgin%
 	move %%d.svg "%der%\%fold%\" >nul
 	echo.
 	echo Berkas %%d.svg telah dibuat
