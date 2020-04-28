@@ -7,10 +7,16 @@
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 ; !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\AppMainExe.exe"
 
+; Var InkCommand
+; Function commandVar
+  ; Var /GLOBAL Inkput
+  ; StrCpy $InkCommand "$INSTDIR\inkporter_x.bat"
+  ; StrCpy $Inkput "%1"
+; FunctionEnd
 
 
-SetCompressor lzma
 Unicode true
+SetCompressor lzma
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
 
@@ -54,9 +60,10 @@ Section "MainSection" SEC01
   ; CreateShortCut "$SMPROGRAMS\Inkporter\Inkporter.lnk" "$INSTDIR\AppMainExe.exe"
   ; CreateShortCut "$DESKTOP\Inkporter.lnk" "$INSTDIR\AppMainExe.exe"
   File "inkporter.bat"
+  File "inkporter_x.bat"
   File "inkporter.ico"
   File "license.txt"
-  File /r "C:\Users\HP-LAPTOP\Desktop\inkporter_cli_installer\deps*"
+  File /r "C:\Users\HP-LAPTOP\Desktop\inkporter_cli_installer_x\deps*"
 SectionEnd
 
 Section "setvar" SEC02
@@ -72,7 +79,7 @@ Section "setvar" SEC02
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
-  EnVar::AddValue "Path" "%PROGRAMFILES%\Inkscape"
+  EnVar::AddValue "Path" "$PROGRAMFILES64\Inkscape"
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
@@ -80,7 +87,7 @@ Section "setvar" SEC02
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
-  EnVar::AddValue "Path" "%PROGRAMFILES%\7-Zip"
+  EnVar::AddValue "Path" "$PROGRAMFILES64\7-Zip"
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
@@ -93,6 +100,9 @@ Section -Post
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter" "" "Buka Inkporter di sini"
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter" "Icon" "$INSTDIR\inkporter.ico"
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter\command" "" "$INSTDIR\inkporter.bat"
+  WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter\command" "" "$INSTDIR\inkporter_x.bat %1"
+  WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter" "Icon" "$INSTDIR\inkporter.ico"
+  WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter" "" "Ekspor dengan Inkporter"
   WriteUninstaller "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
@@ -128,7 +138,7 @@ Section Uninstall
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
   
-  EnVar::DeleteValue "Path" "%PROGRAMFILES%\Inkscape"
+  EnVar::DeleteValue "Path" "$PROGRAMFILES\Inkscape"
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
   
@@ -136,7 +146,7 @@ Section Uninstall
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
   
-  EnVar::DeleteValue "Path" "%PROGRAMFILES%\7-Zip"
+  EnVar::DeleteValue "Path" "$PROGRAMFILES\7-Zip"
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
 
@@ -148,5 +158,6 @@ Section Uninstall
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKCR "Directory\Background\shell\Inkporter"
+  DeleteRegKey HKCR "inkscape.svg\shell\Inkporter"
   SetAutoClose true
 SectionEnd
