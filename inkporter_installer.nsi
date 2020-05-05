@@ -79,7 +79,7 @@ Section "setvar" SEC02
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
-  EnVar::AddValue "Path" "$PROGRAMFILES64\Inkscape"
+  EnVar::AddValue "Path" "$PROGRAMFILES64\Inkscape\bin"
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
@@ -138,7 +138,7 @@ Section Uninstall
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
   
-  EnVar::DeleteValue "Path" "$PROGRAMFILES\Inkscape"
+  EnVar::DeleteValue "Path" "$PROGRAMFILES\Inkscape\bin"
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
   
