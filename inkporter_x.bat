@@ -6,6 +6,20 @@ rem inkporter version = 1.5
 REM echo Untuk informasi pengembang, Silakan ketik "about"
 REM echo untuk mengunjungi laman bantuan online, Silakan ketik "help"
 :pilihan
+echo "|| Selamat Datang di                                                    ||"
+echo "||  ___       _                     _                         _         ||"
+echo "|| |_ _|_ __ | | ___ __   ___  _ __| |_ ___ _ __    __      _(_)_ __    ||"
+echo "||  | || '_ \| |/ / '_ \ / _ \| '__| __/ _ \ '__|___\ \ /\ / / | '_ \   ||"
+echo "||  | || | | |   <| |_) | (_) | |  | ||  __/ | |_____\ V  V /| | | | |  ||"
+echo "|| |___|_| |_|_|\_\ .__/ \___/|_|   \__\___|_|        \_/\_/ |_|_| |_|  ||"
+echo "||                |_|                                                   ||"
+echo File yang dipilih : %1
+echo.
+echo Silakan Pilih Target Ekspor Anda
+echo 1) PNG         4) EPS-Default    7) WebP         
+echo 2) PDF         5) SVG-Plain      8) Booklet (PDF)            
+echo 3) PDF-CMYK    6) JPEG           9) ZIP (PNG + EPS-Default)    
+echo.
 set /p target=Pilihan Anda : 
 if %target%== 1 goto PNG
 if %target%== 2 goto PDF
