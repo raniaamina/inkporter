@@ -1,4 +1,15 @@
 #!/bin/bash
+
+
+# Buang tanda pagar pada dua baris di bawah ini bila Anda menggunakan Inkscape Flatpak
+# shopt -s expand_aliases
+# alias inkscape='flatpak run org.inkscape.Inkscape'
+
+if [ "$1" = "--version" ] ; then
+  echo "v2.1.3"
+  exit 0
+fi
+
 echo " "
 echo "Selamat datang di:"
 echo " _       _                     _            
@@ -8,14 +19,14 @@ echo " _       _                     _
 |_|_| |_|_|\_\ .__/ \___/|_|   \__\___|_|   
              |_| 
 ============================================"
-echo "Inkporter Version: 1.7.1"
+echo "Inkporter Version: 2.1.3"
 echo " "
 echo "Silakan pilih format output yang Anda inginkan"
 SOURCE=$1
 IDPATTERN=$2
 echo " "
 PS3='Enter the number: '
-options=("png" "jpg" "pdf" "pdf-cmyk" "svg" "eps-default" "booklet" "cancel")
+options=("png" "jpg" "svg" "pdf" "pdf-cmyk" "eps-default" "booklet" "webp" "cancel")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -25,10 +36,11 @@ do
             read -e -p "Tentukan DPI Ekspor (default 96 dpi): " -i "96" DPI
             read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
             mkdir -p $DIRECTORY
-            for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
+            for id in $(inkscape -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -z -j -i $id -e "$DIRECTORY/$id.png" -d $DPI -f $SOURCE >> /tmp/inkporter-png.log
+            inkscape -j -i $id -o "$DIRECTORY/$id.png" $SOURCE -d $DPI  &>> /tmp/inkporter-png.log
             echo "Sedang memproses $id ke $DIRECTORY/$id.png"
+            echo ""
             done
             break
             ;;
@@ -37,31 +49,46 @@ do
             read -e -p "Tentukan latar gambar black/white (default white): " -i "white" BGCOLOR
             read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
             mkdir -p $DIRECTORY/.temp
-            for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
+            for id in $(inkscape -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -z -j -i $id -e "$DIRECTORY/.temp/$id.png" -d 96 -f $SOURCE >> /tmp/inkporter-jpg.log
+            inkscape -j -i $id -o "$DIRECTORY/.temp/$id.png" $SOURCE -d 96 &>> /tmp/inkporter-jpg.log
             echo "Sedang memproses $id ke $DIRECTORY/$id.jpg"
+            echo ""
             done
             cd $DIRECTORY/.temp
-            for i in *.png; do convert "$i"  -background $BGCOLOR -flatten -quality 100 -colorspace CMYK "../${i%.*}.jpg"; 
-            echo "Sedang mengoptimasi $id.jpg"  
+            for i in *.png; do 
+            echo "Sedang mengoptimasi $id.jpg" 
+            convert "$i"  -background $BGCOLOR -flatten -quality 100 -colorspace CMYK "../${i%.*}.jpg";  
             done
             cd .. && rm -r .temp
-            cd .. 
+            # cd .. 
+            break
+            ;;
+        "svg")
+            echo "Berkas akan diekspor ke format SVG"
+            echo "Pastikan tidak ada objek clone dalam dokumen, id objek sudah tepat, dan Anda sudah siap gembira hari ini."
+            read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
+            mkdir -p $DIRECTORY
+            for id in $(inkscape -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
+            do 
+            inkscape -i $id -l -o "$DIRECTORY/$id.svg" $SOURCE --export-id-only &>> /tmp/inkporter-svg.log
+            sleep 1
+            echo "Sedang memproses $id ke $DIRECTORY/$id.svg"
+            done
             break
             ;;
         "pdf")
             echo "Berkas akan diekspor ke format PDF"
             read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
             mkdir -p $DIRECTORY/.temp
-            for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
+            for id in $(inkscape -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -z -i $id -l "$DIRECTORY/.temp/$id.svg" -f $SOURCE >> /tmp/inkporter-pdf.log
+            inkscape -i $id -l -o "$DIRECTORY/.temp/$id.svg" $SOURCE --export-id-only &>> /tmp/inkporter-pdf.log
             echo "Sedang memproses $id ke $DIRECTORY/$id.pdf"
             done
             cd $DIRECTORY/.temp
-            for i in *.svg; do inkscape "$i" --export-area-page --without-gui "$i" -A "../${i%.*}.pdf";
-             echo "Sedang mengoptimasi berkas $id.pdf"
+            for i in *.svg; do cat "$i" | inkscape --pipe -C -o "../${i%.*}.pdf"
+            echo "Sedang mengoptimasi berkas $id.pdf"
             done
             cd .. && rm -r .temp
             cd .. 
@@ -71,17 +98,16 @@ do
             echo "Berkas akan diekspor ke format PDF (CMYK)"
             read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
             mkdir -p $DIRECTORY/.temp
-            for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
+            for id in $(inkscape -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -z -i $id -l "$DIRECTORY/.temp/$id.svg" -f $SOURCE >> /tmp/inkporter-pdf-cmyk.log
-            echo "Inisiasi objek: $id (OK!)"
-            done
-            cd $DIRECTORY/.temp
-            for i in *.svg; do inkscape "$i" --export-area-page --without-gui "$i" -A ${i%.*}.pdf;
+            inkscape -i $id -l -o "$DIRECTORY/.temp/$id.svg" $SOURCE --export-id-only &>> /tmp/inkporter-pdf-cmyk.log
             echo "Sedang memproses $id ke $DIRECTORY/$id.pdf"
             done
+            cd $DIRECTORY/.temp
+            for i in *.svg; do cat "$i" | inkscape --pipe -C -o "${i%.*}.pdf"
+            done
             rm *.svg
-            for i in *.pdf; do gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -sOutputFile="../${i%.*}.pdf" "$i"; >> /tmp/inkporter-pdf-gs.log; 
+            for i in *.pdf; do gs -q -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -sOutputFile="../${i%.*}.pdf" "$i"; &>> /tmp/inkporter-pdf-gs.log; 
             echo "Sedang mengoptimasi berkas $id.pdf ke CMYK"
             sleep 1
             done
@@ -89,29 +115,17 @@ do
             cd .. 
             break
             ;;
-        "svg")
-            echo "Berkas akan diekspor ke format SVG"
-            echo "Pastikan tidak ada objek clone dalam dokumen, id objek sudah tepat, dan Anda sudah siap gembira hari ini."
-            read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
-            mkdir -p $DIRECTORY
-            for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
-            do 
-            inkscape -z -j -i $id -f $SOURCE -l "$DIRECTORY/$id.svg" >> /tmp/inkporter-pdf.log
-            echo "Sedang memproses $id ke $DIRECTORY/$id.svg"
-            done
-            break
-            ;;
         "eps-default")
             echo "Berkas akan diekspor ke format EPS (Default)"
             read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
             mkdir -p $DIRECTORY/.temp
-            for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
+            for id in $(inkscape -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -z -i $id -l "$DIRECTORY/.temp/$id.svg" -f $SOURCE >> /tmp/inkporter-pdf.log
+            inkscape -i $id -l -o "$DIRECTORY/.temp/$id.svg" $SOURCE --export-id-only &>> /tmp/inkporter-eps.log
             echo "Sedang memproses $id ke $DIRECTORY/$id.eps"
             done
             cd $DIRECTORY/.temp
-            for i in *.svg; do inkscape "$i" --without-gui "$i" -E "../${i%.*}.eps" --export-area-page --export-ignore-filters --export-text-to-path --export-ps-level={3};
+            for i in *.svg; do inkscape -C --export-ignore-filters -T --export-ps-level=3 -o "../${i%.*}.eps" "$i";
             echo "Sedang mengoptimasi berkas $id.eps"
             done
             cd .. && rm -r .temp
@@ -122,18 +136,37 @@ do
             echo "Berkas akan akan diproses ke format PDF (CMYK)"
             read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
             mkdir -p $DIRECTORY/.temp
-            for id in $(inkscape -z -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
+            for id in $(inkscape -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -z -j -i $id -f $SOURCE -l "$DIRECTORY/.temp/$id.svg" 
+            inkscape -i $id -l -o "$DIRECTORY/.temp/$id.svg" $SOURCE --export-id-only &>> /tmp/inkporter-booklet.log
             echo "Inisiasi objek: $id (OK!)"
             done
             cd $DIRECTORY/.temp
-#             for i in *.svg; do sed -r -i "s/#((0x){0,1}|#{0,1})([0-9a-fA-F]{8}|[0-9a-fA-F]{6})/#000/g" "$i"; done 
-            echo "Mnegkompilasi booklet"
+            # for i in *.svg; do sed -r -i "s/#((0x){0,1}|#{0,1})([0-9a-fA-F]{8}|[0-9a-fA-F]{6})/#000/g" "$i"; done 
+            echo "Mengkompilasi booklet"
             rsvg-convert -f pdf -o "../$DIRECTORY.pdf" $(ls --sort=version *.svg)
             cd ..
             rm -r .temp
             cd .. 
+            break
+            ;;
+        "webp")
+            echo "Berkas akan diekspor ke format WEBP"
+            read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
+            mkdir -p $DIRECTORY/.temp
+            for id in $(inkscape -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
+            do 
+            inkscape -j -i $id -o "$DIRECTORY/.temp/$id.png" $SOURCE -d 96 &>> /tmp/inkporter-webp.log
+            echo "Sedang memproses $id ke $DIRECTORY/$id.webp"
+            echo ""
+            done
+            cd $DIRECTORY/.temp
+            for i in *.png; do 
+            echo "Sedang mengoptimasi $id.webp" 
+            cwebp -quiet "$i" -o "../${i%.*}.webp";  
+            done
+            cd .. && rm -r .temp
+            # cd .. 
             break
             ;;
         "cancel")
