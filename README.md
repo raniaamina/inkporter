@@ -46,4 +46,6 @@ If the installation is correct, you'll find Inkporter menu on Extensions -> Expo
 This project fully supported by Gimpscape Indoensia (The Biggest Indonesia F/LOSS Design Community)
 
 ## Disclaimer & Donation
-This is early development extension. We don't guarantee anything about this extension so please use at your own risk. If you feel helped by this extension, of course you can give us a cup of coffee, please refer to [Dev-Lovers Page](https://devlovers.netlify.com) :")
+This is early development extension. We don't guarantee anything about this extension so please use at your own risk. Currently, we focus developing inkporter on linux as primary system, so if you use MacOS or Windows forgive us if we can't provide full features of Inkporter. The main problem is dependencies installation for each operating system is different, so it effect to inkporter features.
+
+If you feel helped by this extension, of course you can give us a cup of coffee, please refer to [Dev-Lovers Page](https://devlovers.netlify.com) :")
