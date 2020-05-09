@@ -1,14 +1,78 @@
 #!/bin/bash
 
+INSTALLDIR=$(which inkporter)
+INKSCAPEDIR=$(which inkscape)
+VERSION="2.2.1"
 
 # Buang tanda pagar pada dua baris di bawah ini bila Anda menggunakan Inkscape Flatpak
 # shopt -s expand_aliases
 # alias inkscape='flatpak run org.inkscape.Inkscape'
 
 if [ "$1" = "--version" ] ; then
-  echo "v2.1.3"
+  echo "Inkporter v$VERSION"
+  echo "Dipadukan dengan" $(inkscape --version)
   exit 0
 fi
+
+if [ "$1" = "--enable-flatpak" ] ; then
+  echo "Mengaktifkan Dukungan Flatpak ..."
+  sudo sed -i '/shopt/s/^#*//g' $INSTALLDIR
+  sudo sed -i '/org.inkscape.Inkscape/s/^#*//g' $INSTALLDIR
+  echo "done"
+  exit 0
+fi
+
+if [ "$1" = "--enable-flatpak" ] ; then
+  echo "Mengaktifkan Dukungan Flatpak ..."
+  sudo sed -i '/shopt/s/^#*//g' $INSTALLDIR
+  sudo sed -i '/org.inkscape.Inkscape/s/^#*//g' $INSTALLDIR
+  echo "done"
+  exit 0
+fi
+
+if [ "$1" = "--enable-native" ] ; then
+  echo "Mengaktifkan Inkscape native ..."
+  sudo sed -i '/shopt/s/^#*/#/g' $INSTALLDIR
+  sudo sed -i '/org.inkscape.Inkscape/s/^#*/#/g' $INSTALLDIR
+  echo "done"
+  exit 0
+fi
+
+if [ "$1" = "--deps-info" ] ; then
+  echo "Versi Inkscape"
+  inkscape --version 
+  echo
+  echo "Versi Ghostscript"
+  gs --version 
+  echo
+  echo "Versi RSVG"
+  rsvg-convert --version 
+  echo
+  echo "Versi WEBP"
+  cwebp -version 
+  echo
+  exit 0
+fi
+
+if [ "$1" = "--help" ] ; then
+  echo
+  echo "Penggunaan Umum:"
+  echo "inkporter [FILE.svg] [POLA-ID]"
+  echo "  Contoh: inkporter desain.svg icon"
+  echo ""
+  echo "Parameter Khusus"
+  echo "  --enable-flatpak      Gunakan Inkscape dari Flatpak"
+  echo "  --enable-native       Gunakan Inkscape dari sistem"
+  echo "  --version             Menampilkan versi Inkporter"
+  echo "  --deps-info           Informasi dependensi"
+  echo "  --help                Menampilkan halaman bantuan"
+  echo 
+  echo "Inkporter v$VERSION"
+  echo "https://catatan.raniaamina.id/tools/inkporter"
+  echo
+  exit 0
+fi
+
 
 echo " "
 echo "Selamat datang di:"
@@ -19,7 +83,7 @@ echo " _       _                     _
 |_|_| |_|_|\_\ .__/ \___/|_|   \__\___|_|   
              |_| 
 ============================================"
-echo "Inkporter Version: 2.1.3"
+echo "Inkporter Version: $VERSION"
 echo " "
 echo "Silakan pilih format output yang Anda inginkan"
 SOURCE=$1
