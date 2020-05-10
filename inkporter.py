@@ -126,7 +126,7 @@ class Inkporter(inkex.Effect):
         for item in self.svg.selected:
             file_export = os.path.expandvars(
                 self.options.output_dir) + "/" + item + ".svg"
-            command = "inkscape -j -i %s -l -o '%s' '%s' &>>%s" % (
+            command = "inkscape -j -i {0} -l -o '{1}' '{2}' 1>>{3} 2>>{3}".format(
                 item, file_export, self.myfile, self.tmplog_path)
             os.system(command)
         os.close(self.tmplog_fd)
@@ -158,13 +158,15 @@ class Inkporter(inkex.Effect):
             self.tmpout.append(tmpsvg_export)
             while not os.path.exists(tmpsvg_export):
                 sleep(1)
-        export_path = os.path.expandvars(self.options.output_dir) + "/" + self.options.id_pattern + ".pdf"
+        export_path = os.path.expandvars(self.options.output_dir) + "/" + self.options.id_pattern + "-booklet.pdf"
         self.tmpout.sort(key=lambda s: [atoi(u) for u in re.split(r'(\d+)', s)])
-        command = "rsvg-convert -f pdf -o '{0}' {1}".format(
-            export_path, "".join(f + " " for f in self.tmpout))
+        command = "rsvg-convert -f pdf -o '{0}' {1} 1>>{2} 2>>{2}".format(
+            export_path, "".join(f + " " for f in self.tmpout), self.tmplog_path)
         os.system(command)
         if self.options.with_cmyk:
-            command = "gs -q -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -sOutputFile='{0}' '{1}'".format(export_path + "-cmyk.pdf", export_path)
+            cmyk_export_path = os.path.dirname(export_path) + os.path.basename(export_path).split(".pdf")[0] + ".cmyk.pdf"
+            command = "gs -q -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -sOutputFile='{0}' '{1}' 1>>{2} 2>>{2}".format(
+                cmyk_export_path, export_path, self.tmplog_path)
             os.system(command)
         os.close(self.tmplog_fd)
     
@@ -206,6 +208,7 @@ class Inkporter(inkex.Effect):
         handler, self.myfile = tempfile.mkstemp(suffix=".svg",prefix="inkporter-%s-"%file_format)
         with open(handler, "w") as f:
             f.write(etree.tostring(self.document, encoding="utf-8",xml_declaration=True).decode("utf-8"))
+        self.tmpout.append(self.myfile)
 
     def get_cmd_output(self, cmd):
         # Adapted from webslicer extension (extensions > web > slicer)
@@ -232,7 +235,7 @@ class Inkporter(inkex.Effect):
         if not self.has_rsvg():
             inkex.utils.errormsg(
                 "This extension requires rsvg-convert (from librsvg/librsvg-bin) to run, please install it before start exporting")
-            return
+            exit()
         if len(self.options.id_pattern) > 0:
             new_nss = inkex.utils.NSS
             new_nss[u're'] = u'http://exslt.org/regular-expressions'
@@ -244,7 +247,7 @@ class Inkporter(inkex.Effect):
         if len(self.svg.selected) < 1:
             inkex.utils.errormsg(
                 "Please select at least 1 object or fill ID Pattern to use this extension!")
-            return
+            exit()
         try:
             if not os.path.isdir(os.path.expandvars(self.options.output_dir)):
                 os.mkdir(os.path.expandvars(self.options.output_dir))

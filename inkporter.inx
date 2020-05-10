@@ -2,7 +2,7 @@
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension" xmlns:xlink="http://www.w3.org/1999/xlink">
         <name>Inkporter</name>
         <id>id.gimpscape.inkporter</id>
-        <_param name="welcome" type="description" appearance="header" indent="1">Welcome to Inkporter 1.0.0!</_param>
+        <_param name="welcome" type="description" appearance="header" indent="1">Welcome to Inkporter 1.1.0!</_param>
         <_param name="descriptions" type="description" xml:space="preserve">Export your work based on special ID to several document formats easily.</_param>
         <!-- start notebook -->
         <param name='tab' type="notebook">
