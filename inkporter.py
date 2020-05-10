@@ -9,7 +9,7 @@ import os
 import inkex
 from time import sleep
 
-__version__ = '1.0.0'
+__version__ = '1.1.0'
 
 def atoi(text):
     return int(text) if text.isdigit() else text
