@@ -1,6 +1,6 @@
 <p align="center" class="has-mb-6">
-<img class="not-gallery-item" height="128" src="/inkporter.svg" alt="logo">
-<br><b>Inkporter</b></br>
+<img class="not-gallery-item" height="128" src="inkscape-1.0/inkporter.svg" alt="logo">
+<br><b>Inkporter</b>
 <br>
 Export SVG Document to Several Format Based on Its ID!
 <br>
