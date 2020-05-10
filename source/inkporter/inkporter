@@ -2,7 +2,7 @@
 
 INSTALLDIR=$(which inkporter)
 INKSCAPEDIR=$(which inkscape)
-VERSION="2.2.3"
+VERSION="2.2.5"
 
 # Buang tanda pagar pada dua baris di bawah ini bila Anda menggunakan Inkscape Flatpak
 # shopt -s expand_aliases
