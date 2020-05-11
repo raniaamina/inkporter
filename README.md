@@ -7,7 +7,7 @@ Export SVG Document to Several Format Based on Its ID!
 
 # Inkpoter GUI
 
-An extension that will help you to export your object in your SVG to several format (SVG, JPG, PDF, Multiple PDF Page, WEBP, and EPS) by its ID. If you're book creator, icon designer, seller on marketplace, web designer, this ekstension will fully help your task. This ekstension also available as CLI version, please refer to [this page](https://app.gitbook.com/@raniaamina/s/mozelup/tools/inkporter).
+An extension that will help you to export your object in your SVG to several format (SVG, JPG, PDF, Multiple PDF Page, WEBP, and EPS) by its ID. If you're book creator, icon designer, seller on marketplace, web designer, this ekstension will fully help your task. This ekstension also available as CLI version, please refer to [this page](https://app.gitbook.com/@raniaamina/s/mozelup/tools/inkporter) or open Master Branch from this repository.
 
 ## How Inkporter Work
 
@@ -25,12 +25,12 @@ Currently we make this ekstension for Inkscape 0.9x, we need some lines to make 
 
 ## How to Use Inkporter
 
-Just copy and paset inkporter.inx and inkporter.py to Inkscape extension directory, usually in `$HOME/.config/inkscape/extensions` for linux.
+Just copy and paste inkporter.inx, inkporter.py, and inkporter directory to Inkscape extension directory, usually in `$HOME/.config/inkscape/extensions` for linux.
 
 Unable to find where is the `extensions` directory for your Inkscape installation?  
 you can check it from `Edit > Preferences > System` menu, then look at `User extensions` path in `System Info` section.
 
-If the installation is correct, you'll find Inkporter menu on Extensions -> Export -> Inkporter.
+If the installation is correct, you'll find Inkporter menu on Extensions -> Export -> Inkporter. Please make sure you're coppying right version of Inkporter, we provide two version of inkporter which is for Inkscape 0.9x and Inkscape 1.0 version.
 
 ## Development Status:
 
@@ -42,6 +42,7 @@ If the installation is correct, you'll find Inkporter menu on Extensions -> Expo
   - [x] Linux (default, flatpak, snap)
   - [ ] MacOS
   - [x] Windows (with limited features)
+- [x] Add support for Inkscape 1.0
 
 ## Contributor
 
