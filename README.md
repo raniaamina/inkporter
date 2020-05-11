@@ -19,7 +19,7 @@ Aplikasi yang dibutuhkan :
 
 Petunjuk Instalasi
 
-* Unduh [Installer inkporter-win](https://github.com/raniaamina/inkporter/releases/tag/1.4) lalu buka Installer untuk memasang inkporter-win
+* Unduh [Installer inkporter-win](https://github.com/raniaamina/inkporter/releases/tag/1.4c-cli-win) lalu buka Installer untuk memasang inkporter-win
 * Unduh dan Install dependensi dibawah ini di direktori defaultnya (Program Files)
 	* [Ghostscript 9.52](https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/gs952w32.exe)
 	* [Imagemagick](https://imagemagick.org/script/download.php#windows)
