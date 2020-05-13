@@ -21,6 +21,7 @@ echo 2) PDF         5) SVG-Plain      8) Booklet (PDF)
 echo 3) PDF-CMYK    6) JPEG           9) ZIP (PNG + EPS-Default)    
 echo.
 set /p target=Pilihan Anda : 
+set svgin=%1
 if %target%== 1 goto PNG
 if %target%== 2 goto PDF
 if %target%== 3 goto PDFCMYK
