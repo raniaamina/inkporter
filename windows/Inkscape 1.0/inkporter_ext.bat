@@ -1,6 +1,7 @@
 @echo off
 setlocal
 
+
 :main
 rem inkporter version = 1.5
 echo "|| Welcome to                                                           ||"
@@ -28,7 +29,6 @@ if %target%== booklet goto BOOKLET
 if %target%== booklet_cmyk goto BOOKLETCMYK
 if %target%== bundle goto BUNDLE
 
-
 :PNG
 set dpi=%5
 :PNGBATCHPPROCESS
@@ -47,8 +47,8 @@ set quality=%7
 :JPEGBATCHPPROCESS
 echo Getting ready to export %svgin% from SVG to JPEG
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-filename=%4\%%d.png --export-dpi=%dpi% %svgin% >nul
-	magick convert %4\%%d.png -background %6 -flatten -quality %7 -colorspace %8 %4\%%d.jpeg
+	inkscape --export-id=%%d --export-filename=%4\temp-%%d.png --export-dpi=%dpi% %svgin% >nul
+	magick convert %4\temp-%%d.png -background %6 -flatten -quality %7 -colorspace %8 %4\%%d.jpeg
 	echo File %%d.jpeg created
 	del %4\%%d.png
 	)
@@ -58,9 +58,9 @@ goto end
 :PDFBATCHPPROCESS
 echo Getting ready to export %svgin% from SVG to PDF
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\%%d.svg %svgin%
-	inkscape --export-area-page  --export-filename=%4\%%d.pdf %4\%%d.svg
-	del %4\%%d.svg
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\temp-%%d.svg %svgin%
+	inkscape --export-area-page  --export-filename=%4\%%d.pdf %4\temp-%%d.svg
+	del %4\temp-%%d.svg
 	echo File %%d.pdf created
 	)
 goto end
@@ -69,10 +69,10 @@ goto end
 :PDFCMYKBATCHPPROCESS
 echo Getting ready to export %svgin% from SVG to PDF dengan color space CMYK
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\%%d.svg %svgin%
-	inkscape --export-area-page  --export-filename=%4\%%d-rgb.pdf %4\%%d.svg
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\temp-%%d.svg %svgin%
+	inkscape --export-area-page  --export-filename=%4\%%d-rgb.pdf %4\temp-%%d.svg
 	gswin32c -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%4\%%d.pdf %4\%%d-rgb.pdf
-	del %4\%%d.svg
+	del %4\temp-%%d.svg
 	del %4\%%d-rgb.pdf
 	echo File %%d.pdf dengan color space CMYK created
 	)
@@ -91,9 +91,9 @@ goto end
 :EPSBATCHPPROCESS
 echo Getting ready to export %svgin% from SVG to EPS
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\%%d.svg %svgin%
-	inkscape %4\%%d.svg --export-filename=%4\%%d.eps --export-type=eps --export-area-page --export-ps-level=3 --export-text-to-path --export-ignore-filters >nul
-	del %4\%%d.svg
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\temp-%%d.svg %svgin%
+	inkscape %4\temp-%%d.svg --export-filename=%4\%%d.eps --export-type=eps --export-area-page --export-ps-level=3 --export-text-to-path --export-ignore-filters >nul
+	del %4\temp-%%d.svg
 	echo File %%d.eps created
 	)
 goto end
@@ -116,10 +116,10 @@ set namaFile=%objID%-booklet.pdf
 echo Getting ready to export %svgin% from SVG to Booklet (PDF)
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
 	echo Processing %%d
-	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\%%d.svg %svgin%
-	inkscape --export-area-page --export-type=pdf --export-filename=%4\pdftemp-%%d.pdf %4\%%d.svg
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\temp-%%d.svg %svgin%
+	inkscape --export-area-page --export-type=pdf --export-filename=%4\pdftemp-%%d.pdf %4\temp-%%d.svg
 	move %4\pdftemp-%%d.pdf %4\pdftemp-%%d.pdfx
-	del %4\%%d.svg
+	del %4\temp-%%d.svg
 	)
 cd %4
 dir /b | findstr pdftemp >> %4\list.txt
@@ -135,12 +135,12 @@ set namaFile=%objID%-booklet_cmyk.pdf
 echo Getting ready to export %svgin% from SVG to Booklet (PDF)
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
 	echo Processing %%d
-	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\%%d.svg %svgin%
-	inkscape --export-area-page  --export-filename=%4\%%d-rgb.pdf %4\%%d.svg
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\temp-%%d.svg %svgin%
+	inkscape --export-area-page  --export-filename=%4\%%d-rgb.pdf %4\temp-%%d.svg
 	gswin32c -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%4\%%d-temp.pdf %4\%%d-rgb.pdf
 	move %4\%%d-temp.pdf %4\pdftemp-%%d.pdfx
 	del %4\%%d-rgb.pdf
-	del %4\%%d.svg
+	del %4\temp-%%d.svg
 	)
 cd %4
 dir /b | findstr pdftemp >> %4\list.txt
@@ -160,7 +160,7 @@ echo.
 :BUNDLEBATCHPROCESS
 echo Getting ready to export %svgin% from SVG to ZIP Bundle (PNG + EPS Default)
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-plain-svg --export-filename=%4\%%d.svg %svgin%
+	inkscape --export-id=%%d --export-plain-svg --export-filename=%4\temp-%%d.svg %svgin%
 	inkscape %%d.svg --export-filename=%4\%%d.eps --export-type=eps --export-area-page --export-ps-level=3 --export-text-to-path --export-ignore-filters >nul
 	inkscape --export-id=%%d --export-filename=%4\%%d.png %svgin% >nul
 	7z a -tzip %%d.zip %%d.png %%d.eps
