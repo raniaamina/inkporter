@@ -75,7 +75,7 @@ class Inkporter(inkex.Effect):
         file_export = '"' + self.options.output_dir + '"'
         if self.options.with_cmyk:
             if not self.has_ghostscript():
-                inkex.utils.errormsg("Please install and add Ghostscript directory to Environment Variable to export PDF with CMYK color space")
+                inkex.utils.errormsg("Please install and add Ghostscript 32bit directory to Environment Variable to export PDF with CMYK color space")
                 return
             command = "start inkporter_ext pdf_cmyk {0} {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
@@ -102,7 +102,7 @@ class Inkporter(inkex.Effect):
 
     def do_booklet(self):
         if not self.has_ghostscript():
-            inkex.utils.errormsg("Please install and add Ghostscript directory to Environment Variable to do Booklet (PDF) export")
+            inkex.utils.errormsg("Please install and add Ghostscript 32bit directory to Environment Variable to do Booklet (PDF) export")
             return
         if self.options.with_cmyk:
             file_export = '"' + self.options.output_dir + '"'
