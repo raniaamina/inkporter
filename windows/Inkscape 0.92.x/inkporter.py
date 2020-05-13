@@ -73,7 +73,7 @@ class Inkporter(inkex.Effect):
         file_export = '"' + self.options.output_dir + '"'
         if self.options.with_cmyk:
             if not self.has_ghostscript():
-                inkex.debug("Please install Ghostscript to do PDF export")
+                inkex.debug("Please install and add Ghostscript 32bit directory to Environment Variables to do PDF export")
                 return
             command = "start inkporter_ext pdf_cmyk {0} {1} {2}".format(
                 self.svg_file, self.options.id_pattern, file_export)
@@ -99,6 +99,9 @@ class Inkporter(inkex.Effect):
         os.close(self.tmplog_fd)
 
     def do_booklet(self):
+        if not self.has_ghostscript():
+            inkex.debug("Please install and add Ghostscript 32bit directory to Environment Variables to do PDF export")
+            return
         if self.options.with_cmyk:
             file_export = '"' + self.options.output_dir + '"'
             command = "start inkporter_ext booklet_cmyk {0} {1} {2}".format(
@@ -115,7 +118,7 @@ class Inkporter(inkex.Effect):
     def do_webp(self):
         file_export = '"' + self.options.output_dir + '"'
         if not self.has_webp():
-            inkex.debug("Please download and configure libwebp to do webp export")
+            inkex.debug("Please download and add libwebp directory to Environment Variables to do webp export")
             return
         command = "start inkporter_ext webp {0} {1} {2} {3}".format(
             self.svg_file, self.options.id_pattern, file_export, self.options.dpi)
