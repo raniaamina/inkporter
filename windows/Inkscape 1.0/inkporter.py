@@ -60,7 +60,9 @@ class Inkporter(inkex.Effect):
 
     def do_jpg(self):
         file_export = '"' + self.options.output_dir + '"'
-        
+        if not self.has_imagemagick():
+            inkex.utils.errormsg("Please install and add ImageMagick directory to Environment Variable")
+            return
         options = " RGB"
         if self.options.with_cmyk:
             options = "CMYK"
@@ -73,7 +75,7 @@ class Inkporter(inkex.Effect):
         file_export = '"' + self.options.output_dir + '"'
         if self.options.with_cmyk:
             if not self.has_ghostscript():
-                inkex.utils.errormsg("Please install Ghostscript to do PDF export")
+                inkex.utils.errormsg("Please install and add Ghostscript directory to Environment Variable to export PDF with CMYK color space")
                 return
             command = "start inkporter_ext pdf_cmyk {0} {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
@@ -99,6 +101,9 @@ class Inkporter(inkex.Effect):
         os.close(self.tmplog_fd)
 
     def do_booklet(self):
+        if not self.has_ghostscript():
+            inkex.utils.errormsg("Please install and add Ghostscript directory to Environment Variable to do Booklet (PDF) export")
+            return
         if self.options.with_cmyk:
             file_export = '"' + self.options.output_dir + '"'
             command = "start inkporter_ext booklet_cmyk {0} {1} {2}".format(
@@ -115,7 +120,7 @@ class Inkporter(inkex.Effect):
     def do_webp(self):
         file_export = '"' + self.options.output_dir + '"'
         if not self.has_webp():
-            inkex.utils.errormsg("Please download and configure libwebp to do webp export")
+            inkex.utils.errormsg("Please download and add libwebp directory to Environment Variable to do webp export")
             return
         command = "start inkporter_ext webp {0} {1} {2} {3}".format(
             self.myfile, self.options.id_pattern, file_export, self.options.dpi)
@@ -130,9 +135,9 @@ class Inkporter(inkex.Effect):
         status, output = self.get_cmd_output('convert --version')
         return status == 0 and 'ImageMagick' in output
 
-    def has_rsvg(self):
-        status, output = self.get_cmd_output('rsvg-convert --version')
-        return status == 0 and 'rsvg-convert' in output
+    # def has_rsvg(self):
+        # status, output = self.get_cmd_output('rsvg-convert --version')
+        # return status == 0 and 'rsvg-convert' in output
     
     def has_webp(self):
         status, output = self.get_cmd_output('cwebp -help')
@@ -167,10 +172,10 @@ class Inkporter(inkex.Effect):
 
     # called when extension is running
     def effect(self):
-        if not self.has_rsvg():
-            inkex.utils.errormsg(
-                "This extension requires rsvg-convert (from librsvg/librsvg-bin) to run, please install it before start exporting")
-            exit()
+        # if not self.has_rsvg():
+            # inkex.utils.errormsg(
+                # "This extension requires rsvg-convert (from librsvg/librsvg-bin) to run, please install it before start exporting")
+            # exit()
         if len(self.options.id_pattern) > 0:
             new_nss = inkex.utils.NSS
             new_nss[u're'] = u'http://exslt.org/regular-expressions'
