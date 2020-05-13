@@ -103,10 +103,10 @@ echo.
 :WEBPBATCHPPROCESS
 echo Getting ready to export %svgin% from SVG to WEBP
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-png=%4\%%d.png --export-dpi=%dpi% %svgin% >nul
-	cwebp %4\%%d.png -o %4\%%d.webp
+	inkscape --export-id=%%d --export-png=%4\temp-%%d.png --export-dpi=%dpi% %svgin% >nul
+	cwebp %4\temp-%%d.png -o %4\%%d.webp
 	echo File %%d.webp created
-	del %4\%%d.png
+	del %4\temp-%%d.png
 	)
 goto end
 
