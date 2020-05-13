@@ -161,10 +161,10 @@ class Inkporter(inkex.Effect):
 
     # called when extension is running
     def effect(self):
-        if not self.has_rsvg():
-            inkex.debug(
-                "This extension requires rsvg-convert (from librsvg/librsvg-bin) to run, please install it before start exporting")
-            return
+        # if not self.has_rsvg():
+            # inkex.debug(
+                # "This extension requires rsvg-convert (from librsvg/librsvg-bin) to run, please install it before start exporting")
+            # return
         if len(self.options.id_pattern) > 0:
             new_nss = inkex.NSS
             new_nss[u're'] = u'http://exslt.org/regular-expressions'
