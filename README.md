@@ -45,7 +45,7 @@ sudo chmod +x /usr/local/bin/inkporter
 
 ### Penggunaan
 
-> Harap diperhatikan, Inkscape versi 1.x diperuntukkan untuk Inkscape versi 0.9x ke bawah. Untuk penggunak Inkscape versi 1.0 atau yang terbaru, pastikan untuk memasang Inkporter versi 2.x
+> Harap diperhatikan, Inkporter versi 1.x diperuntukkan untuk Inkscape versi 0.9x ke bawah. Untuk penggunak Inkscape versi 1.0 atau yang terbaru, pastikan untuk memasang Inkporter versi 2.x
 
 
 
