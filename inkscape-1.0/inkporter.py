@@ -31,7 +31,7 @@ def run_command(commands, log_path):
 
 class ProgressBar():
     def __init__(self, export_format, id_pattern, num_objects):
-        self.__text = "Exporting to {0} with pattern: {1}".format(export_format.upper(), id_pattern)
+        self.__text = "Exporting Object with ID Pattern '{1}' to {0}".format(export_format.upper(), id_pattern)
         self.__num_objects = num_objects
         self.__active = False
     
@@ -59,7 +59,7 @@ class ProgressBar():
         if self.is_active:
             current_progress = str(int(progress * 100 / self.__num_objects))
             self.__process.stdin.write("{0}\n".format(current_progress).encode("utf-8"))
-            self.__process.stdin.write("# {0} ({1}/{2})\n".format(self.__text,progress,self.__num_objects).encode("utf-8"))
+            self.__process.stdin.write("# {0} ({1}/{2} done)\n".format(self.__text,progress,self.__num_objects).encode("utf-8"))
             self.__process.stdin.flush()
 
     def __exit__(self, *args):
