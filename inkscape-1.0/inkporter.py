@@ -128,22 +128,41 @@ class Inkporter(inkex.Effect):
         if not self.has_imagemagick():
             inkex.utils.errormsg("Please install Imagemagick to do JPG/Booklet export")
             return
-        options = "-colorspace RGB"
-        if self.options.with_cmyk:
-            options = "-colorspace CMYK"
-        for item in self.svg.selected:
-            tmpfile_export = self.tmpdir + "/" + item + ".png"
-            command = "inkscape -j -i {0} -o '{1}' -d {2} '{3}' 1>>{4} 2>>{4}".format(
-                item, tmpfile_export, self.options.dpi, self.myfile, self.tmplog_path)
-            os.system(command)
-            self.tmpout.append(tmpfile_export)
-            while not os.path.exists(tmpfile_export):
-                sleep(1)
-            file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg"
-            command2 = "convert '{0}' -background '{1}' -flatten -quality {2} {3} '{4}'".format(
-                tmpfile_export, self.options.bg_color, self.options.quality, options, file_export)
-            os.system(command2)
-        os.close(self.tmplog_fd)
+
+        with ProgressBar(self.options.format, self.options.id_pattern, len(self.svg.selected)) as progressbar:
+            colorspace = "RGB"
+            if self.options.with_cmyk:
+                colorspace = "CMYK"
+            for idx,item in enumerate(self.svg.selected):
+                tmp_export_path = self.tmpdir + "/" + item + ".png"
+                # first, export to PNG
+                run_command([
+                    "inkscape",
+                    "-j","-i", item,
+                    "-d", str(self.options.dpi),
+                    "-o", "{0}".format(tmp_export_path),
+                    self.myfile
+                ], self.tmplog_path)
+
+                # while not os.path.exists(tmp_export_path):
+                #     sleep(1)
+                self.tmpout.append(tmp_export_path)
+
+                # then, convert it to JPG using ImageMagick
+                real_export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg"
+                run_command([
+                    "convert",
+                    "{0}".format(tmp_export_path),
+                    "-background", "{0}".format(self.options.bg_color),
+                    "-flatten",
+                    "-quality", "{0}".format(self.options.quality),
+                    "-colorspace", "{0}".format(colorspace),
+                    "{0}".format(real_export_path)
+                ], self.tmplog_path)
+
+                if not progressbar.is_active:
+                    break
+                progressbar.update_progress(idx + 1)
 
     def do_pdf(self):
         if self.options.with_cmyk:
