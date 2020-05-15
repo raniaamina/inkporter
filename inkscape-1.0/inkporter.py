@@ -192,13 +192,19 @@ class Inkporter(inkex.Effect):
         os.close(self.tmplog_fd)
 
     def do_svg(self):
-        for item in self.svg.selected:
-            file_export = os.path.expandvars(
-                self.options.output_dir) + "/" + item + ".svg"
-            command = "inkscape -j -i {0} -l -o '{1}' '{2}' 1>>{3} 2>>{3}".format(
-                item, file_export, self.myfile, self.tmplog_path)
-            os.system(command)
-        os.close(self.tmplog_fd)
+        with ProgressBar(self.options.format, self.options.id_pattern, len(self.svg.selected)) as progressbar:
+            for idx,item in enumerate(self.svg.selected):
+                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".svg"
+                command = [
+                    "inkscape",
+                    "-j","-i", item,
+                    "-o", "{0}".format(export_path),
+                    self.myfile
+                ]
+                run_command(command, self.tmplog_path)
+                if not progressbar.is_active:
+                    break
+                progressbar.update_progress(idx + 1)
 
     def do_eps(self):
         for item in self.svg.selected:
