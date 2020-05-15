@@ -57,6 +57,15 @@ class Inkporter(inkex.Effect):
         command = "start inkporter_ext png {0} {1} {2} {3} {4}".format(
             self.svg_file, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color)
         os.system(command)
+        
+    def do_bundle(self):
+        if not self.has_7z():
+            inkex.debug("Please install and add 7z directory to Environment Variables to do PDF export")
+            return
+        file_export = '"' + self.options.output_dir + '"'
+        command = "start inkporter_ext bundle {0} {1} {2} {3} {4}".format(
+            self.svg_file, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color)
+        os.system(command)
 
     def do_jpg(self):
         file_export = '"' + self.options.output_dir + '"'
@@ -140,6 +149,10 @@ class Inkporter(inkex.Effect):
     def has_webp(self):
         status, output = self.get_cmd_output('cwebp -help')
         return status == 0 and 'output.webp' in output
+        
+    def has_7z(self):
+        status, output = self.get_cmd_output('7z -help')
+        return status == 0 and '7-Zip' in output
     
 
     def get_cmd_output(self, cmd):
@@ -197,6 +210,8 @@ class Inkporter(inkex.Effect):
                 self.do_booklet()
             elif self.options.format == "webp":
                 self.do_webp()
+            elif self.options.format == "bundle":
+                self.do_bundle()
             self.do_cleanup()
         except Exception as e:
             inkex.debug(e)
