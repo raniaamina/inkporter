@@ -230,19 +230,23 @@ class Inkporter(inkex.Effect):
                 progressbar.update_progress(idx + 1)
 
     def do_eps(self):
-        for item in self.svg.selected:
-            tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-            command = "inkscape -i {0} -l -o '{1}' '{2}' 1>>{3} 2>>{3}".format(
-                item, tmpsvg_export, self.myfile, self.tmplog_path)
-            os.system(command)
-            self.tmpout.append(tmpsvg_export)
-            while not os.path.exists(tmpsvg_export):
-                sleep(1)
-            export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".eps"
-            command2 = "inkscape -o '{0}' '{1}' --export-area-page --export-ignore-filters --export-text-to-path --export-ps-level=3 1>>{2} 2>>{2}".format(
-                export_path, tmpsvg_export, self.tmplog_path)
-            os.system(command2)
-        os.close(self.tmplog_fd)
+        with ProgressBar(self.options.format, self.options.id_pattern, len(self.svg.selected)) as progressbar:
+            for idx,item in enumerate(self.svg.selected):
+                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".eps"
+                command = [
+                    "inkscape",
+                    "--export-area-drawing",
+                    "--export-ignore-filters",
+                    "--export-text-to-path",
+                    "--export-ps-level=3",
+                    "-j","-i", item,
+                    "-o", "{0}".format(export_path),
+                    self.myfile
+                ]
+                run_command(command, self.tmplog_path)
+                if not progressbar.is_active:
+                    break
+                progressbar.update_progress(idx + 1)
 
     def do_booklet(self):
         if not self.has_imagemagick():
