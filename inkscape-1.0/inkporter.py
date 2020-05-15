@@ -7,6 +7,7 @@ import sys
 import shutil
 import os
 import inkex
+import signal
 import subprocess
 from time import sleep
 
@@ -14,24 +15,23 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
-__version__ = '1.1.0'
-
-my_progressbar = None
+__version__ = '1.2.0'
 
 def atoi(text):
     return int(text) if text.isdigit() else text
 
 def run_command(commands, log_path):
-    log = open(log_path, "a")
-    process = subprocess.Popen(commands, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
-    for line in process.stdout:
-        sys.stdout.write(line)
-        log.write(line)
-    process.wait()
+    try:
+        outputs = subprocess.check_output(commands, stderr=subprocess.STDOUT, universal_newlines=True)
+        with open(log_path, "a") as log:
+            for line in outputs:
+                log.write(line)
+    except subprocess.CalledProcessError as error:
+        inkex.utils.errormsg(error.output)
 
 class ProgressBar():
     def __init__(self, export_format, id_pattern, num_objects):
-        self.__text = "Export {0} with pattern {1}".format(export_format, id_pattern)
+        self.__text = "Exporting to {0} with pattern: {1}".format(export_format.upper(), id_pattern)
         self.__num_objects = num_objects
         self.__active = False
     
@@ -47,16 +47,20 @@ class ProgressBar():
             "zenity",
             "--progress",
             "--title='Inkporter: Exporting...'",
-            "--text='%s'" % self.__text,
             "--auto-close",
+            "--width=400",
+            "--no-cancel",
+            "--percentage=0"
         ], stdin=subprocess.PIPE, stdout=self.__devnull, stderr=self.__devnull)
         self.__active = True
         return self
     
     def update_progress(self, progress):
         if self.is_active:
-            current_progress = int(progress * 100 / self.__num_objects)
+            current_progress = str(int(progress * 100 / self.__num_objects))
             self.__process.stdin.write("{0}\n".format(current_progress).encode("utf-8"))
+            self.__process.stdin.write("# {0} ({1}/{2})\n".format(self.__text,progress,self.__num_objects).encode("utf-8"))
+            self.__process.stdin.flush()
 
     def __exit__(self, *args):
         if self.__active:
@@ -67,6 +71,7 @@ class ProgressBar():
             self.__process.stdin.close()
         if not self.__devnull.closed:
             self.__devnull.close()
+        self.__process.wait()
         self.__active = False
 
 class Inkporter(inkex.Effect):
@@ -105,20 +110,19 @@ class Inkporter(inkex.Effect):
     
     def do_png(self):
         with ProgressBar(self.options.format, self.options.id_pattern, len(self.svg.selected)) as progressbar:
-            for idx,item in enumerate(self.svg.selected, start=1):
+            for idx,item in enumerate(self.svg.selected):
                 export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".png"
                 command = [
                     "inkscape",
                     "-j","-i", item,
                     "-d", str(self.options.dpi),
-                    "-o", "'{0}'".format(export_path),
+                    "-o", "{0}".format(export_path),
                     self.myfile
                 ]
                 run_command(command, self.tmplog_path)
                 if not progressbar.is_active:
                     break
-                progressbar.update_progress(idx)
-        os.close(self.tmplog_fd)
+                progressbar.update_progress(idx + 1)
 
     def do_jpg(self):
         if not self.has_imagemagick():
@@ -262,7 +266,8 @@ class Inkporter(inkex.Effect):
             f.write(etree.tostring(self.document, encoding="utf-8",xml_declaration=True).decode("utf-8"))
         self.tmpout.append(self.myfile)
         self.tmpdir = tempfile.mkdtemp(prefix="inkporter")
-        self.tmplog_fd, self.tmplog_path = tempfile.mkstemp(prefix="inkporter-%s-%s-"%(file_format,self.options.id_pattern), suffix=".log")
+        fd, self.tmplog_path = tempfile.mkstemp(prefix="inkporter-%s-%s-"%(file_format,self.options.id_pattern), suffix=".log")
+        os.close(fd)
 
     def get_cmd_output(self, cmd):
         # Adapted from webslicer extension (extensions > web > slicer)
