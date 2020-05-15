@@ -144,7 +144,7 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	del %4\%%d-rgb.pdf
 	del %4\temp-%%d.svg
 	)
-cd %4
+pushd %4
 dir /b | findstr pdftemp >> %4\list.txt
 echo.
 gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaFile% @%4\list.txt
