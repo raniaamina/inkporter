@@ -252,32 +252,44 @@ class Inkporter(inkex.Effect):
         if not self.has_imagemagick():
             inkex.utils.errormsg("Please install Imagemagick to do JPG/Booklet export")
             return
-        for idx,item in enumerate(self.svg.selected):
-            tmpsvg_export = self.tmpdir + "/" + item + ".pdf"
-            command = "inkscape -i {0} -j -D -d {1} -o '{2}' '{3}' 1>>{4} 2>>{4}".format(
-                item, self.options.dpi, tmpsvg_export, self.myfile, self.tmplog_path)
-            os.system(command)
-            inkex.utils.debug(command)
-            self.tmpout.append(tmpsvg_export)
-            # while not os.path.exists(tmpsvg_export):
-            #     sleep(1)
-        # export_path = os.path.expandvars(self.options.output_dir) + "/" + self.options.id_pattern + "-booklet.pdf"
-        # export_mode = "\\"
-        # self.tmpout.sort(key=lambda s: [atoi(u) for u in re.split(r'(\d+)', s)])
-        # command = "rsvg-convert -f pdf -o '{0}' {1} 1>>{2} 2>>{2}".format(
-        #     export_path, "".join(f + " " for f in self.tmpout), self.tmplog_path)
-        # os.system(command)CMYK
-        # if self.options.with_cmyk:
-        #     export_path = os.path.expandvars(self.options.output_dir) + "/" + "CMYK-" + self.options.id_pattern + "-booklet.pdf"
-        #     export_mode = "-sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK"
-        # self.tmpout.remove(self.myfile)
-        # command = "gs -q -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite {0} -sOutputFile='{1}' {2} 1>>{3} 2>>{3}".format(
-        #     export_mode, export_path, ' '.join(x for x in self.tmpout), self.tmplog_path)
-        # os.system(command)
-        # os.close(self.tmplog_fd)
-        # self.tmpout.append(self.myfile)
-        # inkex.utils.debug(command)
-    
+        with ProgressBar(self.options.format, self.options.id_pattern, len(self.svg.selected)) as progressbar:
+            for idx,item in enumerate(self.svg.selected):
+                # first, export to PDF using inkscape
+                tmp_export_path = self.tmpdir + "/" + item + ".pdf"
+                run_command([
+                    "inkscape",
+                    "--export-area-drawing",
+                    "-d", "{0}".format(self.options.dpi),
+                    "-j","-i", item,
+                    "-o", "{0}".format(tmp_export_path),
+                    self.myfile
+                ], self.tmplog_path)
+                self.tmpout.append(tmp_export_path)
+
+                if not progressbar.is_active:
+                    break
+                progressbar.update_progress(idx + 1)
+
+            # then, convert it to PDF CMYK using Ghostscript
+            real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/BOOKLET-" + item + ".pdf"
+            command = [
+                "gs","-dSAFER", "-dBATCH", "-dNOPAUSE", "-dNOCACHE", "-sDEVICE=pdfwrite"
+            ]
+            if self.options.with_cmyk:
+                real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/CMYK-BOOKLET-" + item + ".pdf"
+                command.append("-sColorConversionStrategy=CMYK")
+                command.append("-dProcessColorModel=/DeviceCMYK")
+            command.append(real_export_path)
+            # sort by name first
+            self.tmpout.sort(key=lambda s: [atoi(u) for u in re.split(r'(\d+)', s)])
+            # removing inputfile temp
+            self.tmpout.remove(self.myfile)
+            command = command + self.tmpout
+            run_command(command, self.tmplog_path)
+            # re-append for cleanup later
+            self.tmpout.append(self.myfile)
+            # inkex.utils.debug(command)
+
     def do_webp(self):
         if not self.has_webp():
             inkex.utils.errormsg("Please install libwebp to do webp export")
