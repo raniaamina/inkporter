@@ -22,10 +22,52 @@ def atoi(text):
     return int(text) if text.isdigit() else text
 
 def run_command(commands, log_path):
-    process = subprocess.Popen(commands, stdout=subprocess.STDOUT, stderr=subprocess.STDOUT, universal_newlines=True)
-    with open(log_path, "a") as log:
-        for line in process.stdout:
-            log.write(line)
+    log = open(log_path, "a")
+    process = subprocess.Popen(commands, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True)
+    for line in process.stdout:
+        sys.stdout.write(line)
+        log.write(line)
+    process.wait()
+
+class ProgressBar():
+    def __init__(self, export_format, id_pattern, num_objects):
+        self.__text = "Export {0} with pattern {1}".format(export_format, id_pattern)
+        self.__num_objects = num_objects
+        self.__active = False
+    
+    @property
+    def is_active(self):
+        if self.__active and self.__process.poll() is not None:
+            self.__close()
+        return self.__active
+
+    def __enter__(self):
+        self.__devnull = open(os.devnull, 'w')
+        self.__process = subprocess.Popen([
+            "zenity",
+            "--progress",
+            "--title='Inkporter: Exporting...'",
+            "--text='%s'" % self.__text,
+            "--auto-close",
+        ], stdin=subprocess.PIPE, stdout=self.__devnull, stderr=self.__devnull)
+        self.__active = True
+        return self
+    
+    def update_progress(self, progress):
+        if self.is_active:
+            current_progress = int(progress * 100 / self.__num_objects)
+            self.__process.stdin.write("{0}\n".format(current_progress).encode("utf-8"))
+
+    def __exit__(self, *args):
+        if self.__active:
+            self.__close()
+
+    def __close(self):
+        if not self.__process.stdin.closed:
+            self.__process.stdin.close()
+        if not self.__devnull.closed:
+            self.__devnull.close()
+        self.__active = False
 
 class Inkporter(inkex.Effect):
     def __init__(self):
@@ -62,16 +104,20 @@ class Inkporter(inkex.Effect):
         self.tmpout = []
     
     def do_png(self):
-        for item in self.svg.selected:
-            export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".png"
-            command = [
-                "inkscape",
-                "-j","-i", item,
-                "-d", self.options.dpi,
-                "-o", "'%s'" % export_path,
-                self.myfile
-            ]
-            run_command(command, self.tmplog_path)
+        with ProgressBar(self.options.format, self.options.id_pattern, len(self.svg.selected)) as progressbar:
+            for idx,item in enumerate(self.svg.selected, start=1):
+                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".png"
+                command = [
+                    "inkscape",
+                    "-j","-i", item,
+                    "-d", str(self.options.dpi),
+                    "-o", "'{0}'".format(export_path),
+                    self.myfile
+                ]
+                run_command(command, self.tmplog_path)
+                if not progressbar.is_active:
+                    break
+                progressbar.update_progress(idx)
         os.close(self.tmplog_fd)
 
     def do_jpg(self):
@@ -274,7 +320,7 @@ class Inkporter(inkex.Effect):
                 self.do_booklet()
             elif self.options.format == "webp":
                 self.do_webp()
-            # self.do_cleanup()
+            self.do_cleanup()
         except Exception as e:
             inkex.utils.errormsg(e)
             import traceback
