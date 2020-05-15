@@ -169,27 +169,50 @@ class Inkporter(inkex.Effect):
             if not self.has_ghostscript():
                 inkex.utils.errormsg("Please install Ghostscript to do PDF export")
                 return
-            for item in self.svg.selected:
-                tmpsvg_export = self.tmpdir + "/" + item + ".pdf"
-                command = "inkscape -i {0} -j -C -d {1} -o '{2}' '{3}' 1>>{4} 2>>{4}".format(
-                    item, self.options.dpi, tmpsvg_export, self.myfile, self.tmplog_path)
-                os.system(command)
-                self.tmpout.append(tmpsvg_export)
-                while not os.path.exists(tmpsvg_export):
-                    sleep(1)
-                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + "-CMYK.pdf"
-                command2 = "gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK " \
-                    + "-dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode " \
-                    + "-dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile='{0}' '{1}' 1>>{2} 2>>{2}".format(
-                        export_path, tmpsvg_export, self.tmplog_path)
-                os.system(command2)
+            with ProgressBar(self.options.format, self.options.id_pattern, len(self.svg.selected)) as progressbar:
+                for idx,item in enumerate(self.svg.selected):
+                    # first, export to PDF using inkscape
+                    tmp_export_path = self.tmpdir + "/" + item + ".pdf"
+                    run_command([
+                        "inkscape",
+                        "--export-area-drawing",
+                        "-d", "{0}".format(self.options.dpi),
+                        "-j","-i", item,
+                        "-o", "{0}".format(tmp_export_path),
+                        self.myfile
+                    ], self.tmplog_path)
+                    self.tmpout.append(tmp_export_path)
+
+                    # then, convert it to PDF CMYK using Ghostscript
+                    real_export_path = os.path.expandvars(self.options.output_dir) + "/CMYK-" + item + ".pdf"
+                    run_command([
+                        "gs","-dSAFER", "-dBATCH", "-dNOPAUSE", "-dNOCACHE", "-sDEVICE=pdfwrite", "-dAutoRotatePages=/None",
+                        "-sColorConversionStrategy=CMYK", "-dProcessColorModel=/DeviceCMYK", "-dAutoFilterColorImages=false",
+                        "-dAutoFilterGrayImages=false", "-dColorImageFilter=/FlateEncode", "-dGrayImageFilter=/FlateEncode",
+                        "-dDownsampleMonoImages=false", "-dDownsampleGrayImages=false",
+                        "-sOutputFile={0}".format(real_export_path),
+                        "{0}".format(tmp_export_path)
+                    ], self.tmplog_path)
+
+                    if not progressbar.is_active:
+                        break
+                    progressbar.update_progress(idx + 1)
         else:
-            for item in self.svg.selected:
-                tmpsvg_export = self.options.output_dir + "/" + item + ".pdf"
-                command = "inkscape -i {0} -j -C -d {1} -o '{2}' '{3}' 1>>{4} 2>>{4}".format(
-                    item, self.options.dpi, tmpsvg_export, self.myfile, self.tmplog_path)
-                os.system(command)
-        os.close(self.tmplog_fd)
+            with ProgressBar(self.options.format, self.options.id_pattern, len(self.svg.selected)) as progressbar:
+                for idx,item in enumerate(self.svg.selected):
+                    export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
+                    command = [
+                        "inkscape",
+                        "--export-area-drawing",
+                        "-d", "{0}".format(self.options.dpi),
+                        "-j","-i", item,
+                        "-o", "{0}".format(export_path),
+                        self.myfile
+                    ]
+                    run_command(command, self.tmplog_path)
+                    if not progressbar.is_active:
+                        break
+                    progressbar.update_progress(idx + 1)
 
     def do_svg(self):
         with ProgressBar(self.options.format, self.options.id_pattern, len(self.svg.selected)) as progressbar:
