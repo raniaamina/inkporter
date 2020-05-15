@@ -282,19 +282,32 @@ class Inkporter(inkex.Effect):
         if not self.has_webp():
             inkex.utils.errormsg("Please install libwebp to do webp export")
             return
-        for item in self.svg.selected:
-            tmppng_export = self.tmpdir + "/" + item + ".png"
-            command = "inkscape -j -i {0} -o '{1}' -d {2} '{3}' 1>>{4} 2>>{4}".format(
-                item, tmppng_export, self.options.dpi, self.myfile, self.tmplog_path)
-            os.system(command)
-            self.tmpout.append(tmppng_export)
-            while not os.path.exists(tmppng_export):
-                sleep(1)
-            export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".webp"
-            command = "cwebp '{0}' -quiet -o '{1}' 1>>{2} 2>>{2}".format(
-                tmppng_export, export_path, self.tmplog_path)
-            os.system(command)
-        os.close(self.tmplog_fd)
+        with ProgressBar(self.options.format, self.options.id_pattern, len(self.svg.selected)) as progressbar:
+            for idx,item in enumerate(self.svg.selected):
+                tmp_export_path = self.tmpdir + "/" + item + ".png"
+                # first, export to PNG
+                run_command([
+                    "inkscape",
+                    "-j","-i", item,
+                    "-d", str(self.options.dpi),
+                    "-o", "{0}".format(tmp_export_path),
+                    self.myfile
+                ], self.tmplog_path)
+
+                self.tmpout.append(tmp_export_path)
+
+                # then, convert it to WEBP using cwebp
+                real_export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".webp"
+                run_command([
+                    "cwebp",
+                    "-quiet",
+                    "-o","{0}".format(real_export_path),
+                    "{0}".format(tmp_export_path),
+                ], self.tmplog_path)
+
+                if not progressbar.is_active:
+                    break
+                progressbar.update_progress(idx + 1)
 
     def has_ghostscript(self):
         status, output = self.get_cmd_output('gs --help')
