@@ -141,10 +141,6 @@ class Inkporter(inkex.Effect):
     def has_imagemagick(self):
         status, output = self.get_cmd_output('convert --version')
         return status == 0 and 'ImageMagick' in output
-
-    def has_rsvg(self):
-        status, output = self.get_cmd_output('rsvg-convert --version')
-        return status == 0 and 'rsvg-convert' in output
     
     def has_webp(self):
         status, output = self.get_cmd_output('cwebp -help')
@@ -177,10 +173,6 @@ class Inkporter(inkex.Effect):
 
     # called when extension is running
     def effect(self):
-        # if not self.has_rsvg():
-            # inkex.debug(
-                # "This extension requires rsvg-convert (from librsvg/librsvg-bin) to run, please install it before start exporting")
-            # return
         if len(self.options.id_pattern) > 0:
             new_nss = inkex.NSS
             new_nss[u're'] = u'http://exslt.org/regular-expressions'

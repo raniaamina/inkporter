@@ -15,16 +15,16 @@
                                 <item value="jpg">JPG</item>
                                 <item value="pdf">PDF</item>
                                 <item value="svg">SVG</item>
-                                <item value="eps">EPS</item>
+                                <item value="eps">EPS-Default</item>
                                 <item value="booklet">Booklet (PDF)</item>
-                                <item value="webp">webp</item>
+                                <item value="webp">WebP</item>
                         </param>
                         <param name="id-pattern" type="string" gui-text="ID Pattern        "></param>
                         <param name="with-cmyk" type="bool" gui-text="Use CMYK ? (JPG/PDF)">false</param>
                         <param name="dpi" type="int" min="0" max="10000" gui-text="DPI (for PNG/JPG)">96</param>
                         <param name="quality" type="int" min="0" max="100" gui-text="Quality (for JPG)">100</param>
                         <param name="bg-color" type="string" gui-text="Background Color (for JPG)">#ffffff</param>
-                        <param name="output-dir" type="path" mode="folder" gui-text="Output Directory ">$HOME/inkporter-output/</param>
+                        <param name="output-dir" type="path" mode="folder" gui-text="Output Directory ">%USERPROFILE%\Pictures</param>
                 </page>
                 <!-- next tab -->
                 <page name='usage' gui-text='Usage'>
