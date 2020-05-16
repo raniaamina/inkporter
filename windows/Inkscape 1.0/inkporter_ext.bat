@@ -118,11 +118,21 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	echo Processing %%d
 	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\temp-%%d.svg %svgin%
 	inkscape --export-area-page --export-type=pdf --export-filename=%4\pdftemp-%%d.pdf %4\temp-%%d.svg
-	move %4\pdftemp-%%d.pdf %4\pdftemp-%%d.pdfx
+	move %4\pdftemp-%%d.pdf %4\pdftemp-%%d.pdfx >nul
 	del %4\temp-%%d.svg
 	)
 cd %4
-dir /b | findstr pdftemp >> %4\list.txt
+REM export all pdfx to list.txt
+rem based on answer on stackoverflow : https://stackoverflow.com/questions/19297935/naturally-sort-files-in-batch
+(
+setlocal enabledelayedexpansion
+for %%f in (*.pdfx) do (
+set numbr=00000000000000000000000000000000%%f
+set numbr=!numbr:~-36!
+set $!numbr!=%%f
+)
+for /f "tokens=1,* delims==" %%f in ('set $0') do echo %%g
+) >> list.txt
 echo.
 gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaFile% @%4\list.txt
 del *.pdfx
@@ -138,12 +148,22 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\temp-%%d.svg %svgin%
 	inkscape --export-area-page  --export-filename=%4\%%d-rgb.pdf %4\temp-%%d.svg
 	gswin32c -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%4\%%d-temp.pdf %4\%%d-rgb.pdf
-	move %4\%%d-temp.pdf %4\pdftemp-%%d.pdfx
+	move %4\%%d-temp.pdf %4\pdftemp-%%d.pdfx >nul
 	del %4\%%d-rgb.pdf
 	del %4\temp-%%d.svg
 	)
 pushd %4
-dir /b | findstr pdftemp >> %4\list.txt
+REM export all pdfx to list.txt
+rem based on answer on stackoverflow : https://stackoverflow.com/questions/19297935/naturally-sort-files-in-batch
+(
+setlocal enabledelayedexpansion
+for %%f in (*.pdfx) do (
+set numbr=00000000000000000000000000000000%%f
+set numbr=!numbr:~-36!
+set $!numbr!=%%f
+)
+for /f "tokens=1,* delims==" %%f in ('set $0') do echo %%g
+) >> list.txt
 echo.
 gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaFile% @%4\list.txt
 del *.pdfx
@@ -151,23 +171,18 @@ del list.txt
 goto end
 
 :BUNDLE
-set /p objID="Pola nama Object ID : "
-set /p fold="Buat folder hasil ekspor : "
-echo File akan disimpan di %cd%\%fold%
-md "%fold%" 2>nul
-set der=%cd%
-echo.
+set dpi=%5
 :BUNDLEBATCHPROCESS
 echo Getting ready to export %svgin% from SVG to ZIP Bundle (PNG + EPS Default)
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-plain-svg --export-filename=%4\temp-%%d.svg %svgin%
-	inkscape %%d.svg --export-filename=%4\%%d.eps --export-type=eps --export-area-page --export-ps-level=3 --export-text-to-path --export-ignore-filters >nul
-	inkscape --export-id=%%d --export-filename=%4\%%d.png %svgin% >nul
-	7z a -tzip %%d.zip %%d.png %%d.eps
-	del %%d.svg
-	del %%d.png
-	del %%d.eps
-	move %%d.zip "%der%\%fold%\" >nul
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%4\temp-%%d.svg %svgin%
+	inkscape %4\temp-%%d.svg --export-filename=%4\%%d.eps --export-type=eps --export-area-page --export-ps-level=3 --export-text-to-path --export-ignore-filters >nul
+	inkscape --export-id=%%d --export-filename=%4\%%d.png --export-dpi=%dpi%  %svgin%
+	del %4\temp-%%d.svg
+	7z a -tzip %4\%%d.zip %4\%%d.png %4\%%d.eps
+	del %4\%%d.svg
+	del %4\%%d.png
+	del %4\%%d.eps
 	echo File %%d.zip created
 	)
 goto end

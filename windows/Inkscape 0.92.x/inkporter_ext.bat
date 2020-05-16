@@ -118,15 +118,28 @@ set namaFile=%objID%-booklet.pdf
 echo Getting ready to process objects with "%objID%" pattern name to Booklet (PDF)
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
 	echo Processing %%d
-	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-plain-svg=%4\%%d.svg %svgin%
+	inkscape --export-id=%%d --export-id-only --export-plain-svg=%4\%%d.svg %svgin%
+	echo svg created
 	inkscape --export-area-page --export-pdf=%4\pdftemp-%%d.pdf %4\%%d.svg
+	echo pdf created
 	move %4\pdftemp-%%d.pdf %4\pdftemp-%%d.pdfx
 	del %4\%%d.svg
 	)
-cd %4
-dir /b | findstr pdftemp >> %4\list.txt
+pushd %4
+REM export all pdfx to list.txt
+rem based on answer on stackoverflow : https://stackoverflow.com/questions/19297935/naturally-sort-files-in-batch
+(
+setlocal enabledelayedexpansion
+for %%f in (*.pdfx) do (
+set numbr=00000000000000000000000000000000%%f
+set numbr=!numbr:~-36!
+set $!numbr!=%%f
+)
+for /f "tokens=1,* delims==" %%f in ('set $0') do echo %%g
+) >> list.txt
 echo.
-gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaFile% @%4\list.txt
+gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaFile% @list.txt
+pause
 del *.pdfx
 del list.txt
 goto end
@@ -145,7 +158,18 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	del %4\temp-%%d.svg
 	)
 pushd %4
-dir /b | findstr pdftemp >> %4\list.txt
+REM export all pdfx to list.txt
+rem based on answer in stackoverflow : https://stackoverflow.com/questions/19297935/naturally-sort-files-in-batch
+(
+setlocal enabledelayedexpansion
+for %%f in (*.pdfx) do (
+set numbr=00000000000000000000000000000000%%f
+set numbr=!numbr:~-36!
+set $!numbr!=%%f
+)
+for /f "tokens=1,* delims==" %%f in ('set $0') do echo %%g
+) >> list.txt
+
 echo.
 gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaFile% @%4\list.txt
 del *.pdfx

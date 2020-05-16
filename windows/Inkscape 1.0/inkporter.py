@@ -57,7 +57,16 @@ class Inkporter(inkex.Effect):
         command = "start inkporter_ext png {0} {1} {2} {3} {4}".format(
             self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color)
         os.system(command)
-
+        
+    def do_bundle(self):
+        file_export = '"' + self.options.output_dir + '"'
+        if not self.has_7z():
+            inkex.utils.errormsg("Please install and add 7-Zip directory to Environment Variable to do Booklet (PDF) export")
+            return
+        command = "start inkporter_ext bundle {0} {1} {2} {3} {4}".format(
+            self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color)
+        os.system(command)
+        
     def do_jpg(self):
         file_export = '"' + self.options.output_dir + '"'
         if not self.has_imagemagick():
@@ -130,6 +139,10 @@ class Inkporter(inkex.Effect):
     def has_ghostscript(self):
         status, output = self.get_cmd_output('gswin32c --help')
         return status == 0 and 'Ghostscript' in output
+        
+    def has_7z(self):
+        status, output = self.get_cmd_output('7z --help')
+        return status == 0 and '7-Zip' in output
 
     def has_imagemagick(self):
         status, output = self.get_cmd_output('convert --version')
@@ -198,6 +211,8 @@ class Inkporter(inkex.Effect):
                 self.do_booklet()
             elif self.options.format == "webp":
                 self.do_webp()
+            elif self.options.format == "bundle":
+                self.do_bundle()
             self.do_cleanup()
         except Exception as e:
             inkex.utils.errormsg(e)

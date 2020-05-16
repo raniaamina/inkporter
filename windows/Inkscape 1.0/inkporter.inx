@@ -18,6 +18,7 @@
                                 <item value="eps">EPS-Default</item>
                                 <item value="booklet">Booklet (PDF)</item>
                                 <item value="webp">WebP</item>
+								<item value="bundle">ZIP (PNG + EPS-Default)</item>
                         </param>
                         <param name="id-pattern" type="string" gui-text="ID Pattern        "></param>
                         <param name="with-cmyk" type="bool" gui-text="Use CMYK ? (JPG/PDF)">false</param>
