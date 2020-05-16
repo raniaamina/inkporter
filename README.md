@@ -18,10 +18,10 @@ The simple explanations is, inkporter will read ID pattern (i.e icon-1, icon-2, 
 Currently we make this ekstension for Inkscape 0.9x, we need some lines to make this ekstension work on version 1.x, and of course we'll do it in the future. To make Inkporter run correctly, please make sure that this Dependencies already installed on your system:
 
 - Inkscape
-- librsvg2-bin (this package has different name on some linux distro repositories)
 - Ghostscript
 - ImageMagick
 - webp / libwebp
+- zenity
 
 ## How to Use Inkporter
 
@@ -40,7 +40,12 @@ If the installation is correct, you'll find Inkporter menu on Extensions -> Expo
 - [x] Backend Development (Phase 2)
 - [ ] Testing (Phase 3)
   - [x] Linux (default, flatpak, snap)
-  - [ ] MacOS
+  - [x] MacOS
+    ```bash
+    # run with this trick
+    ➜  ~ cd /Applications/Inkscape.app/Contents/MacOS
+    ➜  MacOS ./inkscape
+    ```
   - [x] Windows (with limited features)
 - [x] Add support for Inkscape 1.0
 

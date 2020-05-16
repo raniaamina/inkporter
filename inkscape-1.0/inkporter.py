@@ -7,17 +7,85 @@ import sys
 import shutil
 import os
 import inkex
+import signal
+import subprocess
 from time import sleep
 
-__version__ = '1.1.0'
+import gi
+gi.require_version("Gtk", "3.0")
+from gi.repository import Gtk
+
+__version__ = '1.2.0'
 
 def atoi(text):
     return int(text) if text.isdigit() else text
 
+def run_command(commands, log_path):
+    try:
+        outputs = subprocess.check_output(commands, stderr=subprocess.STDOUT, universal_newlines=True)
+        with open(log_path, "a") as log:
+            for line in outputs:
+                log.write(line)
+    except subprocess.CalledProcessError as error:
+        inkex.utils.errormsg(error.output)
+
+class ProgressBar():
+    def __init__(self, export_format, num_objects, use_zenity):
+        self.__text = "Exporting Object with ID 'objectid' to {0}".format(export_format.upper())
+        self.__num_objects = num_objects
+        self.__active = False
+        if use_zenity:
+            self.__progress_command = "zenity"
+        else:
+            self.__progress_command = None
+    
+    @property
+    def is_active(self):
+        if self.__active and self.__process.poll() is not None:
+            self.__close()
+        return self.__active
+
+    def __enter__(self):
+        if self.__progress_command is None:
+           return self 
+        self.__devnull = open(os.devnull, 'w')
+        self.__process = subprocess.Popen([
+            "zenity",
+            "--progress",
+            "--title='Inkporter: Exporting...'",
+            "--auto-close",
+            "--width=400",
+            "--no-cancel",
+            "--percentage=0"
+        ], stdin=subprocess.PIPE, stdout=self.__devnull, stderr=self.__devnull)
+        self.__active = True
+        return self
+    
+    def update_progress(self, progress, object_id):
+        if self.is_active:
+            current_progress = str(int(progress * 100 / self.__num_objects))
+            self.__process.stdin.write("{0}\n".format(current_progress).encode("utf-8"))
+            self.__process.stdin.write("# {0} ({1}/{2} done)\n".format(
+                self.__text.replace('objectid', object_id), 
+                progress, 
+                self.__num_objects).encode("utf-8"))
+            self.__process.stdin.flush()
+
+    def __exit__(self, *args):
+        if self.__active:
+            self.__close()
+
+    def __close(self):
+        if not self.__process.stdin.closed:
+            self.__process.stdin.close()
+        if not self.__devnull.closed:
+            self.__devnull.close()
+        self.__process.wait()
+        self.__active = False
 
 class Inkporter(inkex.Effect):
-    def __init__(self, *args, **kwargs):
-        inkex.Effect.__init__(self, *args, **kwargs)
+    def __init__(self):
+        inkex.Effect.__init__(self)
         try:
             self.tty = open("/dev/tty", 'w')
         except:
@@ -46,147 +114,230 @@ class Inkporter(inkex.Effect):
         self.arg_parser.add_argument("-q", "--quality",
                                      type=int, dest="quality",
                                      help="Quality of image export, 0-100, higher better but slower",  default=100)
-        # temporary svg out file
         self.id_to_process = None
-        self.tmpdir = tempfile.mkdtemp(prefix="inkporter")
-        self.tmplog_fd, self.tmplog_path = tempfile.mkstemp(prefix="inkporter", suffix=".log")
+        self.with_zenity = True
         self.tmpout = []
     
     def do_png(self):
-        for item in self.svg.selected:
-            file_export = os.path.expandvars(
-                self.options.output_dir) + "/" + item + ".png"
-            command = "inkscape -j -i {0} -o '{1}' -d {2} '{3}' 1>>{4} 2>>{4}".format(
-                item, file_export, self.options.dpi, self.myfile, self.tmplog_path)
-            os.system(command)
-        os.close(self.tmplog_fd)
+        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
+            for idx,item in enumerate(self.svg.selected):
+                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".png"
+                command = [
+                    "inkscape",
+                    "-j","-i", item,
+                    "-d", str(self.options.dpi),
+                    "-o", "{0}".format(export_path),
+                    self.myfile
+                ]
+                run_command(command, self.tmplog_path)
+                if self.with_zenity:
+                    if not progressbar.is_active:
+                        break
+                    progressbar.update_progress(idx + 1, item)
 
     def do_jpg(self):
         if not self.has_imagemagick():
             inkex.utils.errormsg("Please install Imagemagick to do JPG/Booklet export")
             return
-        options = "-colorspace RGB"
-        if self.options.with_cmyk:
-            options = "-colorspace CMYK"
-        for item in self.svg.selected:
-            tmpfile_export = self.tmpdir + "/" + item + ".png"
-            command = "inkscape -j -i {0} -o '{1}' -d {2} '{3}' 1>>{4} 2>>{4}".format(
-                item, tmpfile_export, self.options.dpi, self.myfile, self.tmplog_path)
-            os.system(command)
-            self.tmpout.append(tmpfile_export)
-            while not os.path.exists(tmpfile_export):
-                sleep(1)
-            file_export = os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg"
-            command2 = "convert '{0}' -background '{1}' -flatten -quality {2} {3} '{4}'".format(
-                tmpfile_export, self.options.bg_color, self.options.quality, options, file_export)
-            os.system(command2)
-        os.close(self.tmplog_fd)
+
+        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
+            colorspace = "RGB"
+            if self.options.with_cmyk:
+                colorspace = "CMYK"
+            for idx,item in enumerate(self.svg.selected):
+                tmp_export_path = self.tmpdir + "/" + item + ".png"
+                # first, export to PNG
+                run_command([
+                    "inkscape",
+                    "-j","-i", item,
+                    "-d", str(self.options.dpi),
+                    "-o", "{0}".format(tmp_export_path),
+                    self.myfile
+                ], self.tmplog_path)
+
+                # while not os.path.exists(tmp_export_path):
+                #     sleep(1)
+                self.tmpout.append(tmp_export_path)
+
+                # then, convert it to JPG using ImageMagick
+                real_export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg"
+                run_command([
+                    "convert",
+                    "{0}".format(tmp_export_path),
+                    "-background", "{0}".format(self.options.bg_color),
+                    "-flatten",
+                    "-quality", "{0}".format(self.options.quality),
+                    "-colorspace", "{0}".format(colorspace),
+                    "{0}".format(real_export_path)
+                ], self.tmplog_path)
+
+                if self.with_zenity:
+                    if not progressbar.is_active:
+                        break
+                    progressbar.update_progress(idx + 1, item)
 
     def do_pdf(self):
         if self.options.with_cmyk:
             if not self.has_ghostscript():
                 inkex.utils.errormsg("Please install Ghostscript to do PDF export")
                 return
-            for item in self.svg.selected:
-                tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-                command = "inkscape -i {0} -l -o '{1}' '{2}' 1>>{3} 2>>{3}".format(
-                    item, tmpsvg_export, self.myfile, self.tmplog_path)
-                os.system(command)
-                self.tmpout.append(tmpsvg_export)
-                tmppdf_export = self.tmpdir + "/" + item + ".pdf"
-                command = "inkscape --export-area-page -o '{0}' '{1}' 1>>{2} 2>>{2}".format(
-                    tmppdf_export, tmpsvg_export, self.tmplog_path)
-                os.system(command)
-                self.tmpout.append(tmppdf_export)
-                while not os.path.exists(tmpsvg_export):
-                    sleep(1)
-                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
-                command2 = "gs -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK " \
-                    + "-dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode " \
-                    + "-dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile='{0}' '{1}' 1>>{2} 2>>{2}".format(
-                        export_path, tmppdf_export, self.tmplog_path)
-                os.system(command2)
+            with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
+                for idx,item in enumerate(self.svg.selected):
+                    # first, export to PDF using inkscape
+                    tmp_export_path = self.tmpdir + "/" + item + ".pdf"
+                    run_command([
+                        "inkscape",
+                        "--export-area-drawing",
+                        "-d", "{0}".format(self.options.dpi),
+                        "-j","-i", item,
+                        "-o", "{0}".format(tmp_export_path),
+                        self.myfile
+                    ], self.tmplog_path)
+                    self.tmpout.append(tmp_export_path)
+
+                    # then, convert it to PDF CMYK using Ghostscript
+                    real_export_path = os.path.expandvars(self.options.output_dir) + "/CMYK-" + item + ".pdf"
+                    run_command([
+                        "gs","-dSAFER", "-dBATCH", "-dNOPAUSE", "-dNOCACHE", "-sDEVICE=pdfwrite", "-dAutoRotatePages=/None",
+                        "-sColorConversionStrategy=CMYK", "-dProcessColorModel=/DeviceCMYK", "-dAutoFilterColorImages=false",
+                        "-dAutoFilterGrayImages=false", "-dColorImageFilter=/FlateEncode", "-dGrayImageFilter=/FlateEncode",
+                        "-dDownsampleMonoImages=false", "-dDownsampleGrayImages=false",
+                        "-sOutputFile={0}".format(real_export_path),
+                        "{0}".format(tmp_export_path)
+                    ], self.tmplog_path)
+
+                    if self.with_zenity:
+                        if not progressbar.is_active:
+                            break
+                        progressbar.update_progress(idx + 1, item)
         else:
-            for item in self.svg.selected:
-                tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-                command = "inkscape -i {0} -l -o '{1}' '{2}' 1>>{3} 2>>{3}".format(
-                    item, tmpsvg_export, self.myfile, self.tmplog_path)
-                os.system(command)
-                self.tmpout.append(tmpsvg_export)
-                while not os.path.exists(tmpsvg_export):
-                    sleep(1)
-                export_path = os.path.expandvars(
-                    self.options.output_dir) + "/" + item + ".pdf"
-                command2 = "inkscape --export-area-page -o '{0}' '{1}' 1>>{2} 2>>{2}".format(
-                    export_path, tmpsvg_export, self.tmplog_path)
-                os.system(command2)
-        os.close(self.tmplog_fd)
+            with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
+                for idx,item in enumerate(self.svg.selected):
+                    export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
+                    command = [
+                        "inkscape",
+                        "--export-area-drawing",
+                        "-d", "{0}".format(self.options.dpi),
+                        "-j","-i", item,
+                        "-o", "{0}".format(export_path),
+                        self.myfile
+                    ]
+                    run_command(command, self.tmplog_path)
+                    if self.with_zenity:
+                        if not progressbar.is_active:
+                            break
+                        progressbar.update_progress(idx + 1, item)
 
     def do_svg(self):
-        for item in self.svg.selected:
-            file_export = os.path.expandvars(
-                self.options.output_dir) + "/" + item + ".svg"
-            command = "inkscape -j -i {0} -l -o '{1}' '{2}' 1>>{3} 2>>{3}".format(
-                item, file_export, self.myfile, self.tmplog_path)
-            os.system(command)
-        os.close(self.tmplog_fd)
+        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
+            for idx,item in enumerate(self.svg.selected):
+                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".svg"
+                command = [
+                    "inkscape",
+                    "-j","-i", item,
+                    "-o", "{0}".format(export_path),
+                    self.myfile
+                ]
+                run_command(command, self.tmplog_path)
+                if self.with_zenity:
+                    if not progressbar.is_active:
+                        break
+                    progressbar.update_progress(idx + 1, item)
 
     def do_eps(self):
-        for item in self.svg.selected:
-            tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-            command = "inkscape -i {0} -l -o '{1}' '{2}' 1>>{3} 2>>{3}".format(
-                item, tmpsvg_export, self.myfile, self.tmplog_path)
-            os.system(command)
-            self.tmpout.append(tmpsvg_export)
-            while not os.path.exists(tmpsvg_export):
-                sleep(1)
-            export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".eps"
-            command2 = "inkscape -o '{0}' '{1}' --export-area-page --export-ignore-filters --export-text-to-path --export-ps-level=3 1>>{2} 2>>{2}".format(
-                export_path, tmpsvg_export, self.tmplog_path)
-            os.system(command2)
-        os.close(self.tmplog_fd)
+        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
+            for idx,item in enumerate(self.svg.selected):
+                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".eps"
+                command = [
+                    "inkscape",
+                    "--export-area-drawing",
+                    "--export-ignore-filters",
+                    "--export-text-to-path",
+                    "--export-ps-level=3",
+                    "-j","-i", item,
+                    "-o", "{0}".format(export_path),
+                    self.myfile
+                ]
+                run_command(command, self.tmplog_path)
+                if self.with_zenity:
+                    if not progressbar.is_active:
+                        break
+                    progressbar.update_progress(idx + 1, item)
 
     def do_booklet(self):
         if not self.has_imagemagick():
             inkex.utils.errormsg("Please install Imagemagick to do JPG/Booklet export")
             return
-        for item in self.svg.selected:
-            tmpsvg_export = self.tmpdir + "/" + item + ".svg"
-            command = "inkscape -i {0} -l -o '{1}' '{2}' 1>>{3} 2>>{3}".format(
-                item, tmpsvg_export, self.myfile, self.tmplog_path)
-            os.system(command)
-            self.tmpout.append(tmpsvg_export)
-            while not os.path.exists(tmpsvg_export):
-                sleep(1)
-        export_path = os.path.expandvars(self.options.output_dir) + "/" + self.options.id_pattern + "-booklet.pdf"
-        self.tmpout.sort(key=lambda s: [atoi(u) for u in re.split(r'(\d+)', s)])
-        command = "rsvg-convert -f pdf -o '{0}' {1} 1>>{2} 2>>{2}".format(
-            export_path, "".join(f + " " for f in self.tmpout), self.tmplog_path)
-        os.system(command)
-        if self.options.with_cmyk:
-            cmyk_export_path = os.path.dirname(export_path) + os.path.basename(export_path).split(".pdf")[0] + ".cmyk.pdf"
-            command = "gs -q -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -sOutputFile='{0}' '{1}' 1>>{2} 2>>{2}".format(
-                cmyk_export_path, export_path, self.tmplog_path)
-            os.system(command)
-        os.close(self.tmplog_fd)
-    
+        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
+            for idx,item in enumerate(self.svg.selected):
+                # first, export to PDF using inkscape
+                tmp_export_path = self.tmpdir + "/" + item + ".pdf"
+                run_command([
+                    "inkscape",
+                    "--export-area-drawing",
+                    "-d", "{0}".format(self.options.dpi),
+                    "-j","-i", item,
+                    "-o", "{0}".format(tmp_export_path),
+                    self.myfile
+                ], self.tmplog_path)
+                self.tmpout.append(tmp_export_path)
+
+                if self.with_zenity:
+                    if not progressbar.is_active:
+                        break
+                    progressbar.update_progress(idx + 1, item)
+
+            # then, convert it to PDF CMYK using Ghostscript
+            real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/BOOKLET-" + item + ".pdf"
+            command = [
+                "gs","-dSAFER", "-dBATCH", "-dNOPAUSE", "-dNOCACHE", "-sDEVICE=pdfwrite"
+            ]
+            if self.options.with_cmyk:
+                real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/CMYK-BOOKLET-" + item + ".pdf"
+                command.append("-sColorConversionStrategy=CMYK")
+                command.append("-dProcessColorModel=/DeviceCMYK")
+            command.append(real_export_path)
+            # sort by name first
+            self.tmpout.sort(key=lambda s: [atoi(u) for u in re.split(r'(\d+)', s)])
+            # removing inputfile temp
+            self.tmpout.remove(self.myfile)
+            command = command + self.tmpout
+            run_command(command, self.tmplog_path)
+            # re-append for cleanup later
+            self.tmpout.append(self.myfile)
+            # inkex.utils.debug(command)
+
     def do_webp(self):
         if not self.has_webp():
             inkex.utils.errormsg("Please install libwebp to do webp export")
             return
-        for item in self.svg.selected:
-            tmppng_export = self.tmpdir + "/" + item + ".png"
-            command = "inkscape -j -i {0} -o '{1}' -d {2} '{3}' 1>>{4} 2>>{4}".format(
-                item, tmppng_export, self.options.dpi, self.myfile, self.tmplog_path)
-            os.system(command)
-            self.tmpout.append(tmppng_export)
-            while not os.path.exists(tmppng_export):
-                sleep(1)
-            export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".webp"
-            command = "cwebp '{0}' -quiet -o '{1}' 1>>{2} 2>>{2}".format(
-                tmppng_export, export_path, self.tmplog_path)
-            os.system(command)
-        os.close(self.tmplog_fd)
+        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
+            for idx,item in enumerate(self.svg.selected):
+                tmp_export_path = self.tmpdir + "/" + item + ".png"
+                # first, export to PNG
+                run_command([
+                    "inkscape",
+                    "-j","-i", item,
+                    "-d", str(self.options.dpi),
+                    "-o", "{0}".format(tmp_export_path),
+                    self.myfile
+                ], self.tmplog_path)
+
+                self.tmpout.append(tmp_export_path)
+
+                # then, convert it to WEBP using cwebp
+                real_export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".webp"
+                run_command([
+                    "cwebp",
+                    "-quiet",
+                    "-o","{0}".format(real_export_path),
+                    "{0}".format(tmp_export_path),
+                ], self.tmplog_path)
+
+                if self.with_zenity:
+                    if not progressbar.is_active:
+                        break
+                    progressbar.update_progress(idx + 1, item)
 
     def has_ghostscript(self):
         status, output = self.get_cmd_output('gs --help')
@@ -196,9 +347,9 @@ class Inkporter(inkex.Effect):
         status, output = self.get_cmd_output('convert --version')
         return status == 0 and 'ImageMagick' in output
 
-    def has_rsvg(self):
-        status, output = self.get_cmd_output('rsvg-convert --version')
-        return status == 0 and 'rsvg-convert' in output
+    def has_zenity(self):
+        status, output = self.get_cmd_output('zenity --help')
+        return status == 0 and 'zenity' in output
     
     def has_webp(self):
         status, output = self.get_cmd_output('cwebp -help')
@@ -209,6 +360,9 @@ class Inkporter(inkex.Effect):
         with open(handler, "w") as f:
             f.write(etree.tostring(self.document, encoding="utf-8",xml_declaration=True).decode("utf-8"))
         self.tmpout.append(self.myfile)
+        self.tmpdir = tempfile.mkdtemp(prefix="inkporter")
+        fd, self.tmplog_path = tempfile.mkstemp(prefix="inkporter-%s-%s-"%(file_format,self.options.id_pattern), suffix=".log")
+        os.close(fd)
 
     def get_cmd_output(self, cmd):
         # Adapted from webslicer extension (extensions > web > slicer)
@@ -232,9 +386,11 @@ class Inkporter(inkex.Effect):
 
     # called when extension is running
     def effect(self):
-        if not self.has_rsvg():
-            inkex.utils.errormsg(
-                "This extension requires rsvg-convert (from librsvg/librsvg-bin) to run, please install it before start exporting")
+        if not self.has_zenity():
+            inkex.utils.debug(
+                "This extension requires 'zenity' to display progressbar,\n" 
+                "please install it if you want (optional).")
+            self.with_zenity = False
             exit()
         if len(self.options.id_pattern) > 0:
             new_nss = inkex.utils.NSS
