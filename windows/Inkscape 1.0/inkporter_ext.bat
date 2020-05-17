@@ -121,7 +121,7 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	move %4\pdftemp-%%d.pdf %4\pdftemp-%%d.pdfx >nul
 	del %4\temp-%%d.svg
 	)
-cd %4
+pushd %4
 REM export all pdfx to list.txt
 rem based on answer on stackoverflow : https://stackoverflow.com/questions/19297935/naturally-sort-files-in-batch
 (
