@@ -21,16 +21,37 @@ Currently we make this ekstension for Inkscape 0.9x, we need some lines to make 
 - Ghostscript
 - ImageMagick
 - webp / libwebp
-- zenity
+- zenity (for Linux only)
 
-## How to Use Inkporter
+## How to Install Inkporter
 
+* Copy Inkporter to Extension Directory
+  * Linux
 Just copy and paste inkporter.inx, inkporter.py, and inkporter directory to Inkscape extension directory, usually in `$HOME/.config/inkscape/extensions` for linux.
 
-Unable to find where is the `extensions` directory for your Inkscape installation?  
+  * Windows
+Copy inkporter.inx, inkporter.py, inkporter_ext.bat and inkporter directory to Inkscape Extensions directory, by default it's on `%APPDATA%\Inkscape\extensions` for Windows
+  
+
+  Unable to find where is the `extensions` directory for your Inkscape installation?  
 you can check it from `Edit > Preferences > System` menu, then look at `User extensions` path in `System Info` section.
 
+* Add Dependencies to Environment Variables (Windows)
+
+  In Windows, after you install the required dependencies, you should add the dependency directories to Environment Variable "PATH"
+  
+  simply, you can do it by go to Control Panel -> System and Security -> System -> Advanced System Settings -> Environment Variables, then double click on "Path" System Variable and add the directories if you use Windows 8.1 and below, separate each directory with semicolon (;) like C:\Windows;C:\Users\username\libwebp\bin
+
 If the installation is correct, you'll find Inkporter menu on Extensions -> Export -> Inkporter. Please make sure you're coppying right version of Inkporter, we provide two version of inkporter which is for Inkscape 0.9x and Inkscape 1.0 version.
+
+## How to Export Your Objects with Inkporter
+* Group your objects
+* Give each Groups an unique ID Pattern like obj-1, obj-2, obj-3 (you can replace obj with anything what you want)
+* Open Inkporter
+* Choose the format that you want
+* Insert your unique ID Pattern in Inkporter (in this case is "obj")
+* Define the export directory
+* Click Export and Inkporter will export your objects
 
 ## Development Status:
 
@@ -46,7 +67,7 @@ If the installation is correct, you'll find Inkporter menu on Extensions -> Expo
     ➜  ~ cd /Applications/Inkscape.app/Contents/MacOS
     ➜  MacOS ./inkscape
     ```
-  - [x] Windows (with limited features)
+  - [x] Windows
 - [x] Add support for Inkscape 1.0
 
 ## Contributor
