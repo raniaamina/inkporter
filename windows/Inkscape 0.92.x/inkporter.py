@@ -69,7 +69,9 @@ class Inkporter(inkex.Effect):
 
     def do_jpg(self):
         file_export = '"' + self.options.output_dir + '"'
-        
+        if not self.has_imagemagick():
+            inkex.debug("Please install and add ImageMagick directory to Environment Variables to do PDF export")
+            return
         options = " RGB"
         if self.options.with_cmyk:
             options = "CMYK"
