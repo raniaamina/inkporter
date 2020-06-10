@@ -141,7 +141,7 @@ class Inkporter(inkex.Effect):
         return status == 0 and 'Ghostscript' in output
 
     def has_imagemagick(self):
-        status, output = self.get_cmd_output('convert --version')
+        status, output = self.get_cmd_output('magick --version')
         return status == 0 and 'ImageMagick' in output
     
     def has_webp(self):
