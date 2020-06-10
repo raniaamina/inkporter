@@ -30,7 +30,6 @@ Currently we make this ekstension for Inkscape 0.9x, we need some lines to make 
 
   * For Windows : Copy inkporter.inx, inkporter.py, inkporter_ext.bat and inkporter directory to Inkscape Extensions directory, by default it's on `%APPDATA%\Inkscape\extensions` for Windows
   
-
   Unable to find where is the `extensions` directory for your Inkscape installation?  
 you can check it from `Edit > Preferences > System` menu, then look at `User extensions` path in `System Info` section.
 
@@ -38,7 +37,7 @@ you can check it from `Edit > Preferences > System` menu, then look at `User ext
 
   In Windows, after you install the required dependencies, you should add the dependency directories to Environment Variable "PATH"
   
-  simply, you can do it by go to Control Panel -> System and Security -> System -> Advanced System Settings -> Environment Variables, then double click on "Path" System Variable and add the directories if you use Windows 8.1 and below, separate each directory with semicolon (;) like C:\Windows;C:\Users\username\libwebp\bin
+  simply, you can do it by go to Control Panel -> System and Security -> System -> Advanced System Settings -> Environment Variables, then double click on "Path" System Variable and add the directories. If you use Windows 8.1 and below, separate each directory with semicolon (;) like C:\Windows;C:\Users\username\libwebp\bin
 
 If the installation is correct, you'll find Inkporter menu on Extensions -> Export -> Inkporter. Please make sure you're copying right version of Inkporter, we provide two version of inkporter which is for Inkscape 0.9x and Inkscape 1.0 version.
 
