@@ -28,7 +28,7 @@ sudo curl -s --compressed -o /etc/apt/sources.list.d/gimpscape-ppa.list "https:/
 
 ```bash
 # Memasang Inkporter​
-sudo apt update && sudo apt install
+sudo apt update && sudo apt install inkporter
 ```
 
 ### Selain Debian/Ubuntu Base
