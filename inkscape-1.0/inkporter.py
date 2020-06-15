@@ -15,7 +15,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
-__version__ = '1.2.0'
+__version__ = '1.2.1'
 
 def atoi(text):
     return int(text) if text.isdigit() else text
