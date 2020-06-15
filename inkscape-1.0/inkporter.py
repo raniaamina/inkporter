@@ -86,12 +86,6 @@ class ProgressBar():
 class Inkporter(inkex.Effect):
     def __init__(self):
         inkex.Effect.__init__(self)
-        try:
-            self.tty = open("/dev/tty", 'w')
-        except:
-            # '/dev/null' for POSIX, 'nul' for Windows.
-            self.tty = open(os.devnull, 'w')
-            # print >>self.tty, "gears-dev " + __version__
         self.arg_parser.add_argument('--tab')
         self.arg_parser.add_argument("-f", "--format",
                                      type=str, dest="format",
@@ -391,7 +385,6 @@ class Inkporter(inkex.Effect):
                 "This extension requires 'zenity' to display progressbar,\n" 
                 "please install it if you want (optional).")
             self.with_zenity = False
-            exit()
         if len(self.options.id_pattern) > 0:
             new_nss = inkex.utils.NSS
             new_nss[u're'] = u'http://exslt.org/regular-expressions'
