@@ -21,7 +21,7 @@ Currently we make this ekstension for Inkscape 0.9x, we need some lines to make 
 - Ghostscript
 - ImageMagick
 - webp / libwebp
-- zenity (for Linux only)
+- zenity (for Linux & MacOS)
 
 ## How to Install Inkporter
 
