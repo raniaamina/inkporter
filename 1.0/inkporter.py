@@ -145,7 +145,7 @@ class Inkporter(inkex.Effect):
         return status == 0 and '7-Zip' in output
 
     def has_imagemagick(self):
-        status, output = self.get_cmd_output('magick convert --version')
+        status, output = self.get_cmd_output('magick --version')
         return status == 0 and 'ImageMagick' in output
 
     def has_webp(self):

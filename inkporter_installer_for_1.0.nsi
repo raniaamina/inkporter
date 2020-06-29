@@ -92,7 +92,11 @@ Section "setvar" SEC02
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
-  EnVar::AddValue "Path" "$PROGRAMFILES\gs\gs9.52\bin"
+  ; EnVar::AddValue "Path" "$PROGRAMFILES\gs\gs9.52\bin"
+  ; Pop $0
+  ; DetailPrint "EnVar::AddValue returned=|$0|"
+  
+  EnVar::AddValue "Path" "$INSTDIR\inkporter_data\gs\gs9.52\bin"
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
