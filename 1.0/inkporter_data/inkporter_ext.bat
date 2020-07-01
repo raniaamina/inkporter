@@ -3,7 +3,6 @@ setlocal
 
 
 :main
-rem inkporter version = 1.5
 echo "|| Welcome to                                                           ||"
 echo "||  ___       _                     _                         _         ||"
 echo "|| |_ _|_ __ | | ___ __   ___  _ __| |_ ___ _ __    __      _(_)_ __    ||"
@@ -11,7 +10,7 @@ echo "||  | || '_ \| |/ / '_ \ / _ \| '__| __/ _ \ '__|___\ \ /\ / / | '_ \   ||
 echo "||  | || | | |   <| |_) | (_) | |  | ||  __/ | |_____\ V  V /| | | | |  ||"
 echo "|| |___|_| |_|_|\_\ .__/ \___/|_|   \__\___|_|        \_/\_/ |_|_| |_|  ||"
 echo "||                |_|                                                   ||"
-echo Inkporter-GUI Processor for Windows
+echo "||                        Inkporter-GUI Processor for Windows Ver. 1.3  ||"
 set exdir=%4
 set target=%1
 set svgin=%2
@@ -122,7 +121,7 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	del %4\temp-%%d.svg
 	)
 pushd %4
-REM export all pdfx to list.txt
+rem export all pdfx to list.txt
 rem based on answer on stackoverflow : https://stackoverflow.com/questions/19297935/naturally-sort-files-in-batch
 (
 setlocal enabledelayedexpansion
@@ -153,7 +152,7 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	del %4\temp-%%d.svg
 	)
 pushd %4
-REM export all pdfx to list.txt
+rem export all pdfx to list.txt
 rem based on answer on stackoverflow : https://stackoverflow.com/questions/19297935/naturally-sort-files-in-batch
 (
 setlocal enabledelayedexpansion
@@ -189,11 +188,7 @@ goto end
 
 :end
 echo.
-REM echo Permintaan anda telah diselesaikan
-REM echo File anda telah disimpan di %cd%\%fold%
-REM echo tekan enter untuk keluar
 del %2
-rem pause >nul
 
 :langsung_end
 endlocal

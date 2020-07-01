@@ -7,7 +7,7 @@ if %1 == --help goto help
 
 
 :main
-rem inkporter-win version = 1.5
+rem inkporter-win version = 1.5 Rev.
 echo "|| Selamat Datang di                                                    ||"
 echo "||  ___       _                     _                         _         ||"
 echo "|| |_ _|_ __ | | ___ __   ___  _ __| |_ ___ _ __    __      _(_)_ __    ||"
@@ -15,7 +15,7 @@ echo "||  | || '_ \| |/ / '_ \ / _ \| '__| __/ _ \ '__|___\ \ /\ / / | '_ \   ||
 echo "||  | || | | |   <| |_) | (_) | |  | ||  __/ | |_____\ V  V /| | | | |  ||"
 echo "|| |___|_| |_|_|\_\ .__/ \___/|_|   \__\___|_|        \_/\_/ |_|_| |_|  ||"
 echo "||                |_|                                                   ||"
-echo "||                                                Ver. 1.5 CLI Edition  ||"
+echo "||                                           Ver. 1.5 Rev. CLI Edition  ||"
 echo.
 echo Direktori saat ini %cd%
 echo Berkas SVG yang tersedia :
@@ -59,10 +59,10 @@ echo "||  | || '_ \| |/ / '_ \ / _ \| '__| __/ _ \ '__|___\ \ /\ / / | '_ \   ||
 echo "||  | || | | |   <| |_) | (_) | |  | ||  __/ | |_____\ V  V /| | | | |  ||"
 echo "|| |___|_| |_|_|\_\ .__/ \___/|_|   \__\___|_|        \_/\_/ |_|_| |_|  ||"
 echo "||                |_|                                                   ||"
-echo "||                                                Ver. 1.5 CLI Edition  ||"
+echo "||                                           Ver. 1.5 Rev. CLI Edition  ||"
 echo.
 echo Inkporter CLI For Windows
-echo Version 1.5
+echo Version 1.5 Rev CLI Edition
 echo.
 echo Tool ini dibuat untuk melakukan batch ekspor bedasarkan pola nama Object ID pada berkas .svg
 echo melalui Inkscape command line bedasarkan pola pada nama Object ID

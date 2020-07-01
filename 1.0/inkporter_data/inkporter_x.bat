@@ -13,6 +13,7 @@ echo "||  | || '_ \| |/ / '_ \ / _ \| '__| __/ _ \ '__|___\ \ /\ / / | '_ \   ||
 echo "||  | || | | |   <| |_) | (_) | |  | ||  __/ | |_____\ V  V /| | | | |  ||"
 echo "|| |___|_| |_|_|\_\ .__/ \___/|_|   \__\___|_|        \_/\_/ |_|_| |_|  ||"
 echo "||                |_|                                                   ||"
+echo "||                                           Ver. 1.5 Rev. CLI Edition  ||"
 echo File yang dipilih : %1
 echo.
 echo Silakan Pilih Target Ekspor Anda
