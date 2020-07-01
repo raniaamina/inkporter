@@ -67,18 +67,18 @@ Section "MainSection" SEC01
   ; File /r "inkporter\1.0*"
 SectionEnd
 
- ; Section "setvar" SEC02
-   ; ; Set to HKLM
-  ; EnVar::SetHKLM
+  Section "setvar" SEC02
+  ; Set to HKLM
+  EnVar::SetHKLM
 
   ; ; Check for write access
   ; EnVar::Check "NULL" "NULL"
   ; Pop $0
   ; DetailPrint "EnVar::Check write access HKLM returned=|$0|"
   
-  ; EnVar::AddValue "Path" "$INSTDIR\inkporter_data"
-  ; Pop $0
-  ; DetailPrint "EnVar::AddValue returned=|$0|"
+  EnVar::AddValue "Path" "$INSTDIR\inkporter_data"
+  Pop $0
+  DetailPrint "EnVar::AddValue returned=|$0|"
   
   ; EnVar::AddValue "Path" "$PROGRAMFILES64\Inkscape\bin"
   ; Pop $0
@@ -100,7 +100,7 @@ SectionEnd
   ; Pop $0
   ; DetailPrint "EnVar::AddValue returned=|$0|"
   
-; SectionEnd
+ SectionEnd
 
 Section -Post
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter" "" "Buka Inkporter di sini"
@@ -131,17 +131,17 @@ Section Uninstall
   Delete "$INSTDIR\inkporter.inx"
   RMDir /r "$INSTDIR\inkporter_data"
   
-    ; ; Set to HKLM
-  ; EnVar::SetHKLM
+  ; Set to HKLM
+  EnVar::SetHKLM
 
-  ; ; Check for write access
+  ; Check for write access
   ; EnVar::Check "NULL" "NULL"
   ; Pop $0
   ; DetailPrint "EnVar::Check write access HKLM returned=|$0|"
   
-  ; EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data"
-  ; Pop $0
-  ; DetailPrint "EnVar::DeleteValue returned=|$0|"
+  EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data"
+  Pop $0
+  DetailPrint "EnVar::DeleteValue returned=|$0|"
   
   ; EnVar::DeleteValue "Path" "$PROGRAMFILES\Inkscape\bin"
   ; Pop $0
