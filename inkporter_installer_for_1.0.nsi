@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Inkporter For Inkscape 1.0"
-!define PRODUCT_VERSION "1.5"
+!define PRODUCT_VERSION "1.5 Rev"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 ; !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\AppMainExe.exe"
@@ -16,7 +16,7 @@
 
 
 Unicode true
-SetCompressor lzma
+SetCompressor /solid lzma
 ; MUI 1.67 compatible ------
 !include "MUI.nsh"
 
@@ -46,7 +46,7 @@ SetCompressor lzma
 ; MUI end ------
 
 Name "${PRODUCT_NAME}"
-OutFile "${PRODUCT_NAME}-build-${PRODUCT_VERSION}.exe"
+OutFile "${PRODUCT_NAME} Ver. ${PRODUCT_VERSION}.exe"
 InstallDir "$APPDATA\Inkscape\extensions\"
 ;InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
@@ -56,9 +56,9 @@ Section "MainSection" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   ; File "c:\path\to\file\AppMainExe.exe"
-  CreateDirectory "$SMPROGRAMS\Inkporter"
-  CreateShortCut "$SMPROGRAMS\Inkporter\InkporterConfig (Beta).lnk" "$INSTDIR\inkporter_data\inkporter_config.bat"
-  CreateShortCut "$SMPROGRAMS\Inkporter\Uninstall Inkporter.lnk" "$INSTDIR\inkporter_data\uninst.exe"
+  ; CreateDirectory "$SMPROGRAMS\Inkporter"
+  ; CreateShortCut "$SMPROGRAMS\Inkporter\InkporterConfig (Beta).lnk" "$INSTDIR\inkporter_data\inkporter_config.bat"
+  ; CreateShortCut "$SMPROGRAMS\Inkporter\Uninstall Inkporter.lnk" "$INSTDIR\inkporter_data\uninst.exe"
   File "1.0\Inkporter.py"
   File "1.0\Inkporter.inx"
   File /r "1.0\Inkporter_data*"
@@ -67,40 +67,40 @@ Section "MainSection" SEC01
   ; File /r "inkporter\1.0*"
 SectionEnd
 
-Section "setvar" SEC02
-   ; Set to HKLM
-  EnVar::SetHKLM
+ ; Section "setvar" SEC02
+   ; ; Set to HKLM
+  ; EnVar::SetHKLM
 
-  ; Check for write access
-  EnVar::Check "NULL" "NULL"
-  Pop $0
-  DetailPrint "EnVar::Check write access HKLM returned=|$0|"
+  ; ; Check for write access
+  ; EnVar::Check "NULL" "NULL"
+  ; Pop $0
+  ; DetailPrint "EnVar::Check write access HKLM returned=|$0|"
   
-  EnVar::AddValue "Path" "$INSTDIR\inkporter_data"
-  Pop $0
-  DetailPrint "EnVar::AddValue returned=|$0|"
-  
-  EnVar::AddValue "Path" "$PROGRAMFILES64\Inkscape\bin"
-  Pop $0
-  DetailPrint "EnVar::AddValue returned=|$0|"
-  
-  EnVar::AddValue "Path" "$INSTDIR\deps\libwebp\bin"
-  Pop $0
-  DetailPrint "EnVar::AddValue returned=|$0|"
-  
-  EnVar::AddValue "Path" "$PROGRAMFILES64\7-Zip"
-  Pop $0
-  DetailPrint "EnVar::AddValue returned=|$0|"
-  
-  ; EnVar::AddValue "Path" "$PROGRAMFILES\gs\gs9.52\bin"
+  ; EnVar::AddValue "Path" "$INSTDIR\inkporter_data"
   ; Pop $0
   ; DetailPrint "EnVar::AddValue returned=|$0|"
   
-  EnVar::AddValue "Path" "$INSTDIR\inkporter_data\gs\gs9.52\bin"
-  Pop $0
-  DetailPrint "EnVar::AddValue returned=|$0|"
+  ; EnVar::AddValue "Path" "$PROGRAMFILES64\Inkscape\bin"
+  ; Pop $0
+  ; DetailPrint "EnVar::AddValue returned=|$0|"
   
-SectionEnd
+  ; EnVar::AddValue "Path" "$INSTDIR\deps\libwebp\bin"
+  ; Pop $0
+  ; DetailPrint "EnVar::AddValue returned=|$0|"
+  
+  ; EnVar::AddValue "Path" "$PROGRAMFILES64\7-Zip"
+  ; Pop $0
+  ; DetailPrint "EnVar::AddValue returned=|$0|"
+  
+  ; ; EnVar::AddValue "Path" "$PROGRAMFILES\gs\gs9.52\bin"
+  ; ; Pop $0
+  ; ; DetailPrint "EnVar::AddValue returned=|$0|"
+  
+  ; EnVar::AddValue "Path" "$INSTDIR\inkporter_data\gs\gs9.52\bin"
+  ; Pop $0
+  ; DetailPrint "EnVar::AddValue returned=|$0|"
+  
+; SectionEnd
 
 Section -Post
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter" "" "Buka Inkporter di sini"
@@ -109,17 +109,12 @@ Section -Post
   WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter\command" "" "$INSTDIR\inkporter_data\inkporter_x.bat %1"
   WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter" "Icon" "$INSTDIR\inkporter_data\inkporter.ico"
   WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter" "" "Ekspor dengan Inkporter"
-  WriteUninstaller "$INSTDIR\inkporter_data\uninst.exe"
+  WriteUninstaller "$INSTDIR\uninstall_inkporter.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "${PRODUCT_NAME}"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\inkporter_data\uninst.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninstall_inkporter.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
 SectionEnd
 
-
-Function un.onUninstSuccess
-  HideWindow
-  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) was successfully removed from your computer."
-FunctionEnd
 
 Function un.onInit
   MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove $(^Name) and all of its components?" IDYES +2
@@ -127,45 +122,53 @@ Function un.onInit
 FunctionEnd
 
 Section Uninstall
+  SetShellVarContext current
   ; Delete "$INSTDIR\uninst.exe"
   ; Delete "$INSTDIR\license.txt"
   ; Delete "$INSTDIR\inkporter.ico"
   ; Delete "$INSTDIR\inkporter.bat"
   Delete "$INSTDIR\inkporter.py"
   Delete "$INSTDIR\inkporter.inx"
+  RMDir /r "$INSTDIR\inkporter_data"
   
-    ; Set to HKLM
-  EnVar::SetHKLM
+    ; ; Set to HKLM
+  ; EnVar::SetHKLM
 
-  ; Check for write access
-  EnVar::Check "NULL" "NULL"
-  Pop $0
-  DetailPrint "EnVar::Check write access HKLM returned=|$0|"
+  ; ; Check for write access
+  ; EnVar::Check "NULL" "NULL"
+  ; Pop $0
+  ; DetailPrint "EnVar::Check write access HKLM returned=|$0|"
   
-  EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data"
-  Pop $0
-  DetailPrint "EnVar::DeleteValue returned=|$0|"
+  ; EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data"
+  ; Pop $0
+  ; DetailPrint "EnVar::DeleteValue returned=|$0|"
   
-  EnVar::DeleteValue "Path" "$PROGRAMFILES\Inkscape\bin"
-  Pop $0
-  DetailPrint "EnVar::DeleteValue returned=|$0|"
+  ; EnVar::DeleteValue "Path" "$PROGRAMFILES\Inkscape\bin"
+  ; Pop $0
+  ; DetailPrint "EnVar::DeleteValue returned=|$0|"
   
-  EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data\libwebp\bin"
-  Pop $0
-  DetailPrint "EnVar::DeleteValue returned=|$0|"
+  ; EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data\libwebp\bin"
+  ; Pop $0
+  ; DetailPrint "EnVar::DeleteValue returned=|$0|"
   
-  EnVar::DeleteValue "Path" "$PROGRAMFILES\7-Zip"
-  Pop $0
-  DetailPrint "EnVar::DeleteValue returned=|$0|"
+  ; EnVar::DeleteValue "Path" "$PROGRAMFILES\7-Zip"
+  ; Pop $0
+  ; DetailPrint "EnVar::DeleteValue returned=|$0|"
 
-  EnVar::DeleteValue "Path" "$PROGRAMFILES\gs\gs9.52\bin"
-  Pop $0
-  DetailPrint "EnVar::DeleteValue returned=|$0|"
+  ; EnVar::DeleteValue "Path" "$PROGRAMFILES\gs\gs9.52\bin"
+  ; Pop $0
+  ; DetailPrint "EnVar::DeleteValue returned=|$0|"
 
-  RMDir "$INSTDIR\inkporter_data"
+
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKCR "Directory\Background\shell\Inkporter"
   DeleteRegKey HKCR "inkscape.svg\shell\Inkporter"
   SetAutoClose true
 SectionEnd
+
+Function un.onUninstSuccess
+  HideWindow
+  Delete "$INSTDIR\uninstall_inkporter.exe"
+  MessageBox MB_ICONINFORMATION|MB_OK "$(^Name) was successfully removed from your computer."
+FunctionEnd
