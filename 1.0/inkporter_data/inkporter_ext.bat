@@ -49,7 +49,7 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	inkscape --export-id=%%d --export-filename=%4\temp-%%d.png --export-dpi=%dpi% %svgin% >nul
 	magick convert %4\temp-%%d.png -background %6 -flatten -quality %7 -colorspace %8 %4\%%d.jpeg
 	echo File %%d.jpeg created
-	del %4\%%d.png
+	del %4\temp-%%d.png
 	)
 goto end
 
