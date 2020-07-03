@@ -14,6 +14,7 @@ echo "||  | || | | |   <| |_) | (_) | |  | ||  __/ | |_____\ V  V /| | | | |  ||
 echo "|| |___|_| |_|_|\_\ .__/ \___/|_|   \__\___|_|        \_/\_/ |_|_| |_|  ||"
 echo "||                |_|                                                   ||"
 echo "||                                           Ver. 1.5 Rev. CLI Edition  ||"
+echo.
 echo File yang dipilih : %1
 echo.
 echo Silakan Pilih Target Ekspor Anda
@@ -48,8 +49,8 @@ set der=%cd%
 echo.
 :PNGBATCHPPROCESS
 echo Bersiap mengekspor berkas %svgin% dari SVG ke PNG
-for /f "delims=," %%d in ('"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --query-all %svgin% ^| findstr %objID%') do (
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-id=%%d --export-filename=%%d.png --export-dpi=%dpi%  %svgin% >nul
+for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
+	inkscape --export-id=%%d --export-filename=%%d.png --export-dpi=%dpi%  %svgin% >nul
 	echo Berkas %%d.png telah dibuat
 	move %%d.png "%der%\%fold%\" >nul
 	)
@@ -64,9 +65,9 @@ set der=%cd%
 echo.
 :PDFBATCHPPROCESS
 echo Bersiap mengekspor berkas %svgin% dari SVG ke PDF
-for /f "delims=," %%d in ('"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --query-all %svgin% ^| findstr %objID%') do (
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-id=%%d --export-id-only --export-plain-svg --export-filename=%%d.svg %svgin%
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-area-page  --export-filename=%%d.pdf %%d.svg
+for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%%d.svg %svgin%
+	inkscape --export-area-page  --export-filename=%%d.pdf %%d.svg
 	del %%d.svg
 	move %%d.pdf "%der%\%fold%\" >nul
 	echo Berkas %%d.pdf telah dibuat
@@ -82,9 +83,9 @@ set der=%cd%
 echo.
 :EPSBATCHPPROCESS
 echo Bersiap mengekspor berkas %svgin% dari SVG ke EPS
-for /f "delims=," %%d in ('"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --query-all %svgin% ^| findstr %objID%') do (
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-id=%%d --export-id-only --export-plain-svg --export-filename=%%d.svg %svgin%
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com %%d.svg --export-filename=%%d.eps --export-type=eps --export-area-page --export-ps-level=3 --export-text-to-path --export-ignore-filters >nul
+for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%%d.svg %svgin%
+	inkscape %%d.svg --export-filename=%%d.eps --export-type=eps --export-area-page --export-ps-level=3 --export-text-to-path --export-ignore-filters >nul
 	del %%d.svg
 	move %%d.eps "%der%\%fold%\" >nul
 	echo Berkas %%d.eps telah dibuat
@@ -100,10 +101,10 @@ set der=%cd%
 echo.
 :PDFCMYKBATCHPPROCESS
 echo Bersiap mengekspor berkas %svgin% dari SVG ke PDF dengan color space CMYK
-for /f "delims=," %%d in ('"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --query-all %svgin% ^| findstr %objID%') do (
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-id=%%d --export-id-only --export-plain-svg --export-filename=%%d.svg %svgin%
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-area-page  --export-filename=%%d-rgb.pdf %%d.svg
-	gs9.52\bin\gswin32c -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%%d.pdf %%d-rgb.pdf
+for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%%d.svg %svgin%
+	inkscape --export-area-page  --export-filename=%%d-rgb.pdf %%d.svg
+	gswin32c -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%%d-cmyk.pdf %%d-rgb.pdf
 	del %%d.svg
 	del %%d-rgb.pdf
 	move %%d.pdf "%der%\%fold%\" >nul
@@ -120,8 +121,8 @@ set der=%cd%
 echo.
 :SVGPLAINBATCHPROCESS
 echo Bersiap mengekspor berkas %svgin% dari SVG ke SVG Plain
-for /f "delims=," %%d in ('"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --query-all %svgin% ^| findstr %objID%') do (
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-id=%%d --export-id-only --export-plain-svg --export-filename=%%d.svg %svgin%
+for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%%d.svg %svgin%
 	move %%d.svg "%der%\%fold%\" >nul
 	echo Berkas %%d.svg telah dibuat
 	)
@@ -139,8 +140,8 @@ set der=%cd%
 echo.
 :JPEGBATCHPPROCESS
 echo Bersiap mengekspor berkas %svgin% dari SVG ke JPEG
-for /f "delims=," %%d in ('"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --query-all %svgin% ^| findstr %objID%') do (
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-id=%%d --export-filename=%%d.png --export-dpi=%dpi% %svgin% >nul
+for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
+	inkscape --export-id=%%d --export-filename=%%d.png --export-dpi=%dpi% %svgin% >nul
 	magick convert %%d.png -background #ffffff -flatten -quality 100 %%d.jpeg
 	echo Berkas %%d.jpeg telah dibuat
 	del %%d.png
@@ -159,10 +160,10 @@ set der=%cd%
 echo.
 :WEBPBATCHPPROCESS
 echo Bersiap mengekspor berkas %svgin% dari SVG ke WEBP
-for /f "delims=," %%d in ('"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --query-all %svgin% ^| findstr %objID%') do (
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-id=%%d --export-filename=%%d.png --export-dpi=%dpi%  %svgin% >nul
+for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
+	inkscape --export-id=%%d --export-filename=%%d.png --export-dpi=%dpi%  %svgin% >nul
 	echo Berkas %%d.png telah dibuat
-	libwebp\bin\cwebp %%d.png -o %%d.webp
+	cwebp %%d.png -o %%d.webp
 	move %%d.webp "%der%\%fold%\" >nul
 	del %%d.png
 	)
@@ -175,16 +176,16 @@ echo Berkas akan disimpan di %cd%
 echo.
 :BOOKLETPPROCESS
 echo Bersiap mengekspor berkas %svgin% dari SVG ke Booklet (PDF)
-for /f "delims=," %%d in ('"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --query-all %svgin% ^| findstr %objID%') do (
+for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
 	echo sedang memproses Object ID = %%d
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-id=%%d --export-id-only --export-plain-svg --export-filename=%%d.svg %svgin%
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-area-page --export-type=pdf --export-filename=pdftemp-%%d.pdf %%d.svg
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%%d.svg %svgin%
+	inkscape --export-area-page --export-type=pdf --export-filename=pdftemp-%%d.pdf %%d.svg
 	ren pdftemp-%%d.pdf pdftemp-%%d.pdfx
 	del %%d.svg
 	)
 dir /b | findstr pdftemp >> list.txt
 echo.
-gs9.52\bin\gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas% @list.txt
+gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas% @list.txt
 del *.pdfx
 del list.txt
 goto end
@@ -198,11 +199,11 @@ set der=%cd%
 echo.
 :BUNDLEBATCHPROCESS
 echo Bersiap mengekspor berkas %svgin% dari SVG ke ZIP Bundle (PNG + EPS Default)
-for /f "delims=," %%d in ('"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --query-all %svgin% ^| findstr %objID%') do (
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-id=%%d --export-plain-svg --export-filename=%%d.svg %svgin%
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com %%d.svg --export-filename=%%d.eps --export-type=eps --export-area-page --export-ps-level=3 --export-text-to-path --export-ignore-filters >nul
-	"%PROGRAMFILES%"\Inkscape\bin\inkscape.com --export-id=%%d --export-filename=%%d.png %svgin% >nul
-	7-Zip\7z a -tzip %%d.zip %%d.png %%d.eps
+for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
+	inkscape --export-id=%%d --export-plain-svg --export-filename=%%d.svg %svgin%
+	inkscape %%d.svg --export-filename=%%d.eps --export-type=eps --export-area-page --export-ps-level=3 --export-text-to-path --export-ignore-filters >nul
+	inkscape --export-id=%%d --export-filename=%%d.png %svgin% >nul
+	7z a -tzip %%d.zip %%d.png %%d.eps
 	del %%d.svg
 	del %%d.png
 	del %%d.eps

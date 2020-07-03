@@ -80,25 +80,22 @@ SectionEnd
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
-  ; EnVar::AddValue "Path" "$PROGRAMFILES64\Inkscape\bin"
-  ; Pop $0
-  ; DetailPrint "EnVar::AddValue returned=|$0|"
+  EnVar::AddValue "Path" "$PROGRAMFILES64\Inkscape\bin"
+  Pop $0
+  DetailPrint "EnVar::AddValue returned=|$0|"
   
-  ; EnVar::AddValue "Path" "$INSTDIR\deps\libwebp\bin"
-  ; Pop $0
-  ; DetailPrint "EnVar::AddValue returned=|$0|"
+  EnVar::AddValue "Path" "$INSTDIR\inkporter_data\gs9.52\bin"
+  Pop $0
+  DetailPrint "EnVar::AddValue returned=|$0|"
   
-  ; EnVar::AddValue "Path" "$PROGRAMFILES64\7-Zip"
-  ; Pop $0
-  ; DetailPrint "EnVar::AddValue returned=|$0|"
+  EnVar::AddValue "Path" "$INSTDIR\inkporter_data\libwebp\bin"
+  Pop $0
+  DetailPrint "EnVar::AddValue returned=|$0|"
   
-  ; ; EnVar::AddValue "Path" "$PROGRAMFILES\gs\gs9.52\bin"
-  ; ; Pop $0
-  ; ; DetailPrint "EnVar::AddValue returned=|$0|"
-  
-  ; EnVar::AddValue "Path" "$INSTDIR\inkporter_data\gs\gs9.52\bin"
-  ; Pop $0
-  ; DetailPrint "EnVar::AddValue returned=|$0|"
+  EnVar::AddValue "Path" "$INSTDIR\inkporter_data\7-Zip"
+  Pop $0
+  DetailPrint "EnVar::AddValue returned=|$0|"
+
   
  SectionEnd
 
@@ -106,7 +103,7 @@ Section -Post
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter" "" "Buka Inkporter di sini"
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter" "Icon" "$INSTDIR\inkporter_data\inkporter.ico"
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter\command" "" "$INSTDIR\inkporter_data\inkporter.bat"
-  WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter\command" "" "$INSTDIR\inkporter_data\inkporter_x.bat %1"
+  WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter\command" "" '$INSTDIR\inkporter_data\inkporter_x.bat "%1"'
   WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter" "Icon" "$INSTDIR\inkporter_data\inkporter.ico"
   WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter" "" "Ekspor dengan Inkporter"
   WriteUninstaller "$INSTDIR\uninstall_inkporter.exe"
@@ -125,7 +122,7 @@ Section Uninstall
   SetShellVarContext current
   ; Delete "$INSTDIR\uninst.exe"
   ; Delete "$INSTDIR\license.txt"
-  ; Delete "$INSTDIR\inkporter.ico"
+  Delete "$INSTDIR\inkporter.ico"
   ; Delete "$INSTDIR\inkporter.bat"
   Delete "$INSTDIR\inkporter.py"
   Delete "$INSTDIR\inkporter.inx"
@@ -143,21 +140,21 @@ Section Uninstall
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
   
-  ; EnVar::DeleteValue "Path" "$PROGRAMFILES\Inkscape\bin"
-  ; Pop $0
-  ; DetailPrint "EnVar::DeleteValue returned=|$0|"
+  EnVar::DeleteValue "Path" "$PROGRAMFILES64\Inkscape\bin"
+  Pop $0
+  DetailPrint "EnVar::DeleteValue returned=|$0|"
   
-  ; EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data\libwebp\bin"
-  ; Pop $0
-  ; DetailPrint "EnVar::DeleteValue returned=|$0|"
+  EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data\gs9.52\bin"
+  Pop $0
+  DetailPrint "EnVar::DeleteValue returned=|$0|"
   
-  ; EnVar::DeleteValue "Path" "$PROGRAMFILES\7-Zip"
-  ; Pop $0
-  ; DetailPrint "EnVar::DeleteValue returned=|$0|"
-
-  ; EnVar::DeleteValue "Path" "$PROGRAMFILES\gs\gs9.52\bin"
-  ; Pop $0
-  ; DetailPrint "EnVar::DeleteValue returned=|$0|"
+  EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data\libwebp\bin"
+  Pop $0
+  DetailPrint "EnVar::DeleteValue returned=|$0|"
+  
+  EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data\7-Zip"
+  Pop $0
+  DetailPrint "EnVar::DeleteValue returned=|$0|"
 
 
 

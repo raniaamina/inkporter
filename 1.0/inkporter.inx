@@ -25,7 +25,7 @@
                         <param name="dpi" type="int" min="0" max="10000" gui-text="DPI (for PNG/JPG)">96</param>
                         <param name="quality" type="int" min="0" max="100" gui-text="Quality (for JPG)">100</param>
                         <param name="bg-color" type="string" gui-text="Background Color (for JPG)">#ffffff</param>
-                        <param name="output-dir" type="path" mode="folder" gui-text="Output Directory ">%USERPROFILE%\Pictures</param>
+                        <param name="output-dir" type="path" mode="folder" gui-text="Output Directory "></param>
                 </page>
                 <!-- next tab -->
                 <page name='usage' gui-text='Usage'>
@@ -37,7 +37,7 @@
                         <param name="usage_text5" type="description">Fill directory where the exported files will be saved. Make sure you write the path correctly. Then click "Apply"</param>
                 </page>
                 <page name='about' gui-text='About'> 
-                        <image>inkporter/inkporter.svg</image>
+                        <image>inkporter_data\inkporter.svg</image>
                         <param name="about_text" type="description">Simple tool for exporting svg files from Inkscape based on the specified object ID pattern. This tool can also be called the SVG ID extractor. This toolkit was developed by Rania Amina &amp; Sofyan Sugianto and supported by Gimpscape ID Community.</param>
                         <spacer/>
                         <label appearance="header">Pages:</label>

@@ -70,13 +70,16 @@ class Inkporter(inkex.Effect):
         if not self.has_imagemagick():
             inkex.utils.errormsg("Please install and add ImageMagick directory to Environment Variable")
             return
-        options = " RGB"
         if self.options.with_cmyk:
-            options = "CMYK"
-            
-        command = "start inkporter_data\inkporter_ext jpeg {0} {1} {2} {3} {4} {5} {6}".format(
-            self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color, self.options.quality, options)
-        os.system(command)
+            options = "CMYK"            
+            command = "start inkporter_data\inkporter_ext jpeg_cmyk {0} {1} {2} {3} {4} {5} {6}".format(
+                self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color, self.options.quality, options)
+            os.system(command)
+        else:
+            options = "RGB"
+            command = "start inkporter_data\inkporter_ext jpeg {0} {1} {2} {3} {4} {5} {6}".format(
+                self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color, self.options.quality, options)
+            os.system(command)
 
     def do_pdf(self):
         file_export = '"' + self.options.output_dir + '"'

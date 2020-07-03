@@ -11,6 +11,7 @@ echo "||  | || | | |   <| |_) | (_) | |  | ||  __/ | |_____\ V  V /| | | | |  ||
 echo "|| |___|_| |_|_|\_\ .__/ \___/|_|   \__\___|_|        \_/\_/ |_|_| |_|  ||"
 echo "||                |_|                                                   ||"
 echo "||                        Inkporter-GUI Processor for Windows Ver. 1.3  ||"
+echo.
 set exdir=%4
 set target=%1
 set svgin=%2
@@ -23,6 +24,7 @@ if %target%== pdf_cmyk goto PDFCMYK
 if %target%== eps goto EPS
 if %target%== svg goto SVGPLAIN
 if %target%== jpeg goto JPEG
+if %target%== jpeg_cmyk goto JPEGCMYK
 if %target%== webp goto WEBP
 if %target%== booklet goto BOOKLET
 if %target%== booklet_cmyk goto BOOKLETCMYK
@@ -43,6 +45,7 @@ goto end
 set dpi=%5
 set bgcol=%6
 set quality=%7
+
 :JPEGBATCHPPROCESS
 echo Getting ready to export %svgin% from SVG to JPEG
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
@@ -51,6 +54,23 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	echo File %%d.jpeg created
 	del %4\temp-%%d.png
 	)
+goto end
+
+:JPEGCMYK
+set dpi=%5
+set bgcol=%6
+set quality=%7
+
+:JPEGCMYKPPROCESS
+echo Getting ready to export %svgin% from SVG to JPEG
+for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
+	inkscape --export-id=%%d --export-filename=%4\temp-%%d.png --export-dpi=%dpi% %svgin% >nul
+	magick convert %4\temp-%%d.png -background %6 -flatten -quality %7 -colorspace %8 %4\%%d-cmyk.jpeg
+	echo File %%d-cmyk.jpeg with CMYK color space has created
+	del %4\temp-%%d.png
+	)
+goto end
+	
 goto end
 
 :PDF
@@ -73,7 +93,7 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	inkporter_data\gs9.52\bin\gswin32c -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%4\%%d.pdf %4\%%d-rgb.pdf
 	del %4\temp-%%d.svg
 	del %4\%%d-rgb.pdf
-	echo File %%d.pdf dengan color space CMYK created
+	echo File %%d-cmyk.pdf with CMYK color space has created
 	)
 goto end
 
