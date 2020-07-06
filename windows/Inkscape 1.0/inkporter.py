@@ -8,6 +8,8 @@ import shutil
 import os
 import inkex
 from time import sleep
+import warnings
+
 
 __version__ = '1.1.0'
 
@@ -219,7 +221,7 @@ class Inkporter(inkex.Effect):
             import traceback
             inkex.utils.errormsg(traceback.print_exc())
             print("hai")
-            
+        warnings.filterwarnings("ignore")
 
 
 if __name__ == '__main__':
