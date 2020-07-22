@@ -1,4 +1,4 @@
-REM @echo off
+@echo off
 setlocal
 
 move %2 %2_inkporter-temp.svg >nul 2>nul
