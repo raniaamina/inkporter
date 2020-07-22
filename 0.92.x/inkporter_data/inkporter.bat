@@ -1,4 +1,4 @@
-@echo off
+REM @echo off
 setlocal
 
 move %2 %2_inkporter-temp.svg >nul 2>nul
@@ -25,9 +25,10 @@ echo "||                                                                      ||
 echo "|| For Inkscape 0.92.x                                     Version 1.5  ||"
 echo.  
 
+if [%1]==[] goto mainpilih
 if %1==--about goto credits
 if %1==--help goto help
-if [%1]==[] goto mainpilih
+
 
 :extensions_switcher
 
