@@ -70,8 +70,6 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	del %4\temp-%%d.png
 	)
 goto end
-	
-goto end
 
 :PDF
 :PDFBATCHPPROCESS

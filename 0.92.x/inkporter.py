@@ -54,7 +54,7 @@ class Inkporter(inkex.Effect):
     
     def do_png(self):
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter_ext png {0} {1} {2} {3} {4}".format(
+        command = "start inkporter png {0} {1} {2} {3} {4}".format(
             self.svg_file, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color)
         os.system(command)
         
@@ -63,7 +63,7 @@ class Inkporter(inkex.Effect):
             inkex.debug("Please install and add 7z directory to Environment Variables to do PDF export")
             return
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter_ext bundle {0} {1} {2} {3} {4}".format(
+        command = "start inkporter bundle {0} {1} {2} {3} {4}".format(
             self.svg_file, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color)
         os.system(command)
 
@@ -72,12 +72,14 @@ class Inkporter(inkex.Effect):
         if not self.has_imagemagick():
             inkex.debug("Please install and add ImageMagick directory to Environment Variables to do PDF export")
             return
-        options = " RGB"
         if self.options.with_cmyk:
             options = "CMYK"
-            
-        command = "start inkporter_ext jpeg {0} {1} {2} {3} {4} {5} {6}".format(
-            self.svg_file, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color, self.options.quality, options)
+            command = "start inkporter jpeg_cmyk {0} {1} {2} {3} {4} {5} {6}".format(
+                self.svg_file, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color, self.options.quality, options)
+        else:
+            options = " RGB"
+            command = "start inkporter jpeg {0} {1} {2} {3} {4} {5} {6}".format(
+                self.svg_file, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color, self.options.quality, options)
         os.system(command)
 
     def do_pdf(self):
@@ -86,25 +88,25 @@ class Inkporter(inkex.Effect):
             if not self.has_ghostscript():
                 inkex.debug("Please install and add Ghostscript 32bit directory to Environment Variables to do PDF export")
                 return
-            command = "start inkporter_ext pdf_cmyk {0} {1} {2}".format(
+            command = "start inkporter pdf_cmyk {0} {1} {2}".format(
                 self.svg_file, self.options.id_pattern, file_export)
             os.system(command)
         else:
-            command = "start inkporter_ext pdf {0} {1} {2}".format(
+            command = "start inkporter pdf {0} {1} {2}".format(
                 self.svg_file, self.options.id_pattern, file_export)
             os.system(command)
         os.close(self.tmplog_fd)
 
     def do_svg(self):
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter_ext svg {0} {1} {2}".format(
+        command = "start inkporter svg {0} {1} {2}".format(
             self.svg_file, self.options.id_pattern, file_export)
         os.system(command)
         os.close(self.tmplog_fd)
 
     def do_eps(self):
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter_ext eps {0} {1} {2}".format(
+        command = "start inkporter eps {0} {1} {2}".format(
             self.svg_file, self.options.id_pattern, file_export)
         os.system(command)
         os.close(self.tmplog_fd)
@@ -115,13 +117,13 @@ class Inkporter(inkex.Effect):
             return
         if self.options.with_cmyk:
             file_export = '"' + self.options.output_dir + '"'
-            command = "start inkporter_ext booklet_cmyk {0} {1} {2}".format(
+            command = "start inkporter booklet_cmyk {0} {1} {2}".format(
                 self.svg_file, self.options.id_pattern, file_export)
             os.system(command)
             os.close(self.tmplog_fd)
         else:
             file_export = '"' + self.options.output_dir + '"'
-            command = "start inkporter_ext booklet {0} {1} {2}".format(
+            command = "start inkporter booklet {0} {1} {2}".format(
                 self.svg_file, self.options.id_pattern, file_export)
             os.system(command)
             os.close(self.tmplog_fd)
@@ -131,7 +133,7 @@ class Inkporter(inkex.Effect):
         if not self.has_webp():
             inkex.debug("Please download and add libwebp directory to Environment Variables to do webp export")
             return
-        command = "start inkporter_ext webp {0} {1} {2} {3}".format(
+        command = "start inkporter webp {0} {1} {2} {3}".format(
             self.svg_file, self.options.id_pattern, file_export, self.options.dpi)
         os.system(command)
         os.close(self.tmplog_fd)
@@ -149,7 +151,7 @@ class Inkporter(inkex.Effect):
         return status == 0 and 'output.webp' in output
         
     def has_7z(self):
-        status, output = self.get_cmd_output('7z -help')
+        status, output = self.get_cmd_output('7z --help')
         return status == 0 and '7-Zip' in output
     
 
