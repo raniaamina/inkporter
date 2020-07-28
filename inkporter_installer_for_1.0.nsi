@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Inkporter For Inkscape 1.0"
-!define PRODUCT_VERSION "1.5 Rev"
+!define PRODUCT_VERSION "1.6"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 ; !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\AppMainExe.exe"
@@ -38,7 +38,7 @@ SetCompressor /solid lzma
 !insertmacro MUI_PAGE_FINISH
 
 ; Language files
-!insertmacro MUI_LANGUAGE "Indonesian"
+!insertmacro MUI_LANGUAGE "English"
 
 ; Reserve files
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
@@ -61,6 +61,7 @@ Section "MainSection" SEC01
   ; CreateShortCut "$SMPROGRAMS\Inkporter\Uninstall Inkporter.lnk" "$INSTDIR\inkporter_data\uninst.exe"
   File "1.0\Inkporter.py"
   File "1.0\Inkporter.inx"
+  File "1.0\Inkporter.bat"
   File /r "1.0\Inkporter_data*"
   File "inkporter.ico"
   ; File "license.txt"
@@ -76,7 +77,11 @@ SectionEnd
   ; Pop $0
   ; DetailPrint "EnVar::Check write access HKLM returned=|$0|"
   
-  EnVar::AddValue "Path" "$INSTDIR\inkporter_data"
+  ; EnVar::AddValue "Path" "$INSTDIR\inkporter_data"
+  ; Pop $0
+  ; DetailPrint "EnVar::AddValue returned=|$0|"
+  
+  EnVar::AddValue "Path" "$INSTDIR"
   Pop $0
   DetailPrint "EnVar::AddValue returned=|$0|"
   
@@ -103,7 +108,7 @@ Section -Post
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter" "" "Buka Inkporter di sini"
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter" "Icon" "$INSTDIR\inkporter_data\inkporter.ico"
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter\command" "" "$INSTDIR\inkporter_data\inkporter.bat"
-  WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter\command" "" '$INSTDIR\inkporter_data\inkporter_x.bat "%1"'
+  WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter\command" "" '$INSTDIR\inkporter_data\inkporter.bat "%1"'
   WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter" "Icon" "$INSTDIR\inkporter_data\inkporter.ico"
   WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter" "" "Ekspor dengan Inkporter"
   WriteUninstaller "$INSTDIR\uninstall_inkporter.exe"
@@ -123,7 +128,7 @@ Section Uninstall
   ; Delete "$INSTDIR\uninst.exe"
   ; Delete "$INSTDIR\license.txt"
   Delete "$INSTDIR\inkporter.ico"
-  ; Delete "$INSTDIR\inkporter.bat"
+  Delete "$INSTDIR\inkporter.bat"
   Delete "$INSTDIR\inkporter.py"
   Delete "$INSTDIR\inkporter.inx"
   RMDir /r "$INSTDIR\inkporter_data"
@@ -136,7 +141,11 @@ Section Uninstall
   ; Pop $0
   ; DetailPrint "EnVar::Check write access HKLM returned=|$0|"
   
-  EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data"
+  ; EnVar::DeleteValue "Path" "$INSTDIR\inkporter_data"
+  ; Pop $0
+  ; DetailPrint "EnVar::DeleteValue returned=|$0|"
+  
+  EnVar::DeleteValue "Path" "$INSTDIR"
   Pop $0
   DetailPrint "EnVar::DeleteValue returned=|$0|"
   

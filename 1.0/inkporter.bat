@@ -116,7 +116,7 @@ echo Inkporter-win 1.6 For Inkscape 0.92.x
 echo.
 echo Usage :
 echo inkporter                 runs inkporter and inkporter will prompts you to choose .svg file
-echo inkporter <svg_file>      runs inkporter without being prompted to choose svg file
+echo inkporter "svg_file"      runs inkporter without being prompted to choose svg file
 echo.
 echo Parameters :
 echo --help                    display this message
@@ -201,14 +201,15 @@ echo your objects will be saved in %exdir%
 
 :PDFCMYKBATCHPPROCESS
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
+	echo.
 	echo now processing %%d
 	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%exdir%\%%d-temp.svg %svgin%
 	inkscape --export-area-page --export-filename=%exdir%\%%d-rgb.pdf %exdir%\%%d-temp.svg
+	echo.
 	gswin32c -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%exdir%\%%d-cmyk.pdf %exdir%\%%d-rgb.pdf
 	del %exdir%\%%d-temp.svg
 	del %exdir%\%%d-rgb.pdf
 	echo %%d-cmyk.pdf has been created
-	echo.
 	)
 goto end
 
@@ -322,7 +323,8 @@ set namaberkas=booklet_%objID%.pdf
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
 	echo Now processing %%d
 	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%exdir%\%%d-temp.svg %svgin%
-	inkscape --export-area-page --export-filename=%exdir%\pdftemp-%%d.pdfx %exdir%\%%d-temp.svg
+	inkscape --export-area-page --export-type=pdf --export-filename=%exdir%\pdftemp-%%d.pdf %exdir%\%%d-temp.svg
+	move %exdir%\pdftemp-%%d.pdf %exdir%\pdftemp-%%d.pdfx >nul
 	del %exdir%\%%d-temp.svg
 	)
 pushd %exdir%
@@ -331,7 +333,7 @@ echo.
 gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas% @list.txt
 del *.pdfx
 del list.txt
-goto langsung_end
+goto end
 
 :BOOKLETCMYK
 echo Selected Format : Booklet (PDF-CMYK)
@@ -346,8 +348,8 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	echo Now processing %%d
 	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%exdir%\%%d-temp.svg %svgin%
 	
-	inkscape --export-area-page --export-filename=%exdir%\%%d-rgb.pdf %exdir%\%%d-temp.svg
-	
+	inkscape --export-area-page --export-type=pdf --export-filename=%exdir%\%%d-rgb.pdf %exdir%\%%d-temp.svg
+	echo.
 	gswin32c -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite -dAutoRotatePages=/None -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode -dDownsampleMonoImages=false -dDownsampleGrayImages=false -sOutputFile=%exdir%\%%d-cmyk.pdf %exdir%\%%d-rgb.pdf >nul
 	move %exdir%\%%d-cmyk.pdf %exdir%\%%d-pdftemp-cmyk.pdfx >nul
 	del %exdir%\%%d-rgb.pdf
@@ -359,7 +361,7 @@ echo.
 gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas% @list.txt
 del *.pdfx
 del list.txt
-goto langsung_end
+goto end
 
 :BUNDLE
 echo Selected Format : ZIP Bundle (PNG + EPS Default)
@@ -373,23 +375,23 @@ md "%fold%" 2>nul
 set der=%cd%
 
 :BUNDLEBATCHPROCESS
-md %exdir%\temp
+md %exdir%\temp-inkporter
 
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
-	inkscape --export-id=%%d --export-plain-svg --export-filename=%exdir%\temp\%%d-temp.svg %svgin%
-	inkscape %exdir%\temp\%%d-temp.svg --export-type=eps --export-filename=%exdir%\temp\%%d.eps --export-area-page --export-ps-level=3 --export-text-to-path --export-ignore-filters >nul 2>nul
-	inkscape --export-id=%%d --export-filename=%exdir%\temp\%%d.png %svgin% >nul
-	7z a -tzip %exdir%\%%d.zip %exdir%\temp\%%d.png %exdir%\temp\%%d.eps
+	inkscape --export-id=%%d --export-plain-svg --export-filename=%exdir%\temp-inkporter\%%d-temp.svg %svgin%
+	inkscape %exdir%\temp-inkporter\%%d-temp.svg --export-type=eps --export-filename=%exdir%\temp-inkporter\%%d.eps --export-area-page --export-ps-level=3 --export-text-to-path --export-ignore-filters >nul 2>nul
+	inkscape --export-id=%%d --export-filename=%exdir%\temp-inkporter\%%d.png %svgin% >nul
+	7z a -tzip %exdir%\%%d.zip %exdir%\temp-inkporter\%%d.png %exdir%\temp-inkporter\%%d.eps
 	echo.
 	echo %%d.zip has been created
 	)
-rmdir /s /q %exdir%\temp
+rmdir /s /q %exdir%\temp-inkporter
 goto end
 
 :end
 echo COMPLETE
 del %2_inkporter-temp.svg >nul 2>nul
-if not [%3]==[] exit
+if not [%2]==[] exit
 
 :langsung_end
 echo See you
