@@ -10,7 +10,6 @@ import inkex
 from time import sleep
 import warnings
 
-
 __version__ = '1.1.0'
 
 def atoi(text):
@@ -56,16 +55,13 @@ class Inkporter(inkex.Effect):
     
     def do_png(self):
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter_ext png {0} {1} {2} {3} {4}".format(
+        command = "start inkporter png {0} {1} {2} {3} {4}".format(
             self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color)
         os.system(command)
         
     def do_bundle(self):
         file_export = '"' + self.options.output_dir + '"'
-        if not self.has_7z():
-            inkex.utils.errormsg("Please install and add 7-Zip directory to Environment Variable to do Booklet (PDF) export")
-            return
-        command = "start inkporter_ext bundle {0} {1} {2} {3} {4}".format(
+        command = "start inkporter bundle {0} {1} {2} {3} {4}".format(
             self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color)
         os.system(command)
         
@@ -74,85 +70,67 @@ class Inkporter(inkex.Effect):
         if not self.has_imagemagick():
             inkex.utils.errormsg("Please install and add ImageMagick directory to Environment Variable")
             return
-        options = " RGB"
         if self.options.with_cmyk:
-            options = "CMYK"
-            
-        command = "start inkporter_ext jpeg {0} {1} {2} {3} {4} {5} {6}".format(
-            self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color, self.options.quality, options)
-        os.system(command)
+            options = "CMYK"            
+            command = "start inkporter jpeg_cmyk {0} {1} {2} {3} {4} {5} {6}".format(
+                self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color, self.options.quality, options)
+            os.system(command)
+        else:
+            options = "RGB"
+            command = "start inkporter jpeg {0} {1} {2} {3} {4} {5} {6}".format(
+                self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color, self.options.quality, options)
+            os.system(command)
 
     def do_pdf(self):
         file_export = '"' + self.options.output_dir + '"'
         if self.options.with_cmyk:
-            if not self.has_ghostscript():
-                inkex.utils.errormsg("Please install and add Ghostscript 32bit directory to Environment Variable to export PDF with CMYK color space")
-                return
-            command = "start inkporter_ext pdf_cmyk {0} {1} {2}".format(
+            command = "start inkporter pdf_cmyk {0} {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
             os.system(command)
         else:
-            command = "start inkporter_ext pdf {0} {1} {2}".format(
+            command = "start inkporter pdf {0} {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
             os.system(command)
         os.close(self.tmplog_fd)
 
     def do_svg(self):
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter_ext svg {0} {1} {2}".format(
+        command = "start inkporter svg {0} {1} {2}".format(
             self.myfile, self.options.id_pattern, file_export)
         os.system(command)
         os.close(self.tmplog_fd)
 
     def do_eps(self):
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter_ext eps {0} {1} {2}".format(
+        command = "start inkporter eps {0} {1} {2}".format(
             self.myfile, self.options.id_pattern, file_export)
         os.system(command)
         os.close(self.tmplog_fd)
 
     def do_booklet(self):
-        if not self.has_ghostscript():
-            inkex.utils.errormsg("Please install and add Ghostscript 32bit directory to Environment Variable to do Booklet (PDF) export")
-            return
         if self.options.with_cmyk:
             file_export = '"' + self.options.output_dir + '"'
-            command = "start inkporter_ext booklet_cmyk {0} {1} {2}".format(
+            command = "start inkporter booklet_cmyk {0} {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
             os.system(command)
             os.close(self.tmplog_fd)
         else:
             file_export = '"' + self.options.output_dir + '"'
-            command = "start inkporter_ext booklet {0} {1} {2}".format(
+            command = "start inkporter booklet {0} {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
             os.system(command)
             os.close(self.tmplog_fd)
     
     def do_webp(self):
         file_export = '"' + self.options.output_dir + '"'
-        if not self.has_webp():
-            inkex.utils.errormsg("Please download and add libwebp directory to Environment Variable to do webp export")
-            return
-        command = "start inkporter_ext webp {0} {1} {2} {3}".format(
+        command = "start inkporter webp {0} {1} {2} {3}".format(
             self.myfile, self.options.id_pattern, file_export, self.options.dpi)
         os.system(command)
         os.close(self.tmplog_fd)
 
-    def has_ghostscript(self):
-        status, output = self.get_cmd_output('gswin32c --help')
-        return status == 0 and 'Ghostscript' in output
-        
-    def has_7z(self):
-        status, output = self.get_cmd_output('7z --help')
-        return status == 0 and '7-Zip' in output
-
     def has_imagemagick(self):
         status, output = self.get_cmd_output('magick --version')
         return status == 0 and 'ImageMagick' in output
-
-    def has_webp(self):
-        status, output = self.get_cmd_output('cwebp -help')
-        return status == 0 and 'output.webp' in output
     
     def make_tmp_file(self, file_format):
         handler, self.myfile = tempfile.mkstemp(suffix=".svg",prefix="inkporter-%s-"%file_format)
@@ -221,6 +199,7 @@ class Inkporter(inkex.Effect):
             import traceback
             inkex.utils.errormsg(traceback.print_exc())
             print("hai")
+            
         warnings.filterwarnings("ignore")
 
 
