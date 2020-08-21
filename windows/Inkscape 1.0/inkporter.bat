@@ -36,7 +36,6 @@ pushd %4
 
 if %target%== png goto PNGBATCHPPROCESS
 if %target%== pdf goto PDFBATCHPPROCESS
-if %target%== pdf_cmyk goto PDFCMYKBATCHPPROCESS
 if %target%== eps goto EPSBATCHPPROCESS
 if %target%== svg goto SVGPLAINBATCHPROCESS
 if %target%== jpeg goto JPEGBATCHPPROCESS
@@ -45,6 +44,7 @@ if %target%== webp goto WEBPBATCHPPROCESS
 if %target%== booklet goto BOOKLETPPROCESS
 if %target%== booklet_cmyk goto BOOKLETCMYKPROCESS
 if %target%== bundle goto BUNDLEBATCHPROCESS
+if %target%== pdf_cmyk goto PDFCMYKBATCHPPROCESS
 
 goto pilihtarget
 
