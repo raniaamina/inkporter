@@ -59,7 +59,7 @@ class Inkporter(inkex.Effect):
         
     def do_bundle(self):
         if not self.has_7z():
-            inkex.debug("Please install and add 7z directory to Environment Variables to do PDF export")
+            inkex.debug("Please install and add 7z directory to PATH Environment Variables to do PDF export")
             return
         file_export = '"' + self.options.output_dir + '"'
         command = "start inkporter bundle {0} {1} {2} {3} {4}".format(
@@ -69,7 +69,7 @@ class Inkporter(inkex.Effect):
     def do_jpg(self):
         file_export = '"' + self.options.output_dir + '"'
         if not self.has_imagemagick():
-            inkex.debug("Please install and add ImageMagick directory to Environment Variables to do PDF export")
+            inkex.debug("Please install and add ImageMagick directory to PATH environment variables to do PDF export")
             return
         if self.options.with_cmyk:
             options = "CMYK"
@@ -85,7 +85,7 @@ class Inkporter(inkex.Effect):
         file_export = '"' + self.options.output_dir + '"'
         if self.options.with_cmyk:
             if not self.has_ghostscript():
-                inkex.debug("Please install and add Ghostscript 32bit directory to Environment Variables to do PDF export")
+                inkex.debug("Please install and add Ghostscript 32bit directory to PATH environment variables to do PDF export")
                 return
             command = "start inkporter pdf_cmyk {0} {1} {2}".format(
                 self.svg_file, self.options.id_pattern, file_export)
@@ -112,7 +112,7 @@ class Inkporter(inkex.Effect):
 
     def do_booklet(self):
         if not self.has_ghostscript():
-            inkex.debug("Please install and add Ghostscript 32bit directory to Environment Variables to do PDF export")
+            inkex.debug("Please install and add Ghostscript 32bit directory to PATH environment variables to do PDF export")
             return
         if self.options.with_cmyk:
             file_export = '"' + self.options.output_dir + '"'
@@ -130,7 +130,7 @@ class Inkporter(inkex.Effect):
     def do_webp(self):
         file_export = '"' + self.options.output_dir + '"'
         if not self.has_webp():
-            inkex.debug("Please download and add libwebp directory to Environment Variables to do webp export")
+            inkex.debug("Please download and add libwebp directory to PATH environment variables to do webp export")
             return
         command = "start inkporter webp {0} {1} {2} {3}".format(
             self.svg_file, self.options.id_pattern, file_export, self.options.dpi)
