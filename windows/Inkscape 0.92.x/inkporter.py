@@ -10,7 +10,6 @@ import inkex
 from time import sleep
 inkex.localize()
 
-
 def atoi(text):
     return int(text) if text.isdigit() else text
 
@@ -154,6 +153,9 @@ class Inkporter(inkex.Effect):
         status, output = self.get_cmd_output('7z --help')
         return status == 0 and '7-Zip' in output
     
+    def has_inkporter(self):
+        status, output = self.get_cmd_output('inkporter --help')
+        return status == 0 and 'inkporter' in output
 
     def get_cmd_output(self, cmd):
         # Adapted from webslicer extension (extensions > web > slicer)
@@ -177,18 +179,15 @@ class Inkporter(inkex.Effect):
 
     # called when extension is running
     def effect(self):
-        if len(self.options.id_pattern) > 0:
-            new_nss = inkex.NSS
-            new_nss[u're'] = u'http://exslt.org/regular-expressions'
-            path_to_compile = "//*[re:match(@id,'(%s)','g')]" % self.options.id_pattern
-            self.id_to_process = self.document.xpath(path_to_compile, namespaces=new_nss)
-            self.selected = {}
-            for item in self.id_to_process:
-                self.selected[item.attrib['id']] = item
-        if len(self.selected) < 1:
+        if not self.has_inkporter():
             inkex.debug(
-                "Please select at least 1 object or fill ID Pattern to use this extension!")
+                "Please copy inkporter.bat to Inkscape extensions directory!")
             return
+        if not self.options.id_pattern:
+            inkex.debug(
+                "Please fill ID Pattern to use this extension!")
+            return
+            
         try:
             if not os.path.isdir(os.path.expandvars(self.options.output_dir)):
                 os.mkdir(os.path.expandvars(self.options.output_dir))
