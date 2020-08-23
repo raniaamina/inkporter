@@ -112,11 +112,11 @@ echo libwebp : https://developers.google.com/speed/webp/
 goto void
 
 :help
-echo Inkporter-win 1.6 For Inkscape 0.92.x
+echo Inkporter-win 1.5 For Inkscape 0.92.x
 echo.
 echo Usage :
 echo inkporter                 runs inkporter and inkporter will prompts you to choose .svg file
-echo inkporter <svg_file>      runs inkporter without being prompted to choose svg file
+echo inkporter [svg_file]      runs inkporter without being prompted to choose svg file
 echo.
 echo Parameters :
 echo --help                    display this message
