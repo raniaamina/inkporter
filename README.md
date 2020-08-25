@@ -6,8 +6,6 @@ Perkakas sederhana untuk mengekspor berkas svg dari Inkscape berdasarkan pattern
 
 - Inkscape
 
-- librsvg2-bin
-
 - ghostscript (khusus untuk PDF CMYK)
 
 - webp
