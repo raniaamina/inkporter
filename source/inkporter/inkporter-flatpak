@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# enable flatpak
+INSTALLDIR=$(which inkporter)
+echo "Mengaktifkan Dukungan Flatpak ..."
+sudo sed -i '/shopt/s/^#*//g' $INSTALLDIR
+sudo sed -i '/org.inkscape.Inkscape/s/^#*//g' $INSTALLDIR
+echo "done"
+exit 0

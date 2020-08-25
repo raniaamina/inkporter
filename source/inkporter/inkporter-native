@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# enable native
+INSTALLDIR=$(which inkporter)
+
+echo "Mengaktifkan Inkscape native ..."
+sudo sed -i '/shopt/s/^#*/#/g' $INSTALLDIR
+sudo sed -i '/org.inkscape.Inkscape/s/^#*/#/g' $INSTALLDIR
+echo "done"
+exit 0
