@@ -4,3 +4,4 @@
 *.dsc
 *.tar.xz
 source/debian/*
+source/inkporter/extensions/*
