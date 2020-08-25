@@ -2,7 +2,7 @@
 
 INSTALLDIR=$(which inkporter)
 INKSCAPEDIR=$(which inkscape)
-VERSION="2.2.5"
+VERSION="2.3.1"
 
 # Buang tanda pagar pada dua baris di bawah ini bila Anda menggunakan Inkscape Flatpak
 # shopt -s expand_aliases
@@ -15,27 +15,18 @@ if [ "$1" = "--version" ] ; then
 fi
 
 if [ "$1" = "--enable-flatpak" ] ; then
-  echo "Mengaktifkan Dukungan Flatpak ..."
-  sudo sed -i '/shopt/s/^#*//g' $INSTALLDIR
-  sudo sed -i '/org.inkscape.Inkscape/s/^#*//g' $INSTALLDIR
-  echo "done"
+  bash /usr/bin/inkporter-flatpak
   exit 0
 fi
 
 if [ "$1" = "--enable-native" ] ; then
-  echo "Mengaktifkan Inkscape native ..."
-  sudo sed -i '/alias/s/^#*/#/g' $INSTALLDIR
-  # sudo sed -i '/org.inkscape.Inkscape/s/^#*/#/g' $INSTALLDIR
-  echo "done"
+  bash /usr/bin/inkporter-native
   exit 0
 fi
 
 if [ "$1" = "--deps-info" ] ; then
   echo "Versi Ghostscript"
   gs --version 
-  echo
-  echo "Versi RSVG"
-  rsvg-convert --version 
   echo
   echo "Versi WEBP"
   cwebp -version 
@@ -86,7 +77,7 @@ SOURCE=$1
 IDPATTERN=$2
 echo " "
 PS3='Enter the number: '
-options=("png" "jpg" "svg" "pdf" "pdf-cmyk" "eps-default" "booklet" "webp" "cancel")
+options=("png" "jpg (CMYK)" "svg" "pdf" "pdf-cmyk" "eps-default" "booklet (CMYK)" "webp" "cancel")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -104,9 +95,14 @@ do
             done
             break
             ;;
-        "jpg")
+        "jpg (CMYK)")
+            # pengecekan dependensi
+            if convert --version | grep ImageMagick > /tmp/checkers; then 
+            echo "ada"; else echo; echo "[GALAT!] ImageMagick belum terpasang!"; echo; exit; fi
+            # aksi bila dependensi telah terpenuhi
             echo "Berkas akan diekspor ke format JPG"
             read -e -p "Tentukan latar gambar black/white (default white): " -i "white" BGCOLOR
+            read -e -p "Pilih colorspace yang ingin digunakan RGB/CMYK (default CMYK): " -i "CMYK" COLORSPACE
             read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
             mkdir -p $DIRECTORY/.temp
             for id in $(inkscape -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
@@ -118,7 +114,7 @@ do
             cd $DIRECTORY/.temp
             for i in *.png; do 
             echo "Sedang mengoptimasi $id.jpg" 
-            convert "$i"  -background $BGCOLOR -flatten -quality 100 -colorspace CMYK "../${i%.*}.jpg";  
+            convert "$i"  -background $BGCOLOR -flatten -quality 100 -colorspace $COLORSPACE "../${i%.*}.jpg";  
             done
             cd .. && rm -r .temp
             # cd .. 
@@ -150,13 +146,16 @@ do
             done
             cd $DIRECTORY/.temp
             for i in *.svg; do cat "$i" | inkscape --pipe -C -o "../${i%.*}.pdf"
-            echo "Sedang mengoptimasi berkas $id.pdf"
             done
             cd .. && rm -r .temp
             cd .. 
             break
             ;;
          "pdf-cmyk")
+            # pengecekan dependensi
+            if gs --version | grep . > /tmp/checkers; then 
+            echo "ada"; else echo; echo "[GALAT!] Paket Ghostscript belum terpasang!"; echo; exit; fi
+            # aksi bila dependensi telah terpenuhi
             echo "Berkas akan diekspor ke format PDF (CMYK)"
             read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
             mkdir -p $DIRECTORY/.temp
@@ -196,25 +195,43 @@ do
             cd .. 
             break
             ;;
-        "booklet")
-            echo "Berkas akan akan diproses ke format PDF (CMYK)"
+        "booklet (CMYK)")
+            # pengecekan dependensi
+            if gs --version | grep . > /tmp/checkers; then 
+            echo "ada"; else echo; echo "[GALAT!] Paket Ghostscript belum terpasang!"; echo; exit; fi
+            # aksi bila dependensi telah terpenuhi
+            echo "Berkas akan diekspor ke format PDF Booklet"
             read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
             mkdir -p $DIRECTORY/.temp
             for id in $(inkscape -S $SOURCE | grep $IDPATTERN | cut -d "," -f 1)
             do 
-            inkscape -i $id -l -o "$DIRECTORY/.temp/$id.svg" $SOURCE --export-id-only &>> /tmp/inkporter-booklet.log
-            echo "Inisiasi objek: $id (OK!)"
+            inkscape -i $id -l -o "$DIRECTORY/.temp/$id.svg" $SOURCE --export-id-only &>> /tmp/inkporter-pdf.log
+            echo "Sedang memproses $id ke $DIRECTORY/$id.pdf"
+            echo
             done
             cd $DIRECTORY/.temp
-            # for i in *.svg; do sed -r -i "s/#((0x){0,1}|#{0,1})([0-9a-fA-F]{8}|[0-9a-fA-F]{6})/#000/g" "$i"; done 
-            echo "Mengkompilasi booklet"
-            rsvg-convert -f pdf -o "../$DIRECTORY.pdf" $(ls --sort=version *.svg)
-            cd ..
-            rm -r .temp
+            for i in *.svg; do cat "$i" | inkscape --pipe -C -o "${i%.*}.pdf"
+            done
+            gs -q -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -sOutputFile=../$DIRECTORY.pdf $(ls --sort=version *.pdf)  
+            cd .. && rm -r .temp
+            echo
+            read -p "Ingin mengubah booklet menjadi PDF dengan colorspace CMYK? (Y/N) " -n 1 -r
+            echo    # (optional) move to a new line
+            if [[ $REPLY =~ ^[Yy]$ ]]
+            then echo "Mengubah $DIRECTORY.pdf ke CMYK"
+            gs -q -dSAFER -dBATCH -dNOPAUSE -dNOCACHE -sDEVICE=pdfwrite \
+            -sColorConversionStrategy=CMYK -dProcessColorModel=/DeviceCMYK \
+            -sOutputFile=$DIRECTORY-cmyk.pdf $DIRECTORY.pdf
+            else exit
+            fi
             cd .. 
             break
             ;;
         "webp")
+        # pengecekan dependensi
+            if cwebp -version | grep . > /tmp/checkers; then 
+            echo "ada"; else echo; echo "[GALAT!] Paket webp belum terpasang!"; echo; exit; fi
+            # aksi bila dependensi telah terpenuhi
             echo "Berkas akan diekspor ke format WEBP"
             read -e -p "Buat Sebuah Folder untuk Menyimpan Hasil Ekspor Anda: " DIRECTORY
             mkdir -p $DIRECTORY/.temp
