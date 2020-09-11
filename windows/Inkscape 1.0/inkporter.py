@@ -11,7 +11,7 @@ from time import sleep
 import warnings
 import io
 
-__version__ = '1.6.1'
+__version__ = '1.7.0'
 
 def atoi(text):
     return int(text) if text.isdigit() else text
@@ -27,15 +27,52 @@ class Inkporter(inkex.Effect):
             self.tty = open(os.devnull, 'w')
             # print >>self.tty, "gears-dev " + __version__
         self.arg_parser.add_argument('--tab')
-        self.arg_parser.add_argument("-f", "--format",
-                                     type=str, dest="format",
-                                     help="Preferred output format", default="png")
+        
+        
         self.arg_parser.add_argument("--id-pattern",
                                      type=str, dest="id_pattern",
                                      help="IDs to export")
+                                     
+                                     
         self.arg_parser.add_argument("--with-cmyk",
                                      type=inkex.Boolean, dest="with_cmyk",
                                      help="Use CMYK instead of RGB (for JPG/PDF)")
+                                     
+        self.arg_parser.add_argument("--pack-export",
+                                     type=inkex.Boolean, dest="pack",
+                                     help="Pack each IDs into ZIP")
+
+#       Export Options
+
+        self.arg_parser.add_argument("--png",
+                                     type=inkex.Boolean, dest="png",
+                                     help="Export to PNG")
+                                     
+        self.arg_parser.add_argument("--jpg",
+                                     type=inkex.Boolean, dest="jpg",
+                                     help="Export to JPG")
+        
+        self.arg_parser.add_argument("--pdf",
+                                     type=inkex.Boolean, dest="pdf",
+                                     help="Export to PDF")
+        
+        self.arg_parser.add_argument("--svg",
+                                     type=inkex.Boolean, dest="svg",
+                                     help="Export to SVG")
+        
+        self.arg_parser.add_argument("--eps",
+                                     type=inkex.Boolean, dest="eps",
+                                     help="Export to EPS")
+        
+        self.arg_parser.add_argument("--booklet",
+                                     type=inkex.Boolean, dest="booklet",
+                                     help="Export to Booklet-PDF")
+        
+        self.arg_parser.add_argument("--webp",
+                                     type=inkex.Boolean, dest="webp",
+                                     help="Export to WEBP")
+
+        
         self.arg_parser.add_argument("--dpi",
                                      type=int, dest="dpi",
                                      help="DPI for bitmap image output format", default=96)
@@ -56,8 +93,8 @@ class Inkporter(inkex.Effect):
     
     def do_png(self):
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter png {0} {1} {2} {3} {4}".format(
-            self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color)
+        command = "start inkporter {0} png {1} {2} {3}".format(
+            self.myfile, self.options.id_pattern, file_export, self.options.dpi)
         os.system(command)
         
     def do_bundle(self):
@@ -65,8 +102,8 @@ class Inkporter(inkex.Effect):
             inkex.utils.errormsg("Please install and add 7-Zip directory to Environment Variable")
             return
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter bundle {0} {1} {2} {3} {4}".format(
-            self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color)
+        command = "start inkporter {0} bundle {1} {2} {3} {4}".format(
+            self.myfile, self.options.id_pattern, file_export, self.options.dpi)
         os.system(command)
         
     def do_jpg(self):
@@ -75,14 +112,14 @@ class Inkporter(inkex.Effect):
             inkex.utils.errormsg("Please install and add ImageMagick directory to PATH Environment Variable")
             return
         if self.options.with_cmyk:
-            options = "CMYK"            
-            command = "start inkporter jpeg_cmyk {0} {1} {2} {3} {4} {5} {6}".format(
-                self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color, self.options.quality, options)
+            options = "cmyk"            
+            command = "start inkporter {0} jpeg {1} {2} {3} {4} {5} {6}".format(
+                self.myfile, self.options.id_pattern, file_export, self.options.dpi,  options, self.options.bg_color, self.options.quality)
             os.system(command)
         else:
-            options = "RGB"
-            command = "start inkporter jpeg {0} {1} {2} {3} {4} {5} {6}".format(
-                self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color, self.options.quality, options)
+            options = "rgb"
+            command = "start inkporter {0} jpeg {1} {2} {3} {4} {5} {6}".format(
+                self.myfile, self.options.id_pattern, file_export, self.options.dpi, options, self.options.bg_color, self.options.quality)
             os.system(command)
 
     def do_pdf(self):
@@ -91,28 +128,25 @@ class Inkporter(inkex.Effect):
             if not self.has_gs32():
                 inkex.utils.errormsg("Please Install and add Ghostscript 32 bit directory to PATH environment variable to export PDF-CMYK")
                 return
-            command = "start inkporter pdf_cmyk {0} {1} {2}".format(
+            command = "start inkporter {0} pdf-cmyk {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
             os.system(command)
         else:   
-            command = "start inkporter pdf {0} {1} {2}".format(
+            command = "start inkporter {0} pdf {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
             os.system(command)
-        os.close(self.tmplog_fd)
 
     def do_svg(self):
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter svg {0} {1} {2}".format(
+        command = "start inkporter {0} svg {1} {2}".format(
             self.myfile, self.options.id_pattern, file_export)
         os.system(command)
-        os.close(self.tmplog_fd)
 
     def do_eps(self):
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter eps {0} {1} {2}".format(
+        command = "start inkporter {0} eps {1} {2}".format(
             self.myfile, self.options.id_pattern, file_export)
         os.system(command)
-        os.close(self.tmplog_fd)
 
     def do_booklet(self):
         if not self.has_gs32():
@@ -121,26 +155,33 @@ class Inkporter(inkex.Effect):
             
         if self.options.with_cmyk:
             file_export = '"' + self.options.output_dir + '"'
-            command = "start inkporter booklet_cmyk {0} {1} {2}".format(
+            command = "start inkporter {0} book-cmyk {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
             os.system(command)
             os.close(self.tmplog_fd)
         else:
             file_export = '"' + self.options.output_dir + '"'
-            command = "start inkporter booklet {0} {1} {2}".format(
+            command = "start inkporter {0} book {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
             os.system(command)
-            os.close(self.tmplog_fd)
     
     def do_webp(self):
         file_export = '"' + self.options.output_dir + '"'
         if not self.has_webp():
             inkex.utils.errormsg("Please Download and add libwebp directory to PATH environment variable to export WEBP")
             return
-        command = "start inkporter webp {0} {1} {2} {3}".format(
+        command = "start inkporter {0} webp {1} {2} {3}".format(
             self.myfile, self.options.id_pattern, file_export, self.options.dpi)
         os.system(command)
-        os.close(self.tmplog_fd)
+        
+    def pack(self):
+        file_export = '"' + self.options.output_dir + '"'
+        if not self.has_7zip():
+            inkex.utils.errormsg("Please Download and add 7-ZIP directory to PATH environment variable to pack each IDs into ZIP")
+            return
+        command = "start inkporter {0} webp {1} {2} {3}".format(
+            self.myfile, self.options.id_pattern, file_export)
+        os.system(command)
 
     def has_imagemagick(self):
         status, output = self.get_cmd_output('magick --version')
@@ -157,9 +198,10 @@ class Inkporter(inkex.Effect):
     def has_7zip(self):
         status, output = self.get_cmd_output('7z')
         return status == 0 and '7-Zip' in output
+        
     
-    def make_tmp_file(self, file_format):
-        handler, self.myfile = tempfile.mkstemp(suffix=".svg",prefix="inkporter-%s-"%file_format)
+    def make_tmp_file(self):
+        handler, self.myfile = tempfile.mkstemp(suffix=".svg",prefix="inkporter-")
         with io.open(handler, "w", encoding="utf-8") as f:
             f.write(etree.tostring(self.document, encoding="utf-8",xml_declaration=True).decode("utf-8"))
         self.tmpout.append(self.myfile)
@@ -190,28 +232,30 @@ class Inkporter(inkex.Effect):
         try:
             if not os.path.isdir(os.path.expandvars(self.options.output_dir)):
                 os.mkdir(os.path.expandvars(self.options.output_dir))
-            self.make_tmp_file(self.options.format)
-            if self.options.format == "png":
+            self.make_tmp_file()
+            
+            if self.options.png:
                 self.do_png()
-            elif self.options.format == "jpg":
+            if self.options.jpg:
                 self.do_jpg()
-            elif self.options.format == "pdf":
+            if self.options.pdf:
                 self.do_pdf()
-            elif self.options.format == "svg":
+            if self.options.svg:
                 self.do_svg()
-            elif self.options.format == "eps":
+            if self.options.eps:
                 self.do_eps()
-            elif self.options.format == "booklet":
+            if self.options.booklet:
                 self.do_booklet()
-            elif self.options.format == "webp":
+            if self.options.webp:
                 self.do_webp()
-            elif self.options.format == "bundle":
-                self.do_bundle()
         except Exception as e:
             inkex.utils.errormsg(e)
             import traceback
             inkex.utils.errormsg(traceback.print_exc())
-            
+        
+        if self.options.pack:
+            self.pack()
+        
         self.quit_inkporter()
 
 
