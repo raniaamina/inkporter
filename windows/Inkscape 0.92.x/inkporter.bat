@@ -325,13 +325,23 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	inkscape --export-area-page --without-gui --export-pdf=%exdir%\pdftemp-%%d.pdfx %exdir%\%%d-temp.svg
 	del %exdir%\%%d-temp.svg
 	)
-pushd %exdir%
-dir /b | findstr pdftemp >> list.txt
+:: based on answer on stackoverflow : https://stackoverflow.com/questions/19297935/naturally-sort-files-in-batch
+(
+setlocal enabledelayedexpansion
+for %%f in (*.pdfx) do (
+set numbr=00000000000000000000000000000000%%f
+set numbr=!numbr:~-36!
+set $!numbr!=%%f
+)
+for /f "tokens=1,* delims==" %%f in ('set $0') do echo %%g
+) >>inkporter-pagelist.txt
+
 echo.
-gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas% @list.txt
+set filename=%objID%_booklet-cmyk.pdf
+gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%filename% @inkporter-pagelist.txt
 del *.pdfx
-del list.txt
-goto langsung_end
+del inkporter-pagelist.txt
+goto end
 
 :BOOKLETCMYK
 echo Selected Format : Booklet (PDF-CMYK)
@@ -354,12 +364,23 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	del %exdir%\%%d-temp.svg
 	)
 pushd %exdir%
-dir /b | findstr pdftemp >> list.txt
+:: based on answer on stackoverflow : https://stackoverflow.com/questions/19297935/naturally-sort-files-in-batch
+(
+setlocal enabledelayedexpansion
+for %%f in (*.pdfx) do (
+set numbr=00000000000000000000000000000000%%f
+set numbr=!numbr:~-36!
+set $!numbr!=%%f
+)
+for /f "tokens=1,* delims==" %%f in ('set $0') do echo %%g
+) >>inkporter-pagelist.txt
+
 echo.
-gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas% @list.txt
+set filename=%objID%_booklet-cmyk.pdf
+gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%filename% @inkporter-pagelist.txt
 del *.pdfx
-del list.txt
-goto langsung_end
+del inkporter-pagelist.txt
+goto end
 
 :BUNDLE
 echo Selected Format : ZIP Bundle (PNG + EPS Default)
