@@ -39,8 +39,10 @@
 				<page name="options" gui-text="Options">
                         <param name="export_options" type="description">Export Options :</param>
 						<param name="with-cmyk" type="bool" gui-text="Use CMYK ? (JPG/PDF)">false</param>
-                        <!-- <param name="raster-pdf" type="bool" gui-text="Use Bitmap on PDF">false</param> -->
-						<param name="pack-export" type="bool" gui-text="Pack Each IDs into ZIP">false</param>						
+						
+                        <param name="raster-pdf" type="bool" gui-text="Use Bitmap PDF (EXPERIMENTAL)">false</param>
+						<param name="pack-export" type="bool" gui-text="Pack Each IDs into ZIP (EXPERIMENTAL)">false</param>
+						
 						<param name="dpi" type="int" min="0" max="10000" gui-text="DPI (for PNG/JPG)">96</param>
                         <param name="quality" type="int" min="0" max="100" gui-text="Quality (for JPG)">100</param>
                         <param name="bg-color" type="string" gui-text="Background Color (for JPG)">#ffffff</param>

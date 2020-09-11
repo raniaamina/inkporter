@@ -315,11 +315,20 @@ goto end
 pushd %exdir%
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
 	dir /b | findstr %%d > %%d-zip-inkporter-list.txt
+	for /f "delims=," %%x in ('type %%d-zip-inkporter-list.txt') do (
+		mkdir %%d-inktemp
+		move %%x %%d-inktemp\%%x
+		)
+	move %%d-zip-inkporter-list.txt %%d-inktemp\%%d-zip-inkporter-list.txt
+	pushd %%d-inktemp
 	7z a -tzip %%d.zip @%%d-zip-inkporter-list.txt 
-	for /f "delims=," %%x in ('type zip-inkporter-list.txt') do (
+	for /f "delims=," %%x in ('type %%d-zip-inkporter-list.txt') do (
 		del %%x
 		)
+	rmdir /s /q %exdir%\temp-inkporter
+	cd ..
 	)
+
 
 :end
 exit
