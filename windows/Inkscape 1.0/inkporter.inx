@@ -40,7 +40,7 @@
                         <param name="export_options" type="description">Export Options :</param>
 						<param name="with-cmyk" type="bool" gui-text="Use CMYK ? (JPG/PDF)">false</param>
 						
-                        <param name="raster-pdf" type="bool" gui-text="Use Bitmap PDF (EXPERIMENTAL)">false</param>
+                        <param name="raster-pdf" type="bool" gui-text="Use Bitmap Booklet-PDF (EXPERIMENTAL)">false</param>
 						<param name="pack-export" type="bool" gui-text="Pack Each IDs into ZIP (EXPERIMENTAL)">false</param>
 						
 						<param name="dpi" type="int" min="0" max="10000" gui-text="DPI (for PNG/JPG)">96</param>

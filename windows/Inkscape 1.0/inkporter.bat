@@ -285,12 +285,13 @@ goto end
 :book-raster
 goto REQCHECK
 :book-rasterprocess
-set namaberkas=booklet_%objID%.pdf
+set namaberkas=booklet_raster_%objID%.pdf
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
 	echo Now processing %%d
 	inkscape --export-id=%%d --export-filename=%exdir%\%%d-temp.png --export-dpi=%dpi% %svgin% >nul
-	magick convert %exdir%\%%d-temp.png -background %bgcol% -flatten -colorspace %colsp% -quality %quality% %exdir%\%%d-bookletras-temp-%colsp%.pdf
+	magick convert %exdir%\%%d-temp.png -background %bgcol% -flatten %colorarg% -quality %quality% %exdir%\%%d-bookletras-temp-%colsp%.pdf
 	move %exdir%\%%d-bookletras-temp-%colsp%.pdf %exdir%\%%d-bookletras-temp-%colsp%.pdfx >nul
+	del %exdir%\%%d-temp.png
 	)
 	
 pushd %exdir%

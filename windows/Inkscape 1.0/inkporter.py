@@ -168,20 +168,20 @@ class Inkporter(inkex.Effect):
         file_export = '"' + self.options.output_dir + '"'
         if self.options.with_cmyk:
             if self.options.use_raster:
-                command = "start /w /b inkporter {0} book-cmyk {1} {2}".format(
-                    self.myfile, self.options.id_pattern, file_export)
-            else:
                 command = "start /w /b inkporter {0} book-raster {1} {2} {3} cmyk".format(
                     self.myfile, self.options.id_pattern, file_export, self.options.dpi)
+            else:
+                command = "start /w /b inkporter {0} book-cmyk {1} {2}".format(
+                    self.myfile, self.options.id_pattern, file_export)
             os.system(command)
             os.close(self.tmplog_fd)
         else:
             if self.options.use_raster:
-                command = "start /w /b inkporter {0} book {1} {2}".format(
-                    self.myfile, self.options.id_pattern, file_export)
-            else:
                 command = "start /w /b inkporter {0} book-raster {1} {2} {3} rgb".format(
                     self.myfile, self.options.id_pattern, file_export, self.options.dpi)
+            else:
+                command = "start /w /b inkporter {0} book {1} {2}".format(
+                    self.myfile, self.options.id_pattern, file_export)
             os.system(command)
     
     def do_webp(self):
