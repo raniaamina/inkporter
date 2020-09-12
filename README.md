@@ -1,5 +1,5 @@
 <p align="center" class="has-mb-6">
-<img class="not-gallery-item" height="128" src="linux/inkscape-1.0/inkporter/inkporter.svg" alt="logo">
+<img class="not-gallery-item" height="128" src="windows/1.0/inkporter/inkporter.svg" alt="logo">
 <br><b>Inkporter</b>
 <br>
 Export SVG Document to Several Format Based on Its ID!
@@ -7,8 +7,18 @@ Export SVG Document to Several Format Based on Its ID!
 
 # Inkpoter GUI EXPERIMENTAL BRANCH!
 
-We don't give a full support for new features in here, they might be unstable
+We don't give a full support for this new features yet, they might be very unstable
 Please report any bugs you find in here
+
+# Installation
+
+Basically just same as the stable version https://github.com/raniaamina/inkporter/tree/inkporter-gui#how-to-install-inkporter
+
+# What's New and Experimental
+- Multi format export
+- ZIP exported files by IDs
+- use rasterized page on booklet
+- Re-written CLI core (inkporter-win)
 
 ## Contributor
 
