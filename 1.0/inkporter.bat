@@ -11,7 +11,7 @@ set dpi=%5
 
 if [%1]==[] goto main
 
-REM pushd %4 2>nul
+:: pushd %4 2>nul
 
 :main
 echo "|| Welcome to :                                                         ||"
@@ -36,7 +36,6 @@ pushd %4
 
 if %target%== png goto PNGBATCHPPROCESS
 if %target%== pdf goto PDFBATCHPPROCESS
-if %target%== pdf_cmyk goto PDFCMYKBATCHPPROCESS
 if %target%== eps goto EPSBATCHPPROCESS
 if %target%== svg goto SVGPLAINBATCHPROCESS
 if %target%== jpeg goto JPEGBATCHPPROCESS
@@ -45,12 +44,13 @@ if %target%== webp goto WEBPBATCHPPROCESS
 if %target%== booklet goto BOOKLETPPROCESS
 if %target%== booklet_cmyk goto BOOKLETCMYKPROCESS
 if %target%== bundle goto BUNDLEBATCHPROCESS
+if %target%== pdf_cmyk goto PDFCMYKBATCHPPROCESS
 
 goto pilihtarget
 
 :mainpilih
-REM set exdir="%cd%"
-REM echo exdir=%exdir%
+:: set exdir="%cd%"
+:: echo exdir=%exdir%
 echo.
 echo Available SVG files on %cd% :
 echo.
@@ -63,8 +63,8 @@ echo.
 goto pilihtarget
 
 :pilihtarget
-REM set exdir ="%cd%"
-REM echo exdir=%exdir%
+:: set exdir ="%cd%"
+:: echo exdir=%exdir%
 set svgin=%1
 if [%1]==[] set svgin="%svg%"
 echo Selected file = %svgin%
@@ -112,7 +112,7 @@ echo libwebp : https://developers.google.com/speed/webp/
 goto void
 
 :help
-echo Inkporter-win 1.6 For Inkscape 0.92.x
+echo Inkporter-win 1.6 For Inkscape 1.0
 echo.
 echo Usage :
 echo inkporter                 runs inkporter and inkporter will prompts you to choose .svg file
@@ -145,6 +145,8 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	)
 goto end
 
+
+
 :PDF
 echo Selected Format : PDF
 
@@ -165,7 +167,10 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	echo.
 	echo %%d.pdf has been created
 	)
+	
 goto end
+
+
 
 :EPS
 echo Selected Format : EPS
@@ -313,7 +318,7 @@ goto end
 :BOOKLET
 echo Selected Format : Booklet (PDF)
 set /p objID="Object ID pattern : "
-REM set /p namaberkas="Output filename (put .pdf in the end, unless you want something else) : "
+:: set /p namaberkas="Output filename (put .pdf in the end, unless you want something else) : "
 set exdir="%cd%"
 echo your objects will be saved in %exdir%
 echo.
@@ -322,23 +327,33 @@ echo.
 set namaberkas=booklet_%objID%.pdf
 for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do (
 	echo Now processing %%d
-	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%exdir%\%%d-temp.svg %svgin%
-	inkscape --export-area-page --export-type=pdf --export-filename=%exdir%\pdftemp-%%d.pdf %exdir%\%%d-temp.svg
+	inkscape --export-id=%%d --export-id-only --export-plain-svg --export-filename=%exdir%\%%d-pdf-temp.svg %svgin%
+	inkscape %exdir%\%%d-pdf-temp.svg --export-area-page --export-type=pdf --export-filename=%exdir%\pdftemp-%%d.pdf 
 	move %exdir%\pdftemp-%%d.pdf %exdir%\pdftemp-%%d.pdfx >nul
-	del %exdir%\%%d-temp.svg
+	del %exdir%\%%d-pdf-temp.svg
 	)
+:: change the directory to exdir
 pushd %exdir%
-dir /b | findstr pdftemp >> list.txt
+:: based on answer on stackoverflow : https://stackoverflow.com/questions/19297935/naturally-sort-files-in-batch
+(
+setlocal enabledelayedexpansion
+for %%f in (*.pdfx) do (
+set numbr=00000000000000000000000000000000%%f
+set numbr=!numbr:~-36!
+set $!numbr!=%%f
+)
+for /f "tokens=1,* delims==" %%f in ('set $0') do echo %%g
+) >>inkporter-pagelist.txt
 echo.
-gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas% @list.txt
+gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas% @inkporter-pagelist.txt
 del *.pdfx
-del list.txt
+del inkporter-pagelist.txt
 goto end
 
 :BOOKLETCMYK
 echo Selected Format : Booklet (PDF-CMYK)
 set /p objID="Object ID pattern : "
-REM set /p namaberkas="Output filename (put .pdf in the end, unless you want something else) : "
+:: set /p namaberkas="Output filename (put .pdf in the end, unless you want something else) : "
 set exdir="%cd%"
 echo your objects will be saved in %cd%\%fold%
 
@@ -355,12 +370,21 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 	del %exdir%\%%d-rgb.pdf
 	del %exdir%\%%d-temp.svg
 	)
+	
 pushd %exdir%
-dir /b | findstr pdftemp >> list.txt
+(
+setlocal enabledelayedexpansion
+for %%f in (*.pdfx) do (
+set numbr=00000000000000000000000000000000%%f
+set numbr=!numbr:~-36!
+set $!numbr!=%%f
+)
+for /f "tokens=1,* delims==" %%f in ('set $0') do echo %%g
+) >>inkporter-pagelist.txt
 echo.
-gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas% @list.txt
+gswin32c -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=%namaberkas% @inkporter-pagelist.txt
 del *.pdfx
-del list.txt
+del inkporter-pagelist.txt
 goto end
 
 :BUNDLE
@@ -388,9 +412,10 @@ for /f "delims=," %%d in ('inkscape --query-all %svgin% ^| findstr %objID%') do 
 rmdir /s /q %exdir%\temp-inkporter
 goto end
 
+:endline
 :end
 echo COMPLETE
-del %2_inkporter-temp.svg >nul 2>nul
+:: del %2_inkporter-temp.svg >nul 2>nul
 if not [%2]==[] exit
 
 :langsung_end

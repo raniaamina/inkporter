@@ -9,8 +9,9 @@ import os
 import inkex
 from time import sleep
 import warnings
+import io
 
-__version__ = '1.1.0'
+__version__ = '1.6.1'
 
 def atoi(text):
     return int(text) if text.isdigit() else text
@@ -60,6 +61,9 @@ class Inkporter(inkex.Effect):
         os.system(command)
         
     def do_bundle(self):
+        if not self.has_7zip():
+            inkex.utils.errormsg("Please install and add 7-Zip directory to Environment Variable")
+            return
         file_export = '"' + self.options.output_dir + '"'
         command = "start inkporter bundle {0} {1} {2} {3} {4}".format(
             self.myfile, self.options.id_pattern, file_export, self.options.dpi, self.options.bg_color)
@@ -68,7 +72,7 @@ class Inkporter(inkex.Effect):
     def do_jpg(self):
         file_export = '"' + self.options.output_dir + '"'
         if not self.has_imagemagick():
-            inkex.utils.errormsg("Please install and add ImageMagick directory to Environment Variable")
+            inkex.utils.errormsg("Please install and add ImageMagick directory to PATH Environment Variable")
             return
         if self.options.with_cmyk:
             options = "CMYK"            
@@ -84,10 +88,13 @@ class Inkporter(inkex.Effect):
     def do_pdf(self):
         file_export = '"' + self.options.output_dir + '"'
         if self.options.with_cmyk:
+            if not self.has_gs32():
+                inkex.utils.errormsg("Please Install and add Ghostscript 32 bit directory to PATH environment variable to export PDF-CMYK")
+                return
             command = "start inkporter pdf_cmyk {0} {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
             os.system(command)
-        else:
+        else:   
             command = "start inkporter pdf {0} {1} {2}".format(
                 self.myfile, self.options.id_pattern, file_export)
             os.system(command)
@@ -108,6 +115,10 @@ class Inkporter(inkex.Effect):
         os.close(self.tmplog_fd)
 
     def do_booklet(self):
+        if not self.has_gs32():
+            inkex.utils.errormsg("Please Install and add Ghostscript 32 bit directory to PATH environment variable to export Booklet (PDF)")
+            return
+            
         if self.options.with_cmyk:
             file_export = '"' + self.options.output_dir + '"'
             command = "start inkporter booklet_cmyk {0} {1} {2}".format(
@@ -123,6 +134,9 @@ class Inkporter(inkex.Effect):
     
     def do_webp(self):
         file_export = '"' + self.options.output_dir + '"'
+        if not self.has_webp():
+            inkex.utils.errormsg("Please Download and add libwebp directory to PATH environment variable to export WEBP")
+            return
         command = "start inkporter webp {0} {1} {2} {3}".format(
             self.myfile, self.options.id_pattern, file_export, self.options.dpi)
         os.system(command)
@@ -131,10 +145,22 @@ class Inkporter(inkex.Effect):
     def has_imagemagick(self):
         status, output = self.get_cmd_output('magick --version')
         return status == 0 and 'ImageMagick' in output
+        
+    def has_gs32(self):
+        status, output = self.get_cmd_output('gswin32c --help')
+        return status == 0 and 'Ghostscript' in output
+        
+    def has_webp(self):
+        status, output = self.get_cmd_output('cwebp')
+        return status == 0 and 'cwebp' in output
+    
+    def has_7zip(self):
+        status, output = self.get_cmd_output('7z')
+        return status == 0 and '7-Zip' in output
     
     def make_tmp_file(self, file_format):
         handler, self.myfile = tempfile.mkstemp(suffix=".svg",prefix="inkporter-%s-"%file_format)
-        with open(handler, "w") as f:
+        with io.open(handler, "w", encoding="utf-8") as f:
             f.write(etree.tostring(self.document, encoding="utf-8",xml_declaration=True).decode("utf-8"))
         self.tmpout.append(self.myfile)
 
@@ -151,28 +177,16 @@ class Inkporter(inkex.Effect):
             text = text[:-1]
         return sts, text
 
-    def do_cleanup(self):
-        # for item in self.tmpout:
-            # if os.path.exists(os.path.abspath(item)):
-                # os.remove(os.path.abspath(item))
-        # if os.path.isdir(self.tmpdir):
-            # os.rmdir(self.tmpdir)
-        print("hai")
+    def quit_inkporter(self):
+        warnings.filterwarnings("ignore")
+        exit()
 
     # called when extension is running
     def effect(self):
-        if len(self.options.id_pattern) > 0:
-            new_nss = inkex.utils.NSS
-            new_nss[u're'] = u'http://exslt.org/regular-expressions'
-            path_to_compile = "//*[re:match(@id,'(%s)','g')]" % self.options.id_pattern
-            self.id_to_process = self.document.xpath(path_to_compile, namespaces=new_nss)
-            self.svg.selected = {}
-            for item in self.id_to_process:
-                self.svg.selected[item.attrib['id']] = item
-        if len(self.svg.selected) < 1:
+        if not self.options.id_pattern:
             inkex.utils.errormsg(
-                "Please select at least 1 object or fill ID Pattern to use this extension!")
-            exit()
+                "Please fill ID Pattern to use this extension!")
+            self.quit_inkporter()
         try:
             if not os.path.isdir(os.path.expandvars(self.options.output_dir)):
                 os.mkdir(os.path.expandvars(self.options.output_dir))
@@ -193,14 +207,12 @@ class Inkporter(inkex.Effect):
                 self.do_webp()
             elif self.options.format == "bundle":
                 self.do_bundle()
-            self.do_cleanup()
         except Exception as e:
             inkex.utils.errormsg(e)
             import traceback
             inkex.utils.errormsg(traceback.print_exc())
-            print("hai")
             
-        warnings.filterwarnings("ignore")
+        self.quit_inkporter()
 
 
 if __name__ == '__main__':

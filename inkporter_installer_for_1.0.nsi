@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Inkporter For Inkscape 1.0"
-!define PRODUCT_VERSION "1.6"
+!define PRODUCT_VERSION "1.6.2"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 ; !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\AppMainExe.exe"
@@ -105,12 +105,12 @@ SectionEnd
  SectionEnd
 
 Section -Post
-  WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter" "" "Buka Inkporter di sini"
+  WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter" "" "Open Inkporter here"
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter" "Icon" "$INSTDIR\inkporter_data\inkporter.ico"
   WriteRegExpandStr HKCR "Directory\Background\shell\Inkporter\command" "" "$INSTDIR\inkporter_data\inkporter.bat"
   WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter\command" "" '$INSTDIR\inkporter_data\inkporter.bat "%1"'
   WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter" "Icon" "$INSTDIR\inkporter_data\inkporter.ico"
-  WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter" "" "Ekspor dengan Inkporter"
+  WriteRegExpandStr HKCR "inkscape.svg\shell\Inkporter" "" "Export with Inkporter"
   WriteUninstaller "$INSTDIR\uninstall_inkporter.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "${PRODUCT_NAME}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninstall_inkporter.exe"
