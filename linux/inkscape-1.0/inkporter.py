@@ -103,7 +103,7 @@ class Inkporter(inkex.Effect):
                                      type=str, dest="output_dir",
                                      help="Destination folder for saving your exports", default=os.path.expanduser("~"))
         self.arg_parser.add_argument("--bg-color",
-                                     type=str, dest="bg_color",
+                                     type=inkex.Color, dest="bg_color",
                                      help="Background color for JPG Export", default="white")
         self.arg_parser.add_argument("-q", "--quality",
                                      type=int, dest="quality",
@@ -154,7 +154,7 @@ class Inkporter(inkex.Effect):
                 self.tmpout.append(tmp_export_path)
 
                 # then, convert it to JPG using ImageMagick
-                real_export_path = os.path.expandvars(self.options.output_dir) + "/" + item.get('id') + ".jpg"
+                real_export_path = "{0}/{1}-{2}.jpg".format(os.path.expandvars(self.options.output_dir), item.get('id'), colorspace.lower())
                 run_command([
                     "convert",
                     "{0}".format(tmp_export_path),
@@ -190,7 +190,7 @@ class Inkporter(inkex.Effect):
                     self.tmpout.append(tmp_export_path)
 
                     # then, convert it to PDF CMYK using Ghostscript
-                    real_export_path = os.path.expandvars(self.options.output_dir) + "/CMYK-" + item.get('id') + ".pdf"
+                    real_export_path = os.path.expandvars(self.options.output_dir) + "/" + item.get('id') + "-cmyk.pdf"
                     run_command([
                         "gs","-dSAFER", "-dBATCH", "-dNOPAUSE", "-dNOCACHE", "-sDEVICE=pdfwrite", "-dAutoRotatePages=/None",
                         "-sColorConversionStrategy=CMYK", "-dProcessColorModel=/DeviceCMYK", "-dAutoFilterColorImages=false",
@@ -282,12 +282,12 @@ class Inkporter(inkex.Effect):
                     progressbar.update_progress(idx + 1, item.get('id'))
 
             # then, convert it to PDF CMYK using Ghostscript
-            real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/BOOKLET-" + item.get('id') + ".pdf"
+            real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/Booklet-" + self.options.id_pattern + ".pdf"
             command = [
                 "gs","-dSAFER", "-dBATCH", "-dNOPAUSE", "-dNOCACHE", "-sDEVICE=pdfwrite"
             ]
             if self.options.with_cmyk:
-                real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/CMYK-BOOKLET-" + item.get('id') + ".pdf"
+                real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/Booklet-" + self.options.id_pattern + "-cmyk" + ".pdf"
                 command.append("-sColorConversionStrategy=CMYK")
                 command.append("-dProcessColorModel=/DeviceCMYK")
             command.append(real_export_path)
