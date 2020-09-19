@@ -113,12 +113,12 @@ class Inkporter(inkex.Effect):
         self.tmpout = []
     
     def do_png(self):
-        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
-            for idx,item in enumerate(self.svg.selected):
-                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".png"
+        with ProgressBar(self.options.format, len(self.id_to_process), self.with_zenity) as progressbar:
+            for idx,item in enumerate(self.id_to_process):
+                export_path = os.path.expandvars(self.options.output_dir) + "/" + item.get('id') + ".png"
                 command = [
                     "inkscape",
-                    "-j","-i", item,
+                    "-j","-i", item.get('id'),
                     "-d", str(self.options.dpi),
                     "-o", "{0}".format(export_path),
                     self.myfile
@@ -127,23 +127,23 @@ class Inkporter(inkex.Effect):
                 if self.with_zenity:
                     if not progressbar.is_active:
                         break
-                    progressbar.update_progress(idx + 1, item)
+                    progressbar.update_progress(idx + 1, item.get('id'))
 
     def do_jpg(self):
         if not self.has_imagemagick():
             inkex.utils.errormsg("Please install Imagemagick to do JPG/Booklet export")
             return
 
-        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
+        with ProgressBar(self.options.format, len(self.id_to_process), self.with_zenity) as progressbar:
             colorspace = "RGB"
             if self.options.with_cmyk:
                 colorspace = "CMYK"
-            for idx,item in enumerate(self.svg.selected):
-                tmp_export_path = self.tmpdir + "/" + item + ".png"
+            for idx,item in enumerate(self.id_to_process):
+                tmp_export_path = self.tmpdir + "/" + item.get('id') + ".png"
                 # first, export to PNG
                 run_command([
                     "inkscape",
-                    "-j","-i", item,
+                    "-j","-i", item.get('id'),
                     "-d", str(self.options.dpi),
                     "-o", "{0}".format(tmp_export_path),
                     self.myfile
@@ -154,7 +154,7 @@ class Inkporter(inkex.Effect):
                 self.tmpout.append(tmp_export_path)
 
                 # then, convert it to JPG using ImageMagick
-                real_export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".jpg"
+                real_export_path = os.path.expandvars(self.options.output_dir) + "/" + item.get('id') + ".jpg"
                 run_command([
                     "convert",
                     "{0}".format(tmp_export_path),
@@ -168,29 +168,29 @@ class Inkporter(inkex.Effect):
                 if self.with_zenity:
                     if not progressbar.is_active:
                         break
-                    progressbar.update_progress(idx + 1, item)
+                    progressbar.update_progress(idx + 1, item.get('id'))
 
     def do_pdf(self):
         if self.options.with_cmyk:
             if not self.has_ghostscript():
                 inkex.utils.errormsg("Please install Ghostscript to do PDF export")
                 return
-            with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
-                for idx,item in enumerate(self.svg.selected):
+            with ProgressBar(self.options.format, len(self.id_to_process), self.with_zenity) as progressbar:
+                for idx,item in enumerate(self.id_to_process):
                     # first, export to PDF using inkscape
-                    tmp_export_path = self.tmpdir + "/" + item + ".pdf"
+                    tmp_export_path = self.tmpdir + "/" + item.get('id') + ".pdf"
                     run_command([
                         "inkscape",
                         "--export-area-drawing",
                         "-d", "{0}".format(self.options.dpi),
-                        "-j","-i", item,
+                        "-j","-i", item.get('id'),
                         "-o", "{0}".format(tmp_export_path),
                         self.myfile
                     ], self.tmplog_path)
                     self.tmpout.append(tmp_export_path)
 
                     # then, convert it to PDF CMYK using Ghostscript
-                    real_export_path = os.path.expandvars(self.options.output_dir) + "/CMYK-" + item + ".pdf"
+                    real_export_path = os.path.expandvars(self.options.output_dir) + "/CMYK-" + item.get('id') + ".pdf"
                     run_command([
                         "gs","-dSAFER", "-dBATCH", "-dNOPAUSE", "-dNOCACHE", "-sDEVICE=pdfwrite", "-dAutoRotatePages=/None",
                         "-sColorConversionStrategy=CMYK", "-dProcessColorModel=/DeviceCMYK", "-dAutoFilterColorImages=false",
@@ -203,16 +203,16 @@ class Inkporter(inkex.Effect):
                     if self.with_zenity:
                         if not progressbar.is_active:
                             break
-                        progressbar.update_progress(idx + 1, item)
+                        progressbar.update_progress(idx + 1, item.get('id'))
         else:
-            with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
-                for idx,item in enumerate(self.svg.selected):
-                    export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".pdf"
+            with ProgressBar(self.options.format, len(self.id_to_process), self.with_zenity) as progressbar:
+                for idx,item in enumerate(self.id_to_process):
+                    export_path = os.path.expandvars(self.options.output_dir) + "/" + item.get('id') + ".pdf"
                     command = [
                         "inkscape",
                         "--export-area-drawing",
                         "-d", "{0}".format(self.options.dpi),
-                        "-j","-i", item,
+                        "-j","-i", item.get('id'),
                         "-o", "{0}".format(export_path),
                         self.myfile
                     ]
@@ -220,15 +220,15 @@ class Inkporter(inkex.Effect):
                     if self.with_zenity:
                         if not progressbar.is_active:
                             break
-                        progressbar.update_progress(idx + 1, item)
+                        progressbar.update_progress(idx + 1, item.get('id'))
 
     def do_svg(self):
-        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
-            for idx,item in enumerate(self.svg.selected):
-                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".svg"
+        with ProgressBar(self.options.format, len(self.id_to_process), self.with_zenity) as progressbar:
+            for idx,item in enumerate(self.id_to_process):
+                export_path = os.path.expandvars(self.options.output_dir) + "/" + item.get('id') + ".svg"
                 command = [
                     "inkscape",
-                    "-j","-i", item,
+                    "-j","-i", item.get('id'),
                     "-o", "{0}".format(export_path),
                     self.myfile
                 ]
@@ -236,19 +236,19 @@ class Inkporter(inkex.Effect):
                 if self.with_zenity:
                     if not progressbar.is_active:
                         break
-                    progressbar.update_progress(idx + 1, item)
+                    progressbar.update_progress(idx + 1, item.get('id'))
 
     def do_eps(self):
-        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
-            for idx,item in enumerate(self.svg.selected):
-                export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".eps"
+        with ProgressBar(self.options.format, len(self.id_to_process), self.with_zenity) as progressbar:
+            for idx,item in enumerate(self.id_to_process):
+                export_path = os.path.expandvars(self.options.output_dir) + "/" + item.get('id') + ".eps"
                 command = [
                     "inkscape",
                     "--export-area-drawing",
                     "--export-ignore-filters",
                     "--export-text-to-path",
                     "--export-ps-level=3",
-                    "-j","-i", item,
+                    "-j","-i", item.get('id'),
                     "-o", "{0}".format(export_path),
                     self.myfile
                 ]
@@ -256,16 +256,16 @@ class Inkporter(inkex.Effect):
                 if self.with_zenity:
                     if not progressbar.is_active:
                         break
-                    progressbar.update_progress(idx + 1, item)
+                    progressbar.update_progress(idx + 1, item.get('id'))
 
     def do_booklet(self):
         if not self.has_imagemagick():
             inkex.utils.errormsg("Please install Imagemagick to do JPG/Booklet export")
             return
-        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
-            for idx,item in enumerate(self.svg.selected):
+        with ProgressBar(self.options.format, len(self.id_to_process), self.with_zenity) as progressbar:
+            for idx,item in enumerate(self.id_to_process):
                 # first, export to PDF using inkscape
-                tmp_export_path = self.tmpdir + "/" + item + ".pdf"
+                tmp_export_path = self.tmpdir + "/" + item.get('id') + ".pdf"
                 run_command([
                     "inkscape",
                     "--export-area-drawing",
@@ -282,12 +282,12 @@ class Inkporter(inkex.Effect):
                     progressbar.update_progress(idx + 1, item)
 
             # then, convert it to PDF CMYK using Ghostscript
-            real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/BOOKLET-" + item + ".pdf"
+            real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/BOOKLET-" + item.get('id') + ".pdf"
             command = [
                 "gs","-dSAFER", "-dBATCH", "-dNOPAUSE", "-dNOCACHE", "-sDEVICE=pdfwrite"
             ]
             if self.options.with_cmyk:
-                real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/CMYK-BOOKLET-" + item + ".pdf"
+                real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/CMYK-BOOKLET-" + item.get('id') + ".pdf"
                 command.append("-sColorConversionStrategy=CMYK")
                 command.append("-dProcessColorModel=/DeviceCMYK")
             command.append(real_export_path)
@@ -305,9 +305,9 @@ class Inkporter(inkex.Effect):
         if not self.has_webp():
             inkex.utils.errormsg("Please install libwebp to do webp export")
             return
-        with ProgressBar(self.options.format, len(self.svg.selected), self.with_zenity) as progressbar:
-            for idx,item in enumerate(self.svg.selected):
-                tmp_export_path = self.tmpdir + "/" + item + ".png"
+        with ProgressBar(self.options.format, len(self.id_to_process), self.with_zenity) as progressbar:
+            for idx,item in enumerate(self.id_to_process):
+                tmp_export_path = self.tmpdir + "/" + item.get('id') + ".png"
                 # first, export to PNG
                 run_command([
                     "inkscape",
@@ -320,7 +320,7 @@ class Inkporter(inkex.Effect):
                 self.tmpout.append(tmp_export_path)
 
                 # then, convert it to WEBP using cwebp
-                real_export_path = os.path.expandvars(self.options.output_dir) + "/" + item + ".webp"
+                real_export_path = os.path.expandvars(self.options.output_dir) + "/" + item.get('id') + ".webp"
                 run_command([
                     "cwebp",
                     "-quiet",
@@ -331,7 +331,7 @@ class Inkporter(inkex.Effect):
                 if self.with_zenity:
                     if not progressbar.is_active:
                         break
-                    progressbar.update_progress(idx + 1, item)
+                    progressbar.update_progress(idx + 1, item.get('id'))
 
     def has_ghostscript(self):
         status, output = self.get_cmd_output('gs --help')
@@ -390,12 +390,9 @@ class Inkporter(inkex.Effect):
             new_nss[u're'] = u'http://exslt.org/regular-expressions'
             path_to_compile = "//*[re:match(@id,'(%s)','g')]" % self.options.id_pattern
             self.id_to_process = self.document.xpath(path_to_compile, namespaces=new_nss)
-            self.svg.selected = {}
-            for item in self.id_to_process:
-                self.svg.selected[item.attrib['id']] = item
-        if len(self.svg.selected) < 1:
+        if len(self.id_to_process) < 1:
             inkex.utils.errormsg(
-                "Please select at least 1 object or fill ID Pattern to use this extension!")
+                "Oops, Inkporter found nothing with %s pattern!" % self.options.id_pattern)
             exit()
         try:
             if not os.path.isdir(os.path.expandvars(self.options.output_dir)):
