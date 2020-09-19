@@ -3,7 +3,7 @@
         <name>Inkporter</name>
         <id>id.gimpscape.inkporter</id>
         <spacer/>
-        <_param name="welcome" type="description" appearance="header">Welcome to Inkporter 1.2.1!</_param>
+        <_param name="welcome" type="description" appearance="header">Welcome to Inkporter 1.2.2!</_param>
         <_param name="descriptions" type="description" xml:space="preserve">Export your work based on special ID to several document formats easily.</_param>
         <spacer/>
         <!-- start notebook -->
