@@ -15,7 +15,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 
 def atoi(text):
     return int(text) if text.isdigit() else text
@@ -270,7 +270,7 @@ class Inkporter(inkex.Effect):
                     "inkscape",
                     "--export-area-drawing",
                     "-d", "{0}".format(self.options.dpi),
-                    "-j","-i", item,
+                    "-j","-i", item.get('id'),
                     "-o", "{0}".format(tmp_export_path),
                     self.myfile
                 ], self.tmplog_path)
@@ -279,7 +279,7 @@ class Inkporter(inkex.Effect):
                 if self.with_zenity:
                     if not progressbar.is_active:
                         break
-                    progressbar.update_progress(idx + 1, item)
+                    progressbar.update_progress(idx + 1, item.get('id'))
 
             # then, convert it to PDF CMYK using Ghostscript
             real_export_path = "-sOutputFile=" + os.path.expandvars(self.options.output_dir) + "/BOOKLET-" + item.get('id') + ".pdf"
@@ -311,7 +311,7 @@ class Inkporter(inkex.Effect):
                 # first, export to PNG
                 run_command([
                     "inkscape",
-                    "-j","-i", item,
+                    "-j","-i", item.get('id'),
                     "-d", str(self.options.dpi),
                     "-o", "{0}".format(tmp_export_path),
                     self.myfile
