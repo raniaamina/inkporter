@@ -7,21 +7,21 @@ Inkporter is a powerful tool to help your productivity with Inkscape. This tool 
 
 Dependencies :
 
-(Included in installer)
+(Included with installer)
 - [Inkscape](https://inkscape.org/)
 - [Ghostscript 9.52](https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/gs952w32.exe) untuk expor pdf-cmyk
 - [libwebp](https://developers.google.com/speed/webp/download) untuk expor webp
 - [7-zip](https://www.7-zip.org) untuk expor zip
 
 
-(Not included in installer)
+(Not included with installer)
 - [Imagemagick](https://imagemagick.org/script/download.php#windows) untuk expor JPEG
 
 
 Installation Method
 
 * Download [Inkporter-win Installer](https://github.com/raniaamina/inkporter/releases/) Then Run the Installer
-* Instal it as usual
+* Install it as usual
 * **OPTIONAL FOR JPEG EXPORT** Download ImageMagick at https://imagemagick.org/script/download.php#windows choose the top one and install it just as usual
 * You're now ready to use Inkporter
 
