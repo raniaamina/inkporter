@@ -9,13 +9,13 @@ Dependencies :
 
 (Included with installer)
 - [Inkscape](https://inkscape.org/)
-- [Ghostscript 9.52](https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/gs952w32.exe) untuk expor pdf-cmyk
-- [libwebp](https://developers.google.com/speed/webp/download) untuk expor webp
-- [7-zip](https://www.7-zip.org) untuk expor zip
+- [Ghostscript 9.52](https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/gs952w32.exe) as PDF processing tool for some features like (PDF-CMYK and BOOKLET)
+- [libwebp](https://developers.google.com/speed/webp/download) for WebP Support
+- [7-zip](https://www.7-zip.org) for ZIP Support
 
 
 (Not included with installer)
-- [Imagemagick](https://imagemagick.org/script/download.php#windows) untuk expor JPEG
+- [Imagemagick](https://imagemagick.org/script/download.php#windows) for JPEG Support
 
 
 Installation Method
