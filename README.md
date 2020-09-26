@@ -20,8 +20,15 @@ Currently we make this ekstension for Inkscape 0.9x, we need some lines to make 
 - Inkscape
 - Ghostscript
 - ImageMagick
-- webp / libwebp
+- webp / libweb
 - zenity (for Linux & MacOS)
+
+### Dependencies download links for Windows
+- [Inkscape](https://inkscape.org/)
+- [Ghostscript 32bit 9.52](https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/gs952w32.exe)
+- [libwebp](https://developers.google.com/speed/webp/download)
+- [7-zip](https://www.7-zip.org) for ZIP Support
+- [Imagemagick](https://imagemagick.org/script/download.php#windows)
 
 ## How to Install Inkporter
 
