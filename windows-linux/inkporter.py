@@ -136,7 +136,7 @@ class Inkporter(inkex.Effect):
 
     def do_jpg(self):
         if not self.has_imagemagick():
-            inkex.utils.errormsg("Please install Imagemagick to do JPG/Booklet export")
+            inkex.utils.errormsg("Please install Imagemagick to do JPG export")
             return
 
         with ProgressBar(self.options.format, len(self.id_to_process), self.with_zenity) as progressbar:
@@ -274,7 +274,7 @@ class Inkporter(inkex.Effect):
     def do_booklet(self):
             
         if not self.has_imagemagick():
-            inkex.utils.errormsg("Please install Imagemagick to do JPG/Booklet export")
+            inkex.utils.errormsg("Please install Ghostscript to do Booklet export")
             return
         with ProgressBar(self.options.format, len(self.id_to_process), self.with_zenity) as progressbar:
             for idx,item in enumerate(self.id_to_process):
