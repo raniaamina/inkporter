@@ -37,7 +37,7 @@ Currently we make this ekstension for Inkscape 0.9x, we need some lines to make 
 
   * For Windows : Copy inkporter.inx, inkporter.py, inkporter_ext.bat and inkporter directory to Inkscape Extensions directory, by default it's on `%APPDATA%\Inkscape\extensions` for Windows
   
-  Note For Windows : Inkscape 1.0.1 has a problem with importing GTK that needed by Inkporter on linux-windows folder, copy file named `HarfBuzz-0.0.typelib` into ` C:\Program Files\Inkscape\lib\girepository-1.0`
+  Note For Windows : Inkscape 1.0.1 has a problem with importing GTK that needed by Inkporter on linux-windows folder, copy file named `HarfBuzz-0.0.typelib` on misc folder into ` C:\Program Files\Inkscape\lib\girepository-1.0` to solve the problem
   
   Unable to find where is the `extensions` directory for your Inkscape installation?  
 you can check it from `Edit > Preferences > System` menu, then look at `User extensions` path in `System Info` section.
