@@ -11,7 +11,7 @@ from time import sleep
 import warnings
 import io
 
-__version__ = '1.6.1'
+__version__ = '1.6.3'
 
 def atoi(text):
     return int(text) if text.isdigit() else text
@@ -91,13 +91,11 @@ class Inkporter(inkex.Effect):
             if not self.has_gs32():
                 inkex.utils.errormsg("Please Install and add Ghostscript 32 bit directory to PATH environment variable to export PDF-CMYK")
                 return
-            command = "start inkporter pdf_cmyk {0} {1} {2}".format(
-                self.myfile, self.options.id_pattern, file_export)
-            os.system(command)
+            target = "pdf_cmyk"
         else:   
-            command = "start inkporter pdf {0} {1} {2}".format(
-                self.myfile, self.options.id_pattern, file_export)
-            os.system(command)
+            target = "pdf"
+        command = "start inkporter {0} {1} {2} {3} {4}".format(target, self.myfile, self.options.id_pattern, file_export, self.options.dpi)
+        os.system(command)
         os.close(self.tmplog_fd)
 
     def do_svg(self):
@@ -109,8 +107,8 @@ class Inkporter(inkex.Effect):
 
     def do_eps(self):
         file_export = '"' + self.options.output_dir + '"'
-        command = "start inkporter eps {0} {1} {2}".format(
-            self.myfile, self.options.id_pattern, file_export)
+        command = "start inkporter eps {0} {1} {2} {3}".format(
+            self.myfile, self.options.id_pattern, file_export, self.options.dpi)
         os.system(command)
         os.close(self.tmplog_fd)
 
@@ -118,19 +116,17 @@ class Inkporter(inkex.Effect):
         if not self.has_gs32():
             inkex.utils.errormsg("Please Install and add Ghostscript 32 bit directory to PATH environment variable to export Booklet (PDF)")
             return
+        file_export = '"' + self.options.output_dir + '"'
             
         if self.options.with_cmyk:
-            file_export = '"' + self.options.output_dir + '"'
-            command = "start inkporter booklet_cmyk {0} {1} {2}".format(
-                self.myfile, self.options.id_pattern, file_export)
-            os.system(command)
-            os.close(self.tmplog_fd)
+            target = "booklet_cmyk"
         else:
-            file_export = '"' + self.options.output_dir + '"'
-            command = "start inkporter booklet {0} {1} {2}".format(
-                self.myfile, self.options.id_pattern, file_export)
-            os.system(command)
-            os.close(self.tmplog_fd)
+            target = "booklet"
+
+        command = "start inkporter {0} {1} {2} {3} {4}".format(
+            target, self.myfile, self.options.id_pattern, file_export, self.options.dpi)
+        os.system(command)
+        os.close(self.tmplog_fd)
     
     def do_webp(self):
         file_export = '"' + self.options.output_dir + '"'
