@@ -20,10 +20,11 @@ Currently we make this ekstension for Inkscape 0.9x, we need some lines to make 
 - Inkscape
 - Ghostscript
 - ImageMagick
-- webp / libweb
+- webp / libwebp
 - zenity (for Linux & MacOS)
 
 ### Dependencies download links for Windows
+
 - [Inkscape](https://inkscape.org/)
 - [Ghostscript 32bit 9.52](https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs952/gs952w32.exe)
 - [libwebp](https://developers.google.com/speed/webp/download)
@@ -33,17 +34,21 @@ Currently we make this ekstension for Inkscape 0.9x, we need some lines to make 
 ## How to Install Inkporter
 
 * Copy Inkporter to Extension Directory
+  
   * For Linux : Just copy and paste inkporter.inx, inkporter.py, and inkporter directory to Inkscape extension directory, usually in `$HOME/.config/inkscape/extensions` for linux.
-
+  
   * For Windows : Copy inkporter.inx, inkporter.py, inkporter_ext.bat and inkporter directory to Inkscape Extensions directory, by default it's on `%APPDATA%\Inkscape\extensions` for Windows
   
   Note For Windows : Inkscape 1.0.1 has a problem with importing GTK that needed by Inkporter on linux-windows folder, copy file named `HarfBuzz-0.0.typelib` on misc folder into ` C:\Program Files\Inkscape\lib\girepository-1.0` to solve the problem
   
+  > UPDATE!
+  > Now you can use same files for Linux & Windows
+
   Unable to find where is the `extensions` directory for your Inkscape installation?  
 you can check it from `Edit > Preferences > System` menu, then look at `User extensions` path in `System Info` section.
 
 * Add Dependencies to Environment Variables (Windows)
-
+  
   In Windows, after you install the required dependencies, you should add the dependency directories to Environment Variable "PATH"
   
   simply, you can do it by go to Control Panel -> System and Security -> System -> Advanced System Settings -> Environment Variables, then double click on "Path" System Variable and add the directories. If you use Windows 8.1 and below, separate each directory with semicolon (;) like C:\Windows;C:\Users\username\libwebp\bin
@@ -51,6 +56,7 @@ you can check it from `Edit > Preferences > System` menu, then look at `User ext
 If the installation is correct, you'll find Inkporter menu on Extensions -> Export -> Inkporter. Please make sure you're copying right version of Inkporter, we provide two version of inkporter which is for Inkscape 0.9x and Inkscape 1.0 version.
 
 ## How to Export Your Objects with Inkporter
+
 * Group your objects
 * Give each Groups an unique ID Pattern like obj-1, obj-2, obj-3 (you can replace obj with anything what you want)
 * Open Inkporter
@@ -65,9 +71,10 @@ If the installation is correct, you'll find Inkporter menu on Extensions -> Expo
 - [x] UI Research
 - [x] UI Development (Phase 1)
 - [x] Backend Development (Phase 2)
-- [ ] Testing (Phase 3)
+- [x] Testing (Phase 3)
   - [x] Linux (default, flatpak, snap)
   - [x] MacOS
+    
     ```bash
     # run with this trick
     ➜  ~ cd /Applications/Inkscape.app/Contents/MacOS
@@ -80,6 +87,7 @@ If the installation is correct, you'll find Inkporter menu on Extensions -> Expo
 
 - [Sofyan Sugianto - sofyan@artemtech.id](mailto://sofyan@artemtech.id) (Programmer)
 - [Rania Amina - me@raniaamina.id ](https://raniaamina.id) (UI Designer)
+- [Rijal](#) (Windows developers)
 
 This project fully supported by Gimpscape Indoensia (The Biggest Indonesia F/LOSS Design Community)
 
