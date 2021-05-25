@@ -176,7 +176,7 @@ class Inkporter(inkex.Effect):
                 real_export_path = "{0}/{1}-{2}.jpg".format(os.path.expandvars(self.options.output_dir), item.get('id'), colorspace.lower())
                 # order = f"{im} {tmp_export_path} -background {self.options.bg_color} -flatten -quality {self.options.quality} -colorspace {colorspace} {real_export_path}"
                 if os.name == "nt":
-                    this_is_order = f'convert {tmp_export_path} -background {self.options.bg_color} -flatten -colorspace {colorspace} -quality {self.options.quality} "{real_export_path}"'
+                    this_is_order = f'magick convert {tmp_export_path} -background {self.options.bg_color} -flatten -colorspace {colorspace} -quality {self.options.quality} "{real_export_path}"'
     
                 else:
                     this_is_order = ([
