@@ -7,7 +7,6 @@ import sys
 import shutil
 import os
 import inkex
-import signal
 import subprocess
 from time import sleep
 import platform
@@ -171,12 +170,9 @@ class Inkporter(inkex.Effect):
                     self.myfile
                 ], self.tmplog_path)
 
-                # while not os.path.exists(tmp_export_path):
-                #     sleep(1)
                 self.tmpout.append(tmp_export_path)
 
                 # then, convert it to JPG using ImageMagick
-                # file_export = '"' + self.options.output_dir + item.get('id'), colorspace.lower() + ".jpeg" + '"'
                 real_export_path = "{0}/{1}-{2}.jpg".format(os.path.expandvars(self.options.output_dir), item.get('id'), colorspace.lower())
                 # order = f"{im} {tmp_export_path} -background {self.options.bg_color} -flatten -quality {self.options.quality} -colorspace {colorspace} {real_export_path}"
                 if os.name == "nt":
@@ -297,7 +293,6 @@ class Inkporter(inkex.Effect):
                     progressbar.update_progress(idx + 1, item.get('id'))
 
     def do_booklet(self):
-            
         if not self.has_ghostscript():
             inkex.utils.errormsg("Please install Ghostscript to do Booklet export")
             return
@@ -379,12 +374,6 @@ class Inkporter(inkex.Effect):
 
     def has_ghostscript(self):
         if platform.system() == "Windows":
-            # try:
-            #     gs = "gswin32c --help"
-            #     status, output = self.get_cmd_output(gs)
-            # except:
-            #     gs = "gswin64c --help"
-            #     status, output = self.get_cmd_output(gs)
             gs = "gswin32c --help"
             status, output = self.get_cmd_output(gs)
         else:
@@ -435,8 +424,6 @@ class Inkporter(inkex.Effect):
 
     # called when extension is running
     def effect(self):
-        
-            
         if not self.has_zenity():
             if os.name != "nt":
                 inkex.utils.debug(
