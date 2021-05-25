@@ -14,6 +14,11 @@ import platform
 
 from PIL import Image
 
+try:
+    from inkex.elements._utils import NSS # 1.1.x
+except ImportError:
+    from inkex.utils import NSS # 1.0.x
+
 if os.name != "nt":
     import gi
     gi.require_version("Gtk", "3.0")
@@ -440,7 +445,7 @@ class Inkporter(inkex.Effect):
                 self.with_zenity = False
             
         if len(self.options.id_pattern) > 0:
-            new_nss = inkex.utils.NSS
+            new_nss = NSS
             new_nss[u're'] = u'http://exslt.org/regular-expressions'
             path_to_compile = "//*[re:match(@id,'(%s)','g')]" % self.options.id_pattern
             self.id_to_process = self.document.xpath(path_to_compile, namespaces=new_nss)
