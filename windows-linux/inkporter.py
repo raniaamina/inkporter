@@ -7,19 +7,23 @@ import sys
 import shutil
 import os
 import inkex
-import signal
 import subprocess
 from time import sleep
 import platform
 
 from PIL import Image
 
+try:
+    from inkex.elements._utils import NSS # 1.1.x
+except ImportError:
+    from inkex.utils import NSS # 1.0.x
+
 if os.name != "nt":
     import gi
     gi.require_version("Gtk", "3.0")
     from gi.repository import Gtk
 
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 
 def atoi(text):
     return int(text) if text.isdigit() else text
@@ -166,16 +170,13 @@ class Inkporter(inkex.Effect):
                     self.myfile
                 ], self.tmplog_path)
 
-                # while not os.path.exists(tmp_export_path):
-                #     sleep(1)
                 self.tmpout.append(tmp_export_path)
 
                 # then, convert it to JPG using ImageMagick
-                # file_export = '"' + self.options.output_dir + item.get('id'), colorspace.lower() + ".jpeg" + '"'
                 real_export_path = "{0}/{1}-{2}.jpg".format(os.path.expandvars(self.options.output_dir), item.get('id'), colorspace.lower())
                 # order = f"{im} {tmp_export_path} -background {self.options.bg_color} -flatten -quality {self.options.quality} -colorspace {colorspace} {real_export_path}"
                 if os.name == "nt":
-                    this_is_order = f'convert {tmp_export_path} -background {self.options.bg_color} -flatten -colorspace {colorspace} -quality {self.options.quality} "{real_export_path}"'
+                    this_is_order = f'magick convert {tmp_export_path} -background {self.options.bg_color} -flatten -colorspace {colorspace} -quality {self.options.quality} "{real_export_path}"'
     
                 else:
                     this_is_order = ([
@@ -292,7 +293,6 @@ class Inkporter(inkex.Effect):
                     progressbar.update_progress(idx + 1, item.get('id'))
 
     def do_booklet(self):
-            
         if not self.has_ghostscript():
             inkex.utils.errormsg("Please install Ghostscript to do Booklet export")
             return
@@ -374,12 +374,6 @@ class Inkporter(inkex.Effect):
 
     def has_ghostscript(self):
         if platform.system() == "Windows":
-            # try:
-            #     gs = "gswin32c --help"
-            #     status, output = self.get_cmd_output(gs)
-            # except:
-            #     gs = "gswin64c --help"
-            #     status, output = self.get_cmd_output(gs)
             gs = "gswin32c --help"
             status, output = self.get_cmd_output(gs)
         else:
@@ -388,7 +382,10 @@ class Inkporter(inkex.Effect):
         return status == 0 and 'Ghostscript' in output
 
     def has_imagemagick(self):
-        status, output = self.get_cmd_output('convert --version')
+        command = 'convert --version'
+        if platform.system() == 'Windows':
+            command = 'magick convert --version'
+        status, output = self.get_cmd_output(command)
         return status == 0 and 'ImageMagick' in output
 
     def has_zenity(self):
@@ -430,8 +427,6 @@ class Inkporter(inkex.Effect):
 
     # called when extension is running
     def effect(self):
-        
-            
         if not self.has_zenity():
             if os.name != "nt":
                 inkex.utils.debug(
@@ -440,7 +435,7 @@ class Inkporter(inkex.Effect):
                 self.with_zenity = False
             
         if len(self.options.id_pattern) > 0:
-            new_nss = inkex.utils.NSS
+            new_nss = NSS
             new_nss[u're'] = u'http://exslt.org/regular-expressions'
             path_to_compile = "//*[re:match(@id,'(%s)','g')]" % self.options.id_pattern
             self.id_to_process = self.document.xpath(path_to_compile, namespaces=new_nss)
