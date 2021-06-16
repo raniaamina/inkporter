@@ -11,8 +11,6 @@ import subprocess
 from time import sleep
 import platform
 
-from PIL import Image
-
 try:
     from inkex.elements._utils import NSS # 1.1.x
 except ImportError:
