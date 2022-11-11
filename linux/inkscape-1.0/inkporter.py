@@ -386,7 +386,7 @@ class Inkporter(inkex.Effect):
                 "please install it if you want (optional).")
             self.with_zenity = False
         if len(self.options.id_pattern) > 0:
-            new_nss = inkex.utils.NSS
+            new_nss = inkex.NSS
             new_nss[u're'] = u'http://exslt.org/regular-expressions'
             path_to_compile = "//*[re:match(@id,'(%s)','g')]" % self.options.id_pattern
             self.id_to_process = self.document.xpath(path_to_compile, namespaces=new_nss)
